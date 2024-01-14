@@ -8,7 +8,7 @@ const CommentSchema = new Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
-const PostSchema = new Schema(
+export const PostSchema = new Schema(
   {
     email: { type: String, required: true },
     title: { type: String, required: true },

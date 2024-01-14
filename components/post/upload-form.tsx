@@ -7,9 +7,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  Checkbox,
   Input,
-  Link,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { Post } from "@/types/post";

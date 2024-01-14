@@ -19,7 +19,8 @@ import { MessageCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { commentOnPost } from "@/redux_store/slices/posts-slice";
+import { commentOnPost } from "@/redux_store/slices/global-slices";
+import toast from "react-hot-toast";
 
 interface CommentSectionProps {
   currentPost: Post;
@@ -27,9 +28,6 @@ interface CommentSectionProps {
 
 export default function CommentSection({ currentPost }: CommentSectionProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { allComments, error, loading } = useFetchCurrentComments({
-    post: currentPost,
-  });
   const [presentComment, setPresentComment] = useState<string>("");
   const { data: session } = useSession();
   const dispatch = useDispatch();
@@ -68,8 +66,10 @@ export default function CommentSection({ currentPost }: CommentSectionProps) {
       );
 
       console.log(response.data);
+      toast.success("Comment Added");
     } catch (error: any) {
       console.log(error.message);
+      toast.error("Some error occured");
     }
   };
   return (

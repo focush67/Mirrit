@@ -8,10 +8,12 @@ import { Post } from "@/types/post";
 import UserAvatar from "../profile/user-avatar";
 import CommentSection from "../comments/coment-section";
 import { useDispatch } from "react-redux";
-import { likePost } from "@/redux_store/slices/posts-slice";
+import { likePost } from "@/redux_store/slices/global-slices";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { addNewSavedPost } from "@/redux_store/slices/global-slices";
+import toast from "react-hot-toast";
 
 interface PostCardProps {
   post: Post;
@@ -27,8 +29,10 @@ export default function PostCard({ post }: PostCardProps) {
       const response = await axios.post(`/api/posts/like/?id=${post._id}`);
       console.log(response.data);
       dispatch(likePost({ _id: post._id }));
+      toast.success("Liked");
     } catch (error: any) {
       console.log(error.message);
+      toast.error("Some error occured");
     }
   };
 
@@ -37,6 +41,34 @@ export default function PostCard({ post }: PostCardProps) {
       router.push(`/dashboard`);
     } else {
       router.push(`/${email}`);
+    }
+  };
+
+  const handleSavingCluster = async () => {
+    if (!session?.user?.email) {
+      signIn("google");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `/api/save/?email=${session?.user?.email}`,
+        {
+          newPost: post,
+        }
+      );
+
+      console.log(response.data);
+      if (response.data.status === 200 || response.data.status === 201) {
+        console.log("Dispatching post save");
+        dispatch(addNewSavedPost(post));
+        toast.success("Saved to Cluster");
+      } else if (response.data.status === 303) {
+        toast.error("Post already exists in cluster");
+      }
+    } catch (error: any) {
+      console.log(error.message);
+      toast.error("Some error occured");
     }
   };
 
@@ -73,7 +105,10 @@ export default function PostCard({ post }: PostCardProps) {
             <CommentSection currentPost={post} />
           </Hover>
           <Hover text="save">
-            <SaveIcon className="hover:cursor-pointer" />
+            <SaveIcon
+              className="hover:cursor-pointer"
+              onClick={handleSavingCluster}
+            />
           </Hover>
         </div>
       </CardBody>

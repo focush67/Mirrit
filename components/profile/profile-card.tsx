@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addRelationship,
   removeRelationship,
-} from "@/redux_store/slices/users-slice";
+} from "@/redux_store/slices/global-slices";
 import { GlobalState } from "@/types/state";
 
 interface ProfileCardProps {
@@ -31,15 +31,16 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   const { posts } = useFetchUserPosts({ email: profile?.email! });
   const { data: session } = useSession();
   const dispatch = useDispatch();
-  const allUsers = useSelector((state: GlobalState) => state.users.users);
+  const allUsers = useSelector((state: GlobalState) => state.users);
+  const allPosts = useSelector((state: GlobalState) => state.posts);
 
-  const reduxProfile = allUsers.find(
+  const reduxProfile = allUsers?.find(
     (user: UserProfile) => user.email === profile?.email
   );
   const isVisitor = session?.user?.email !== profile?.email;
 
   useEffect(() => {
-    if (session && profile && allUsers.length > 0) {
+    if (session && profile && allUsers?.length > 0) {
       const userWithEmail = allUsers.find(
         (user: UserProfile) => user.email === profile.email
       );
@@ -118,14 +119,14 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                 isBordered
                 radius="full"
                 size="md"
-                src={reduxProfile?.image!}
+                src={profile?.image!}
               />
               <div className="flex flex-col gap-1 items-start justify-center">
                 <h4 className="text-small font-semibold leading-none text-default-600">
-                  {reduxProfile?.name}
+                  {profile?.name}
                 </h4>
                 <h5 className="text-small tracking-tight text-default-400">
-                  {reduxProfile?.email}
+                  {profile?.email}
                 </h5>
               </div>
             </div>
@@ -141,13 +142,13 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           <CardFooter className="gap-3">
             <div className="flex gap-1">
               <p className="font-semibold text-default-400 text-small">
-                {reduxProfile?.following.length}
+                {profile?.following.length}
               </p>
               <p className=" text-default-400 text-small">Following</p>
             </div>
             <div className="flex gap-1">
               <p className="font-semibold text-default-400 text-small">
-                {reduxProfile?.followers?.length}
+                {profile?.followers?.length}
               </p>
               <p className="text-default-400 text-small">Followers</p>
             </div>

@@ -42,6 +42,7 @@ export default function NavigationBar() {
     <UserAvatar src={session?.user?.image!} />,
     <Link href={"/profile"}>Profile</Link>,
     <Link href={"/dashboard"}>Dashboard</Link>,
+    <Link href={"/saved"}>Saved</Link>,
     <Link href={"/messenger"}>Messenger</Link>,
     <Button
       variant="shadow"
@@ -53,7 +54,6 @@ export default function NavigationBar() {
   ];
 
   const defaultMenuItems = [
-    <Link href={"/users"}>Users</Link>,
     <Button
       as={Link}
       color="success"
@@ -97,6 +97,9 @@ export default function NavigationBar() {
         </NavbarItem>
         <NavbarItem className={!session ? "hidden" : "block"}>
           <Link href="/dashboard">Dashboard</Link>
+        </NavbarItem>
+        <NavbarItem className={!session ? "hidden" : "block"}>
+          <Link href={`/saved`}>Saved</Link>
         </NavbarItem>
         <NavbarItem className={!session ? "hidden" : "block"}>
           <Link href="/messenger">Messenger</Link>

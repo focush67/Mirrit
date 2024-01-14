@@ -4,12 +4,8 @@ import PostCard from "@/components/post/post-card";
 import SkeletonRender from "@/components/post/skeleton";
 import useFetchAllPosts from "@/custom_hooks/fetching_hooks/useFetchAllPosts";
 import useFetchAllUsers from "@/custom_hooks/fetching_hooks/useFetchAllUsers";
-import {
-  addPost,
-  addPostsChunk,
-  resetPosts,
-} from "@/redux_store/slices/posts-slice";
-import { addAllUsers } from "@/redux_store/slices/users-slice";
+import { addPostsChunk, resetPosts } from "@/redux_store/slices/global-slices";
+import { addAllUsers } from "@/redux_store/slices/global-slices";
 import { Post } from "@/types/post";
 import { GlobalState } from "@/types/state";
 import { useEffect } from "react";
@@ -34,8 +30,7 @@ export default function Home() {
     };
   }, [posts, dispatch]);
 
-  const allPosts = useSelector((state: GlobalState) => state.posts.posts);
-
+  const allPosts = useSelector((state: GlobalState) => state.posts);
   console.log("Posts: ", allPosts);
 
   if (!posts || posts.length === 0) {

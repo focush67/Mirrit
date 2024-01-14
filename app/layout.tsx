@@ -7,6 +7,7 @@ import ReduxProvider from "@/providers/store-provider";
 import { getServerSession } from "next-auth";
 import NavigationBar from "@/components/navigation/navbar";
 import { Profiles } from "@/models/user-profile-schema";
+import { ToastProvider } from "@/providers/toast-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,14 +35,16 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
-          <SessionProvider session={session}>
-            <ReduxProvider>
-              <NavigationBar />
-              {children}
-            </ReduxProvider>
-          </SessionProvider>
-        </Providers>
+        <ToastProvider>
+          <Providers>
+            <SessionProvider session={session}>
+              <ReduxProvider>
+                <NavigationBar />
+                {children}
+              </ReduxProvider>
+            </SessionProvider>
+          </Providers>
+        </ToastProvider>
       </body>
     </html>
   );
