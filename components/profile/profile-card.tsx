@@ -10,7 +10,6 @@ import {
   Button,
 } from "@nextui-org/react";
 import useFetchUserPosts from "@/custom_hooks/fetching_hooks/useFetchUserPosts";
-import { Post } from "@/types/post";
 import { UserProfile } from "@/types/profile";
 import UploadModal from "../post/upload-form";
 import { signIn, useSession } from "next-auth/react";
@@ -32,11 +31,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   const { data: session } = useSession();
   const dispatch = useDispatch();
   const allUsers = useSelector((state: GlobalState) => state.users);
-  const allPosts = useSelector((state: GlobalState) => state.posts);
 
-  const reduxProfile = allUsers?.find(
-    (user: UserProfile) => user.email === profile?.email
-  );
   const isVisitor = session?.user?.email !== profile?.email;
 
   useEffect(() => {
@@ -111,9 +106,9 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 
   return (
     <>
-      <div className="w-screen flex justify-center">
+      <div className="w-[95vw] flex justify-center mt-2">
         <Card className="sm:w-[70%] md:w-[100%] lg:w-[70%] items-center">
-          <CardHeader className="justify-between">
+          <CardHeader className="flex justify-between">
             <div className="flex gap-5">
               <Avatar
                 isBordered

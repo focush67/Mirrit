@@ -144,7 +144,7 @@ export default function UploadModal() {
   return (
     <>
       <Button onPress={onOpen} color="primary" className="">
-        New Post
+        New
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
         <ModalContent>

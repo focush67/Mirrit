@@ -53,16 +53,20 @@ const Dashboard = () => {
   console.log("filtered posts: ", filteredPosts);
 
   return (
-    <>
-      <div className="flex items-center justify-center mt-1">
-        <ProfileCard profile={profile!} />
+    <div className="flex flex-col justify-center items-center lg:flex-row lg:justify-center lg:items-center">
+      <div>
+        {/* Profile card */}
+        <div className="flex items-center justify-center mt-1">
+          <ProfileCard profile={profile!} />
+        </div>
+        {/* Image cards */}
+        <div className="grid sm:grid-cols-2 sm:ml-[3em] md:grid-cols-3 xl:grid-cols-4 mt-4 gap-4">
+          {filteredPosts?.map((post: Post) => (
+            <PostCard post={post} key={post._id} />
+          ))}
+        </div>
       </div>
-      <div className="grid sm:grid-cols-2 sm:ml-[3em] md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mt-4 gap-4 ">
-        {filteredPosts?.map((post: Post) => (
-          <PostCard post={post} />
-        ))}
-      </div>
-    </>
+    </div>
   );
 };
 

@@ -73,9 +73,9 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <Card className="py-1">
+    <Card className="py-2 h-auto flex">
       <div
-        className="flex flex-row items-center"
+        className="flex flex-row items-center h-auto"
         onClick={() => handleRouting(post.email!)}
       >
         <UserAvatar user={post} />
@@ -85,7 +85,7 @@ export default function PostCard({ post }: PostCardProps) {
           <h4 className="font-bold text-large">{post.title}</h4>
         </CardHeader>
       </div>
-      <CardBody className="overflow-visible py-2 text-center">
+      <CardBody className="overflow-visible py-2 text-center items-center">
         <Image
           alt="Card background"
           className="object-cover rounded-xl"
@@ -96,7 +96,7 @@ export default function PostCard({ post }: PostCardProps) {
         <div className="mt-2 max-h-24 overflow-hidden">
           <p className="whitespace-pre-line">{post.description}</p>
         </div>
-        <div className="my-4 mx-2 flex justify-evenly">
+        <div className="flex flex-row items-center justify-center mt-3 w-[100%]">
           <Hover text="like">
             <Heart className="hover:cursor-pointer" onClick={handleLike} />
             <p>{post.likes}</p>
