@@ -10,11 +10,11 @@ export const POST = async (request: NextRequest) => {
   const requestBody = await request.json();
 
   const { email, userName, image } = requestBody;
-  console.log(requestBody);
 
   try {
     const doesAlreadyExist = await Profiles.findOne({ email });
     if (doesAlreadyExist) {
+      console.log("Already verified");
       return NextResponse.json({
         message: "Already exists",
         status: 303,

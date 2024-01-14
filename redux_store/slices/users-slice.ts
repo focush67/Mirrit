@@ -61,6 +61,7 @@ const usersSlice = createSlice({
       state: GlobalState,
       action: PayloadAction<{ initiator: string; target: string }>
     ): GlobalState => {
+      console.log(action.payload);
       const updatedUsers = state.users.map((user: UserProfile) =>
         user.email === action.payload.initiator
           ? {

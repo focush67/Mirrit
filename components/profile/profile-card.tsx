@@ -52,7 +52,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
         setIsFollowed(isFollowing);
       }
     }
-  }, [profile, posts, session, allUsers]);
+  }, [profile, posts, session, allUsers, dispatch]);
 
   const handleButtonClick = async () => {
     if (!session) {
@@ -77,9 +77,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               target: profile?.email!,
             })
           );
-        }
-
-        if (response.data.status === 201) {
+        } else if (response.data.status === 201) {
           setIsFollowed(true);
         }
       }
@@ -92,25 +90,22 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     const initiator = session?.user?.email;
     const target = profile?.email;
 
-    try {
-      const response = await axios.post(
-        `/api/unfollow/?initiator=${initiator}&target=${target}`
+    const response = await axios.post(
+      `/api/unfollow/?initiator=${initiator}&target=${target}`
+    );
+    console.log(response.data);
+
+    if (response.data.status === 200) {
+      console.log("Dispatching unfollow");
+      dispatch(
+        removeRelationship({
+          initiator: initiator!,
+          target: target!,
+        })
       );
-      console.log(response.data);
-
-      if (response.data.status === 200) {
-        dispatch(
-          removeRelationship({
-            initiator: initiator!,
-            target: target!,
-          })
-        );
-      }
-
-      setIsFollowed(false);
-    } catch (error: any) {
-      console.log(error.message);
     }
+
+    setIsFollowed(false);
   };
 
   return (
