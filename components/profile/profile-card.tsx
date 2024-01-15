@@ -20,13 +20,14 @@ import {
   removeRelationship,
 } from "@/redux_store/slices/global-slices";
 import { GlobalState } from "@/types/state";
+import toast from "react-hot-toast";
 
 interface ProfileCardProps {
   profile: UserProfile | null;
 }
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
-  const [isFollowed, setIsFollowed] = useState(false);
+  const [status, setStatus] = useState(false);
   const { posts } = useFetchUserPosts({ email: profile?.email! });
   const { data: session } = useSession();
   const dispatch = useDispatch();
@@ -45,23 +46,45 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           (follower) => follower.email === session?.user?.email
         );
 
-        setIsFollowed(isFollowing);
+        if (isFollowing) {
+          setStatus(true);
+        } else {
+          setStatus(false);
+        }
       }
     }
   }, [profile, posts, session, allUsers, dispatch]);
 
-  const handleButtonClick = async () => {
-    if (!session) {
-      signIn("google");
-      return null;
-    }
+  const handleToggleRelationship = async () => {
+    if (status === true) {
+      /* dispatch unfollow request and set status to false */
+      const initiator = session?.user?.email;
+      const target = profile?.email;
+      try {
+        const response = await axios.post(
+          `/api/unfollow/?initiator=${initiator}&target=${target}`
+        );
+        console.log(response.data);
 
-    if (isVisitor) {
-      if (isFollowed) {
-        console.log("Already following, hence unfollow");
-        await unfollowRequest();
-        return;
-      } else {
+        if (response.data.status === 200) {
+          console.log("Dispatching unfollow");
+          dispatch(
+            removeRelationship({
+              initiator: initiator!,
+              target: target!,
+            })
+          );
+          toast.success("Unfollowed");
+        }
+      } catch (error: any) {
+        console.log(error.message);
+        toast.error("Some error occured in unfollowing");
+      } finally {
+        setStatus(false);
+      }
+    } else if (status === false) {
+      /* dispatch follow request and set isFollowed to Unfollow*/
+      try {
         const response = await axios.post(
           `/api/follow/?initiator=${session?.user?.email}&target=${profile?.email}`
         );
@@ -73,35 +96,16 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               target: profile?.email!,
             })
           );
-        } else if (response.data.status === 201) {
-          setIsFollowed(true);
         }
+      } catch (error: any) {
+        console.log(error.message);
+        toast.error("Some error occured while following");
+      } finally {
+        setStatus(true);
       }
     } else {
       return null;
     }
-  };
-
-  const unfollowRequest = async () => {
-    const initiator = session?.user?.email;
-    const target = profile?.email;
-
-    const response = await axios.post(
-      `/api/unfollow/?initiator=${initiator}&target=${target}`
-    );
-    console.log(response.data);
-
-    if (response.data.status === 200) {
-      console.log("Dispatching unfollow");
-      dispatch(
-        removeRelationship({
-          initiator: initiator!,
-          target: target!,
-        })
-      );
-    }
-
-    setIsFollowed(false);
   };
 
   return (
@@ -125,11 +129,14 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                 </h5>
               </div>
             </div>
-            <FollowButton
-              isVisitor={isVisitor}
-              isFollowed={isFollowed}
-              handleButtonClick={handleButtonClick}
-            />
+            {session?.user?.email === profile?.email ? (
+              <UploadModal />
+            ) : (
+              <ToggleRelationshipButton
+                status={status}
+                handleClick={handleToggleRelationship}
+              />
+            )}
           </CardHeader>
           <CardBody className="px-3 py-0 text-small text-default-400">
             <span className="pt-2">#FrontendWithZoey</span>
@@ -154,29 +161,20 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   );
 }
 
-const FollowButton = ({
-  isVisitor,
-  isFollowed,
-  handleButtonClick,
-}: {
-  isVisitor: boolean;
-  isFollowed: boolean;
-  handleButtonClick: () => void;
-}) => (
-  <Button
-    className={
-      isVisitor
-        ? isFollowed
-          ? "bg-transparent text-foreground border-default-200"
-          : ""
-        : ""
-    }
-    color="primary"
-    radius="full"
-    size="sm"
-    variant={isFollowed ? "bordered" : "solid"}
-    onClick={handleButtonClick}
-  >
-    {!isVisitor ? <UploadModal /> : isFollowed ? "Unfollow" : "Follow"}
-  </Button>
-);
+interface ToggleProps {
+  status: boolean;
+  handleClick: () => void;
+}
+
+const ToggleRelationshipButton = ({ status, handleClick }: ToggleProps) => {
+  return (
+    <Button
+      color={status ? "secondary" : "primary"}
+      size="sm"
+      variant={status ? `bordered` : `flat`}
+      onClick={handleClick}
+    >
+      {status === true ? "Unfollow" : "Follow"}
+    </Button>
+  );
+};
