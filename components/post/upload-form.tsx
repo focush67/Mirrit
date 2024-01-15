@@ -103,6 +103,13 @@ export default function UploadModal() {
         .then((imageUrl) => {
           setCoverUrl(imageUrl);
           setIsUploading(false);
+          console.log("COVERURL: ", imageUrl);
+          dispatch({
+            type: "CHANGE_COVER_PHOTO",
+            payload: {
+              cover: imageUrl,
+            },
+          });
         })
         .finally(() => {
           setCoverPhoto(null);
@@ -112,17 +119,6 @@ export default function UploadModal() {
           }, 4000);
         });
     });
-
-    console.log("COVERURL:", coverUrl);
-
-    if (coverUrl) {
-      dispatch({
-        type: "CHANGE_COVER_PHOTO",
-        payload: {
-          cover: coverUrl,
-        },
-      });
-    }
   };
 
   const handlePostSubmit = async () => {
@@ -193,6 +189,7 @@ export default function UploadModal() {
                     Upload
                   </Button>
                 </div>
+                {coverUrl.length > 0 ? <p>{coverUrl}</p> : null}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>

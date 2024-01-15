@@ -64,6 +64,17 @@ const globalSlice = createSlice({
       };
     },
 
+    deletePost: (
+      state: GlobalState,
+      action: PayloadAction<{ _id: string }>
+    ): GlobalState => {
+      const { _id } = action.payload;
+      return {
+        ...state,
+        posts: state.posts.filter((post: Post) => post._id !== _id),
+      };
+    },
+
     resetPosts: (): GlobalState => {
       return initialState;
     },
@@ -192,6 +203,7 @@ export const {
   addPostsChunk,
   likePost,
   commentOnPost,
+  deletePost,
   resetPosts,
   addNewSavedPost,
   addAllSavedPosts,

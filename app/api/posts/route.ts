@@ -68,3 +68,39 @@ export const POST = async (request: NextRequest) => {
     });
   }
 };
+
+export const DELETE = async (request: NextRequest) => {
+  await connect();
+
+  const _id = request.nextUrl.searchParams.get("_id");
+
+  if (!_id) {
+    return NextResponse.json({
+      message: "Post not found",
+      status: 404,
+    });
+  }
+
+  try {
+    const deletedPost = await Posts.findByIdAndDelete(_id);
+    console.log(deletedPost);
+    if (!deletedPost) {
+      return NextResponse.json({
+        message: "Deletion not done",
+        status: 405,
+      });
+    }
+
+    return NextResponse.json({
+      message: "Deletion successfull",
+      status: 200,
+      deletedPost,
+    });
+  } catch (error: any) {
+    console.log("Error at /api/posts/delete", error.message);
+    return NextResponse.json({
+      message: "Internal Server Error",
+      status: 500,
+    });
+  }
+};

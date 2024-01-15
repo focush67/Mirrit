@@ -8,12 +8,13 @@ import { Post } from "@/types/post";
 import UserAvatar from "../profile/user-avatar";
 import CommentSection from "../comments/coment-section";
 import { useDispatch } from "react-redux";
-import { likePost } from "@/redux_store/slices/global-slices";
+import { deletePost, likePost } from "@/redux_store/slices/global-slices";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { addNewSavedPost } from "@/redux_store/slices/global-slices";
 import toast from "react-hot-toast";
+import DeleteModal from "../custom-modals/delete-post-modal";
 
 interface PostCardProps {
   post: Post;
@@ -72,6 +73,20 @@ export default function PostCard({ post }: PostCardProps) {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(`/api/posts/?_id=${post._id}`);
+      console.log(response.data);
+      if (response.data.status === 200 || response.data.status === 201) {
+        dispatch(deletePost({ _id: post._id }));
+        toast.success("Deleted");
+      }
+    } catch (error: any) {
+      console.log(error.message);
+      toast.error("Couldn't delete post");
+    }
+  };
+
   return (
     <Card className="py-2 h-auto flex">
       <div
@@ -80,9 +95,15 @@ export default function PostCard({ post }: PostCardProps) {
       >
         <UserAvatar user={post} />
 
-        <CardHeader className="pb-0 pt-2 px-2 flex-col items-start">
-          <p className="text-tiny uppercase font-bold">{post.userName}</p>
-          <h4 className="font-bold text-large">{post.title}</h4>
+        <CardHeader className="pb-0 pt-2 px-2 flex-row items-center overflow-x-hidden gap-5">
+          <div className="flex flex-col">
+            <p className="text-tiny uppercase font-bold">{post.userName}</p>
+            <h4 className="font-bold text-large">{post.title}</h4>
+          </div>
+
+          {post.email === session?.user?.email && (
+            <DeleteModal post={post} handleDelete={handleDelete} />
+          )}
         </CardHeader>
       </div>
       <CardBody className="overflow-visible py-2 text-center items-center">
@@ -97,14 +118,14 @@ export default function PostCard({ post }: PostCardProps) {
           <p className="whitespace-pre-line">{post.description}</p>
         </div>
         <div className="flex flex-row items-center justify-center mt-3 w-[100%]">
-          <Hover text="like">
+          <Hover text="Like">
             <Heart className="hover:cursor-pointer" onClick={handleLike} />
             <p>{post.likes}</p>
           </Hover>
-          <Hover text="comment">
+          <Hover text="Comment">
             <CommentSection currentPost={post} />
           </Hover>
-          <Hover text="save">
+          <Hover text="Save">
             <SaveIcon
               className="hover:cursor-pointer"
               onClick={handleSavingCluster}

@@ -66,13 +66,12 @@ export const POST = async (request: NextRequest) => {
       cluster: SavedPostsCluster,
     });
   } else {
-    const temp = SavedPostsCluster.posts.some(
-      (post: any) => post._id === newPost._id
+    const result = SavedPostsCluster.posts.filter((post: Post) =>
+      isSamePost(post, newPost)
     );
 
-    if (!temp) {
+    if (result) {
       return NextResponse.json({
-        message: "Already exists",
         status: 303,
       });
     }
@@ -89,9 +88,5 @@ export const POST = async (request: NextRequest) => {
 };
 
 const isSamePost = (post1: Post, post2: Post) => {
-  return (
-    post1.title === post2.title &&
-    post1.description === post2.description &&
-    post1._id === post2._id
-  );
+  return post1.title === post2.title && post1.description === post2.description;
 };
