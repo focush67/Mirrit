@@ -9,7 +9,7 @@ export default function useFetchAllPosts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("/api/posts");
+        const response = await axios.get(`/api/posts`);
         setPosts(response.data.posts);
       } catch (error: any) {
         console.log(error.message);

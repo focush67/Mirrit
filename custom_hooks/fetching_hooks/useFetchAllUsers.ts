@@ -10,7 +10,7 @@ export default function useFetchAllUsers() {
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
-        const response = await axios.get("/api/user");
+        const response = await axios.get(`/api/user`);
         setUsers(response.data.users);
       } catch (error: any) {
         console.log(error);

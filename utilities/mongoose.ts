@@ -6,7 +6,8 @@ export default function connect() {
   } else {
     const uri = process.env.NEXT_PUBLIC_MONGO_URI;
     if (!uri) {
-      throw new Error("Not found connection string");
+      console.log("MONGO URL: ", uri);
+      throw new Error("Connection string was not found: ");
     } else {
       console.log("DB ONLINE");
       return mongoose.connect(uri);
