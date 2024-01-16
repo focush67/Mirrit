@@ -37,15 +37,28 @@ export default function NavigationBar() {
     };
 
     isAlreadyRegistered();
-  }, []);
+  }, [session]);
 
   const loggedInMenuItems = [
-    <UserAvatar src={session?.user?.image!} onClick={() => router.push("/")} />,
-    <Link href={`/${session?.user?.email}`}>Profile</Link>,
-    <Link href={"/dashboard"}>Dashboard</Link>,
-    <Link href={"/saved"}>Saved</Link>,
-    <Link href={"https://chatter-woad-nine.vercel.app/login"}>Messenger</Link>,
+    <UserAvatar
+      src={session?.user?.image!}
+      onClick={() => router.push("/")}
+      key={0}
+    />,
+    <Link href={`/${session?.user?.email}`} key={1}>
+      Profile
+    </Link>,
+    <Link href={"/dashboard"} key={2}>
+      Dashboard
+    </Link>,
+    <Link href={"/saved"} key={3}>
+      Saved
+    </Link>,
+    <Link href={"https://chatter-woad-nine.vercel.app/login"} key={4}>
+      Messenger
+    </Link>,
     <Button
+      key={5}
       variant="shadow"
       onClick={() => signOut()}
       className={session ? "flex" : "hidden"}
@@ -56,6 +69,7 @@ export default function NavigationBar() {
 
   const defaultMenuItems = [
     <Button
+      key={10}
       as={Link}
       color="success"
       href="#"

@@ -31,11 +31,6 @@ const Dashboard = () => {
     if (users && users.length > 0) {
       dispatch(addAllUsers(users));
     }
-
-    return () => {
-      console.log("Resetting state");
-      dispatch(resetPosts());
-    };
   }, [posts, dispatch, users]);
 
   const allPosts = useSelector((state: GlobalState) => state.posts);
@@ -56,11 +51,11 @@ const Dashboard = () => {
     <div className="flex flex-col justify-center items-center lg:flex-row lg:justify-center lg:items-center">
       <div>
         {/* Profile card */}
-        <div className="flex items-center justify-center mt-1">
+        <div className="flex items-center justify-center mt-1 ml-1">
           <ProfileCard profile={profile!} />
         </div>
         {/* Image cards */}
-        <div className="grid sm:grid-cols-2 sm:ml-[3em] md:grid-cols-3 xl:grid-cols-4 mt-4 gap-4">
+        <div className="grid sm:grid-cols-2 sm:ml-auto md:grid-cols-3 xl:grid-cols-4 mt-4 gap-4">
           {filteredPosts?.map((post: Post) => (
             <PostCard post={post} key={post._id} />
           ))}

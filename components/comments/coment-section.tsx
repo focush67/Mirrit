@@ -14,7 +14,6 @@ import InputBar from "../input/input-bar";
 import { Post } from "@/types/post";
 import { Comment } from "@/types/comment";
 import IndividualComment from "./individual-comment";
-import useFetchCurrentComments from "@/custom_hooks/fetching_hooks/useFetchCurrentComments";
 import { MessageCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
@@ -28,6 +27,7 @@ interface CommentSectionProps {
 
 export default function CommentSection({ currentPost }: CommentSectionProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [scrollBehaviour, setScrollBehaviour] = useState("inside");
   const [presentComment, setPresentComment] = useState<string>("");
   const { data: session } = useSession();
   const dispatch = useDispatch();
@@ -90,8 +90,8 @@ export default function CommentSection({ currentPost }: CommentSectionProps) {
                 {currentPost.title}
               </ModalHeader>
               <ModalBody>
-                {currentPost.comments.map((comment: Comment) => (
-                  <IndividualComment comment={comment} />
+                {currentPost.comments.map((comment: Comment, index: number) => (
+                  <IndividualComment comment={comment} key={index} />
                 ))}
               </ModalBody>
               <ModalFooter className="items-center">

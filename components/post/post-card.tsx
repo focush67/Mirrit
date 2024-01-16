@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Heart, SaveIcon } from "lucide-react";
 import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
 import Hover from "../hover/hover-pop";
@@ -46,29 +46,34 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   const handleSavingCluster = async () => {
-    if (!session?.user?.email) {
-      signIn("google");
-      return;
+    if (!session || !session?.user || !session?.user?.email) {
+      toast.loading("Missing Email");
     }
 
     try {
       const response = await axios.post(
         `/api/save/?email=${session?.user?.email}`,
         {
-          newPost: post,
+          _id: post._id,
         }
       );
 
       console.log(response.data);
       if (response.data.status === 200 || response.data.status === 201) {
         console.log("Dispatching post save");
-        dispatch(addNewSavedPost(post));
+        console.log(session?.user?.email + " " + post._id);
+        dispatch(
+          addNewSavedPost({
+            email: session?.user?.email!,
+            postId: post._id,
+          })
+        );
         toast.success("Saved to Cluster");
       } else if (response.data.status === 303) {
         toast.error("Post already exists in cluster");
       }
     } catch (error: any) {
-      console.log(error.message);
+      console.log(error);
       toast.error("Some error occured");
     }
   };
@@ -88,7 +93,7 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <Card className="py-2 h-auto flex">
+    <Card className="py-2 h-auto flex flex-col w-[300px]">
       <div
         className="flex flex-row items-center h-auto"
         onClick={() => handleRouting(post.email!)}

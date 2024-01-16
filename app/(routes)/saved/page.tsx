@@ -7,30 +7,24 @@ import { useSession } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect } from "react";
 import { GlobalState } from "@/types/state";
-import { addAllSavedPosts } from "@/redux_store/slices/global-slices";
 
 const SavedPage = () => {
-  const { data: session } = useSession();
-  const { savedPosts } = useFetchUserSavedPosts({
-    email: session?.user?.email!,
-  });
+  const savedCluster = useSelector((state: GlobalState) => state.saved);
 
-  const dispatch = useDispatch();
+  const posts = useSelector((state: GlobalState) => state.posts);
 
-  useEffect(() => {
-    if (savedPosts && savedPosts.length > 0) {
-      dispatch(addAllSavedPosts(savedPosts));
-    }
-  }, [session, savedPosts, dispatch]);
+  const filteredPosts = posts.filter((post: Post) =>
+    savedCluster?.posts.includes(post._id)
+  );
 
-  const reduxSavedPosts = useSelector((state: GlobalState) => state.saved);
-  console.log("Redux saved posts: ", reduxSavedPosts);
+  console.log("Posts: ", posts);
+  console.log("Filtered Posts: ", filteredPosts);
 
-  console.log(savedPosts);
+  useEffect(() => {}, [posts, savedCluster]);
   return (
     <div className="flex flex-col items-center justify-center mt-2 gap-4">
-      {reduxSavedPosts?.map((post: Post) => (
-        <PostCard post={post} />
+      {filteredPosts?.map((post: Post) => (
+        <PostCard post={post} key={post._id} />
       ))}
     </div>
   );

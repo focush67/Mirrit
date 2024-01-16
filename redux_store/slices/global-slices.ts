@@ -1,13 +1,13 @@
 import { Comment } from "@/types/comment";
 import { Post } from "@/types/post";
 import { UserProfile } from "@/types/profile";
-import { GlobalState } from "@/types/state";
+import { GlobalState, SavedPosts } from "@/types/state";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const defaultValue: GlobalState = {
   posts: [],
   users: [],
-  saved: [],
+  saved: null,
   globals: undefined,
 };
 
@@ -16,6 +16,7 @@ const initialState: GlobalState = defaultValue;
 const globalSlice = createSlice({
   name: "posts",
   initialState,
+
   reducers: {
     addPost: (state: GlobalState, action: PayloadAction<Post>): GlobalState => {
       return {
@@ -81,40 +82,54 @@ const globalSlice = createSlice({
 
     addNewSavedPost: (
       state: GlobalState,
-      action: PayloadAction<Post>
+      action: PayloadAction<{ email: string; postId: string }>
     ): GlobalState => {
+      const { email, postId } = action.payload;
+
       return {
         ...state,
-        saved: [...state.saved, action.payload],
+        saved: { email, posts: [...(state.saved?.posts || []), postId] },
       };
     },
 
     addAllSavedPosts: (
       state: GlobalState,
-      action: PayloadAction<Post[]>
+      action: PayloadAction<{ email: string; postIds: string[] }>
     ): GlobalState => {
+      const { email, postIds } = action.payload;
+      const allPostIds = state.saved?.posts
+        ? [...state.saved.posts, ...postIds]
+        : postIds;
+
+      const uniquePostIds = Array.from(new Set(allPostIds));
+
       return {
         ...state,
-        saved: action.payload,
+        saved: {
+          email,
+          posts: uniquePostIds,
+        },
       };
     },
 
     removeSavedPost: (
       state: GlobalState,
-      action: PayloadAction<{ _id: string }>
+      action: PayloadAction<{ email: string; postId: string }>
     ): GlobalState => {
+      const { email, postId } = action.payload;
+      const newPosts =
+        state.saved?.posts.filter((id: string) => id !== postId) || [];
+
       return {
         ...state,
-        saved: state.saved.filter(
-          (saved: Post) => saved._id !== action.payload._id
-        ),
+        saved: { email, posts: newPosts },
       };
     },
 
     removeAllSavedPosts: (state: GlobalState): GlobalState => {
       return {
         ...state,
-        saved: [],
+        saved: null,
       };
     },
 

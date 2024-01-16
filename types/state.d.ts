@@ -5,5 +5,10 @@ export interface GlobalState {
   globals: any;
   posts: Post[];
   users: UserProfile[];
-  saved: Post[];
+  saved: SavedPosts | null;
+}
+
+export interface SavedPosts {
+  email: string;
+  posts: string[];
 }

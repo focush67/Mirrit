@@ -36,7 +36,7 @@ const Profile = ({ params }: any) => {
       console.log("Resetting state");
       dispatch(resetPosts());
     };
-  }, [posts, dispatch]);
+  }, [posts, users, dispatch]);
 
   const allUsers = useSelector((state: GlobalState) => state.users);
 
@@ -56,8 +56,8 @@ const Profile = ({ params }: any) => {
         <ProfileCard profile={profileUser!} />
       </div>
       <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mt-4 gap-4 ">
-        {filteredPosts?.map((post) => (
-          <PostCard post={post} />
+        {filteredPosts?.map((post, index) => (
+          <PostCard post={post} key={index} />
         ))}
       </div>
     </>

@@ -12,7 +12,7 @@ import {
 import useFetchUserPosts from "@/custom_hooks/fetching_hooks/useFetchUserPosts";
 import { UserProfile } from "@/types/profile";
 import UploadModal from "../post/upload-form";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -124,7 +124,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
                 <h4 className="text-small font-semibold leading-none text-default-600">
                   {profile?.name}
                 </h4>
-                <h5 className="text-small tracking-tight text-default-400">
+                <h5 className="text-small tracking-tight text-default-400 mr-3">
                   {profile?.email}
                 </h5>
               </div>

@@ -33,7 +33,7 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
                 Delete this post ?
               </ModalHeader>
               <ModalBody className="flex items-center">
-                <Image src={post.cover} width={300} />
+                <Image src={post.cover} width={300} alt="Post Cover" />
                 <p>This action is irreversible</p>
               </ModalBody>
               <ModalFooter>
