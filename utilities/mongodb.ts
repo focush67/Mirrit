@@ -1,12 +1,13 @@
 import { MongoClient, MongoClientOptions } from "mongodb";
 
-if (!process.env.NEXT_PUBLIC_MONGO_URI) {
+const uri = process.env.NEXT_PUBLIC_MONGO_URI;
+
+if (!uri) {
   throw new Error("No connection string in mongodb.ts");
 }
 
 const IS_DEV = process.env.NODE_ENV === "development";
 
-const uri = process.env.NEXT_PUBLIC_MONGO_URI;
 const options: MongoClientOptions = {};
 
 let client;
