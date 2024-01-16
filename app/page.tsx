@@ -31,10 +31,6 @@ export default function Home() {
       dispatch(addPostsChunk(posts));
     }
 
-    if (users && users.length > 0) {
-      dispatch(addAllUsers(users));
-    }
-
     if (savedPostsCluster && savedPostsCluster.length > 0) {
       dispatch(
         addAllSavedPosts({
@@ -42,8 +38,12 @@ export default function Home() {
           postIds: savedPostsCluster,
         })
       );
+
+      if (users && users.length > 0) {
+        dispatch(addAllUsers(users));
+      }
     }
-  }, [posts, dispatch, users, savedPostsCluster, session]);
+  }, [posts, dispatch, savedPostsCluster, session]);
 
   const allPosts = useSelector((state: GlobalState) => state.posts);
   console.log("Posts: ", allPosts);
