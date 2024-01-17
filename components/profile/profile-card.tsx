@@ -110,8 +110,8 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
 
   return (
     <>
-      <div className="w-[95vw] flex justify-center mt-2">
-        <Card className="sm:w-[70%] md:w-[100%] lg:w-[70%] items-center">
+      <div className="w-full flex justify-center md:w-3/4 lg:w-1/2 md:justify-center mt-2">
+        <Card className="w-full md:w-4/5 lg:w-full m-2 items-center">
           <CardHeader className="flex justify-between">
             <div className="flex gap-5">
               <Avatar

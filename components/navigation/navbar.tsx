@@ -42,7 +42,9 @@ export default function NavigationBar() {
   const loggedInMenuItems = [
     <UserAvatar
       src={session?.user?.image!}
-      onClick={() => router.push("/")}
+      onClick={() => {
+        router.push("/");
+      }}
       key={0}
     />,
     <Link href={`/${session?.user?.email}`} key={1}>
@@ -81,6 +83,9 @@ export default function NavigationBar() {
     >
       Login
     </Button>,
+    <Link href={"/"} key={11}>
+      Home
+    </Link>,
   ];
 
   const registerUser = async () => {
@@ -162,7 +167,14 @@ export default function NavigationBar() {
         {session
           ? loggedInMenuItems.map((item, index) => (
               <NavbarMenuItem key={`${item}-${index}`}>
-                <Link className="w-full" href="#">
+                <Link
+                  className="w-full"
+                  href="#"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    return true;
+                  }}
+                >
                   {item}
                 </Link>
               </NavbarMenuItem>
