@@ -47,7 +47,7 @@ export default function NavigationBar() {
       }}
       key={0}
     />,
-    <Link href={`/${session?.user?.email}`} key={1}>
+    <Link href={`/dashboard`} key={1}>
       Profile
     </Link>,
     <Link href={"/dashboard"} key={2}>

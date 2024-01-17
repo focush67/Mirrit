@@ -90,7 +90,7 @@ export default function UploadModal() {
     }
   };
 
-  const uploadImage = () => {
+  const uploadImage = async () => {
     const name = coverPhoto?.name;
     if (coverPhoto === null || coverPhoto === undefined) {
       alert("No image was selected");
@@ -99,27 +99,40 @@ export default function UploadModal() {
 
     const imageRef = ref(PostsCluster, `${state.title}/${name}`);
     setIsUploading(true);
-    uploadBytes(imageRef, coverPhoto).then(() => {
-      getDownloadURL(imageRef)
-        .then((imageUrl) => {
+
+    const uploadPromise = new Promise<void>((resolve) => {
+      uploadBytes(imageRef, coverPhoto).then(() => {
+        getDownloadURL(imageRef).then((imageUrl) => {
           setCoverUrl(imageUrl);
-          setIsUploading(false);
-          console.log("COVERURL: ", imageUrl);
+          console.log("CoverURL: ", imageUrl);
           dispatch({
             type: "CHANGE_COVER_PHOTO",
             payload: {
               cover: imageUrl,
             },
           });
-        })
-        .finally(() => {
-          setCoverPhoto(null);
-
-          setTimeout(() => {
-            setIsUploading(false);
-          }, 4000);
+          resolve();
+          toast.success("Image successfully uploaded");
         });
+      });
     });
+
+    try {
+      await Promise.race([
+        uploadPromise,
+        new Promise<void>((_, reject) => {
+          setTimeout(() => {
+            reject(new Error("Image Upload Timed Out"));
+          }, 10000);
+        }),
+      ]);
+    } catch (error: any) {
+      console.log(error.message);
+      toast.error("Something went wrong");
+    } finally {
+      setIsUploading(false);
+      setCoverPhoto(null);
+    }
   };
 
   const handlePostSubmit = async () => {
@@ -192,7 +205,6 @@ export default function UploadModal() {
                     Upload
                   </Button>
                 </div>
-                {coverUrl.length > 0 ? <p>{coverUrl}</p> : null}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>
