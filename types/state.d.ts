@@ -6,6 +6,7 @@ export interface GlobalState {
   posts: Post[];
   users: UserProfile[];
   saved: SavedPosts | null;
+  status: string;
 }
 
 export interface SavedPosts {

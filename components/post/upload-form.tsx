@@ -14,6 +14,7 @@ import { Post } from "@/types/post";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { PostsCluster } from "@/utilities/firebase";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function UploadModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -132,8 +133,10 @@ export default function UploadModal() {
         newPost: state,
       });
       console.log(response.data);
+      toast.success("Post Uploaded");
     } catch (error: any) {
       console.log(error);
+      toast.error("Error uploading post");
     }
   };
 

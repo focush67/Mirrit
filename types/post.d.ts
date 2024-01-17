@@ -12,4 +12,6 @@ export interface Post {
   likes: number;
   comments: Comment[];
   shares: number;
+  createdAt?: any;
+  updatedAt?: any;
 }

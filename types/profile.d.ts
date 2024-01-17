@@ -7,4 +7,6 @@ export interface AuthProfile {
 export interface UserProfile extends AuthProfile {
   followers: AuthProfile[];
   following: AuthProfile[];
+  createdAt?: any;
+  updatedAt?: any;
 }

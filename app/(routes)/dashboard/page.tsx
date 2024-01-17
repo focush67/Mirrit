@@ -4,7 +4,9 @@ import PostCard from "@/components/post/post-card";
 import ProfileCard from "@/components/profile/profile-card";
 import useFetchAllUsers from "@/custom_hooks/fetching_hooks/useFetchAllUsers";
 import useFetchUserPosts from "@/custom_hooks/fetching_hooks/useFetchUserPosts";
+import useFetchUserSavedPosts from "@/custom_hooks/fetching_hooks/useFetchUserSavedPosts";
 import {
+  addAllSavedPosts,
   addAllUsers,
   addPostsChunk,
   resetPosts,
@@ -21,7 +23,14 @@ const Dashboard = () => {
 
   const { posts } = useFetchUserPosts({ email: session?.user?.email! });
   const { users } = useFetchAllUsers();
+  const { savedPostsCluster, relevantPosts } = useFetchUserSavedPosts({
+    email: session?.user?.email!,
+  });
   const dispatch = useDispatch();
+
+  console.log({ savedPostsCluster, relevantPosts });
+
+  const cluster = useSelector((state: GlobalState) => state.saved);
 
   useEffect(() => {
     if (posts && posts.length > 0) {
@@ -31,11 +40,22 @@ const Dashboard = () => {
     if (users && users.length > 0) {
       dispatch(addAllUsers(users));
     }
+
+    if (cluster) {
+      dispatch(
+        addAllSavedPosts({
+          email: cluster.email,
+          postIds: cluster.posts,
+        })
+      );
+    }
   }, [posts, dispatch, users]);
 
   const allPosts = useSelector((state: GlobalState) => state.posts);
 
   const allUsers = useSelector((state: GlobalState) => state.users);
+
+  console.log("Cluster: ", { cluster });
 
   const profile = allUsers.find(
     (user: UserProfile) => user.email === session?.user?.email
@@ -44,8 +64,6 @@ const Dashboard = () => {
   const filteredPosts: Post[] = allPosts.filter(
     (post: Post) => post.email === session?.user?.email
   );
-
-  console.log("filtered posts: ", filteredPosts);
 
   return (
     <div className="flex flex-col justify-center items-center lg:flex-row lg:justify-center lg:items-center">

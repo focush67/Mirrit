@@ -5,7 +5,7 @@ import connect from "@/utilities/mongoose";
 export default async function getAllUsers() {
   await connect();
   try {
-    const users = await Profiles.find();
+    const users: UserProfile[] = await Profiles.find();
     if (!users) {
       console.log("No User Profiles found, returning null");
       return null;

@@ -3,12 +3,15 @@ import { Post } from "@/types/post";
 import { UserProfile } from "@/types/profile";
 import { GlobalState, SavedPosts } from "@/types/state";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { fetchCluster, fetchPosts, fetchUsers } from "./async-thunks";
+import { useSelector } from "react-redux";
 
 const defaultValue: GlobalState = {
   posts: [],
   users: [],
   saved: null,
   globals: undefined,
+  status: "loading" || "succeeded" || "failed",
 };
 
 const initialState: GlobalState = defaultValue;
@@ -210,6 +213,48 @@ const globalSlice = createSlice({
     resetUsers: (): GlobalState => {
       return initialState;
     },
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchPosts.pending, (state: GlobalState) => {
+        state.status = "loading";
+      })
+      .addCase(
+        fetchPosts.fulfilled,
+        (state: GlobalState, action: PayloadAction<Post[]>) => {
+          state.status = "succeeded";
+          state.posts = action.payload;
+        }
+      )
+      .addCase(fetchPosts.rejected, (state) => {
+        state.status = "failed";
+      })
+      .addCase(fetchUsers.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        fetchUsers.fulfilled,
+        (state, action: PayloadAction<UserProfile[]>) => {
+          state.status = "succeeded";
+          state.users = action.payload;
+        }
+      )
+      .addCase(fetchUsers.rejected, (state) => {
+        state.status = "failed";
+      })
+      .addCase(fetchCluster.pending, (state: GlobalState) => {
+        state.status = "loading";
+      })
+      .addCase(
+        fetchCluster.fulfilled,
+        (state: GlobalState, action: PayloadAction<SavedPosts>) => {
+          (state.status = "succeeded"), (state.saved = action.payload);
+        }
+      )
+      .addCase(fetchCluster.rejected, (state: GlobalState) => {
+        state.status = "failed";
+      });
   },
 });
 

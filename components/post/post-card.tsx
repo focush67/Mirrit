@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { deletePost, likePost } from "@/redux_store/slices/global-slices";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { addNewSavedPost } from "@/redux_store/slices/global-slices";
 import toast from "react-hot-toast";
 import DeleteModal from "../custom-modals/delete-post-modal";
@@ -28,7 +28,7 @@ export default function PostCard({ post }: PostCardProps) {
   const handleLike = async () => {
     try {
       const response = await axios.post(`/api/posts/like/?id=${post._id}`);
-      console.log(response.data);
+      // console.log(response.data);
       dispatch(likePost({ _id: post._id }));
       toast.success("Liked");
     } catch (error: any) {
@@ -60,8 +60,8 @@ export default function PostCard({ post }: PostCardProps) {
 
       console.log(response.data);
       if (response.data.status === 200 || response.data.status === 201) {
-        console.log("Dispatching post save");
-        console.log(session?.user?.email + " " + post._id);
+        // console.log("Dispatching post save");
+        // console.log(session?.user?.email + " " + post._id);
         dispatch(
           addNewSavedPost({
             email: session?.user?.email!,

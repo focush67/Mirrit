@@ -15,7 +15,10 @@ import { addAllUsers } from "@/redux_store/slices/global-slices";
 import { UserProfile } from "@/types/profile";
 import getUserPosts from "@/server_actions/getUserPosts";
 import getUserSavedCluster from "@/server_actions/getSavedClusters";
-import dispatchPosts from "@/experiments/posts_to_store";
+import Home from "./page";
+import { Post } from "@/types/post";
+import { SavedPosts } from "@/types/state";
+import Dashboard from "./(routes)/dashboard/page";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,12 +33,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession();
-  const posts = await getAllPosts();
-  const users = await getAllUsers();
-  const savedCluster = await getUserSavedCluster();
-
-  console.log({ posts, users, savedCluster });
-
+  const posts: Post[] | null = await getAllPosts();
+  const users: UserProfile[] | null = await getAllUsers();
+  const cluster: SavedPosts | null = await getUserSavedCluster();
   if (session) {
     const newUser = await Profiles.create({
       email: session?.user?.email,
