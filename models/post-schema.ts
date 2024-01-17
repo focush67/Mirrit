@@ -10,7 +10,7 @@ const CommentSchema = new Schema({
 
 export const PostSchema = new Schema(
   {
-    email: { type: String, required: true },
+    email: { type: String, index: true, required: true },
     title: { type: String, required: true },
     description: { type: String },
     image: { type: String },

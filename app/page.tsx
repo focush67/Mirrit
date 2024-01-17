@@ -20,6 +20,7 @@ export default function Home() {
   const dispatch = useDispatch();
 
   const { data: session } = useSession();
+
   const { posts } = useFetchAllPosts();
   const { users } = useFetchAllUsers();
   const { savedPostsCluster } = useFetchUserSavedPosts({

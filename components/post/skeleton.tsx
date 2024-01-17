@@ -5,7 +5,7 @@ import { Card, Skeleton } from "@nextui-org/react";
 
 export default function SkeletonRender() {
   return (
-    <div className="sm:w-[70%] md:w-[100%] lg:w-[70%] items-center ">
+    <div className="w-[90%] md:w-[50%] lg:w-[50%]">
       <Card className="flex space-y-5 p-5 mt-3" radius="lg">
         <Skeleton className="rounded-lg">
           <div className="h-24 rounded-lg bg-default-300"></div>
