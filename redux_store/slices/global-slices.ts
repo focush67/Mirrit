@@ -4,7 +4,6 @@ import { UserProfile } from "@/types/profile";
 import { GlobalState, SavedPosts } from "@/types/state";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchCluster, fetchPosts, fetchUsers } from "./async-thunks";
-import { useSelector } from "react-redux";
 
 const defaultValue: GlobalState = {
   posts: [],
@@ -210,6 +209,17 @@ const globalSlice = createSlice({
       };
     },
 
+    editPost: (
+      state: GlobalState,
+      action: PayloadAction<{ _id: string; editedPost: Post }>
+    ): GlobalState => {
+      const { _id } = action.payload;
+      state.posts.map((post: Post) =>
+        post._id === _id ? action.payload.editedPost : post
+      );
+      return state;
+    },
+
     resetUsers: (): GlobalState => {
       return initialState;
     },
@@ -274,6 +284,11 @@ export const {
   addRelationship,
   removeRelationship,
   resetUsers,
+  editPost,
 } = globalSlice.actions;
+
+export const selectAllPosts = (state: GlobalState) => state.posts;
+export const selectAllUsers = (state: GlobalState) => state.users;
+export const selectSavedCluster = (state: GlobalState) => state.saved;
 
 export default globalSlice.reducer;

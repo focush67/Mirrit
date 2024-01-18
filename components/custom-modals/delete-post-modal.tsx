@@ -21,8 +21,8 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <>
-      <Button onPress={onOpen}>
+    <div>
+      <Button onPress={onOpen} className="w-[10px] bg-inherit">
         <Trash />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -48,6 +48,6 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 }

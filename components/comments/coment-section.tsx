@@ -82,6 +82,7 @@ export default function CommentSection({ currentPost }: CommentSectionProps) {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         scrollBehavior={"inside"}
+        placement="center"
       >
         <ModalContent>
           {(onClose) => (

@@ -104,3 +104,58 @@ export const DELETE = async (request: NextRequest) => {
     });
   }
 };
+
+export const PUT = async (request: NextRequest) => {
+  const { editedPost } = await request.json();
+
+  // const existingPost = await Posts.findById({ _id: id });
+
+  const { _id } = editedPost;
+
+  const exisitingPost = await Posts.findById({
+    _id,
+  });
+
+  if (!exisitingPost) {
+    return NextResponse.json({
+      message: "No post found",
+      status: 404,
+    });
+  }
+
+  console.log(exisitingPost);
+
+  const {
+    title,
+    email,
+    description,
+    image,
+    userName,
+    tags,
+    cover,
+    likes,
+    comments,
+    shares,
+  } = editedPost;
+
+  const updatedPost = await Posts.findByIdAndUpdate(_id, {
+    title,
+    email,
+    description,
+    image,
+    userName,
+    tags,
+    cover,
+    likes,
+    comments,
+    shares,
+  });
+
+  await updatedPost.save();
+
+  return NextResponse.json({
+    done: "yes",
+    status: 200,
+    editedPost: updatedPost,
+  });
+};

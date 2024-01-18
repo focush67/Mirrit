@@ -23,21 +23,8 @@ import { useRouter } from "next/navigation";
 
 export default function NavigationBar() {
   const { data: session } = useSession();
-  const [register, setRegister] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const router = useRouter();
-  useEffect(() => {
-    const isAlreadyRegistered = async () => {
-      const response = await axios.post("/api/register", {
-        email: session?.user?.email,
-        userName: session?.user?.name,
-        image: session?.user?.image,
-      });
-      if (response.data.status === 303) setRegister(true);
-    };
-
-    isAlreadyRegistered();
-  }, [session]);
 
   const loggedInMenuItems = [
     <UserAvatar
@@ -47,7 +34,7 @@ export default function NavigationBar() {
       }}
       key={0}
     />,
-    <Link href={`/dashboard`} key={1}>
+    <Link href={`/profile`} key={1}>
       Profile
     </Link>,
     <Link href={"/dashboard"} key={2}>
@@ -88,15 +75,6 @@ export default function NavigationBar() {
     </Link>,
   ];
 
-  const registerUser = async () => {
-    const response = await axios.post("/api/register", {
-      email: session?.user?.email,
-      userName: session?.user?.name,
-      image: session?.user?.image,
-    });
-    if (response.data.status === 303) setRegister(true);
-  };
-
   return (
     <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
       <NavbarContent className="sm:hidden" justify="start">
@@ -114,6 +92,9 @@ export default function NavigationBar() {
         <NavbarBrand></NavbarBrand>
         <NavbarItem>
           <Link href="/">Home</Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link href="/profile">Profile</Link>
         </NavbarItem>
         <NavbarItem className={!session ? "hidden" : "block"}>
           <Link href="/dashboard">Dashboard</Link>
@@ -151,13 +132,6 @@ export default function NavigationBar() {
               Login
             </Button>
           )}
-
-          <Button
-            className={register || !session ? "hidden" : "flex"}
-            onClick={registerUser}
-          >
-            Verify Email
-          </Button>
 
           <ToggleSwitch />
         </NavbarItem>

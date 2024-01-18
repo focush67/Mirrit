@@ -6,12 +6,13 @@ import React, { useEffect } from "react";
 import PostCard from "@/components/post/post-card";
 import ProfileCard from "@/components/profile/profile-card";
 import { useDispatch, useSelector } from "react-redux";
-import { GlobalState } from "@/types/state";
 import useFetchAllUsers from "@/custom_hooks/fetching_hooks/useFetchAllUsers";
 import {
   addAllUsers,
   addPostsChunk,
   resetPosts,
+  selectAllPosts,
+  selectAllUsers,
 } from "@/redux_store/slices/global-slices";
 import { UserProfile } from "@/types/profile";
 import { Post } from "@/types/post";
@@ -38,13 +39,13 @@ const Profile = ({ params }: any) => {
     };
   }, [posts, users, dispatch]);
 
-  const allUsers = useSelector((state: GlobalState) => state.users);
+  const allUsers = useSelector(selectAllUsers);
 
   const profileUser = allUsers.find(
     (user: UserProfile) => user.email === email
   );
 
-  const allPosts = useSelector((state: GlobalState) => state.posts);
+  const allPosts = useSelector(selectAllPosts);
 
   const filteredPosts: Post[] = allPosts.filter(
     (post: Post) => post.email === email

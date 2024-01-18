@@ -8,10 +8,12 @@ import {
   addAllSavedPosts,
   addAllUsers,
   addPostsChunk,
+  selectAllPosts,
+  selectAllUsers,
+  selectSavedCluster,
 } from "@/redux_store/slices/global-slices";
 import { Post } from "@/types/post";
 import { UserProfile } from "@/types/profile";
-import { GlobalState } from "@/types/state";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +26,7 @@ const Dashboard = () => {
 
   const dispatch = useDispatch();
 
-  const cluster = useSelector((state: GlobalState) => state.saved);
+  const cluster = useSelector(selectSavedCluster);
 
   useEffect(() => {
     if (posts && posts.length > 0) {
@@ -45,9 +47,9 @@ const Dashboard = () => {
     }
   }, [posts, dispatch, users]);
 
-  const allPosts = useSelector((state: GlobalState) => state.posts);
+  const allPosts = useSelector(selectAllPosts);
 
-  const allUsers = useSelector((state: GlobalState) => state.users);
+  const allUsers = useSelector(selectAllUsers);
 
   const profile = allUsers.find(
     (user: UserProfile) => user.email === session?.user?.email

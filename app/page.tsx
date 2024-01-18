@@ -2,33 +2,38 @@
 
 import PostCard from "@/components/post/post-card";
 import SkeletonRender from "@/components/post/skeleton";
-import {
-  addAllSavedPosts,
-  addPostsChunk,
-} from "@/redux_store/slices/global-slices";
-import { addAllUsers } from "@/redux_store/slices/global-slices";
 import { Post } from "@/types/post";
-import { GlobalState, SavedPosts } from "@/types/state";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useSession } from "next-auth/react";
-import { UserProfile } from "@/types/profile";
-import { fetchPosts, fetchUsers } from "@/redux_store/slices/async-thunks";
+import {
+  fetchCluster,
+  fetchPosts,
+  fetchUsers,
+} from "@/redux_store/slices/async-thunks";
 import { AppDispatch } from "@/redux_store/store";
+import {
+  selectAllPosts,
+  selectAllUsers,
+  selectSavedCluster,
+} from "@/redux_store/slices/global-slices";
 
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
-  const posts = useSelector((state: GlobalState) => state.posts);
-
-  const users = useSelector((state: GlobalState) => state.users);
-
-  const cluster = useSelector((state: GlobalState) => state.saved);
 
   useEffect(() => {
     console.log("dispatching");
     dispatch(fetchPosts());
     dispatch(fetchUsers());
+    dispatch(fetchCluster());
   }, [dispatch]);
+
+  const posts = useSelector(selectAllPosts);
+
+  const users = useSelector(selectAllUsers);
+
+  const cluster = useSelector(selectSavedCluster);
+
+  console.log({ posts, users, cluster });
 
   if (!posts || posts?.length === 0) {
     return (

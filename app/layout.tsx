@@ -19,6 +19,7 @@ import Home from "./page";
 import { Post } from "@/types/post";
 import { SavedPosts } from "@/types/state";
 import Dashboard from "./(routes)/dashboard/page";
+import getUserVerification from "@/server_actions/getUserVerification";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,14 +37,9 @@ export default async function RootLayout({
   const posts: Post[] | null = await getAllPosts();
   const users: UserProfile[] | null = await getAllUsers();
   const cluster: SavedPosts | null = await getUserSavedCluster();
-  if (session) {
-    const newUser = await Profiles.create({
-      email: session?.user?.email,
-      name: session?.user?.name,
-      image: session?.user?.image,
-    });
-    console.log(newUser);
-  }
+
+  const verificationStatus = await getUserVerification({ session });
+  console.log(verificationStatus);
 
   return (
     <html lang="en">

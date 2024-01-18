@@ -100,10 +100,10 @@ export default function PostCard({ post }: PostCardProps) {
       >
         <UserAvatar user={post} />
 
-        <CardHeader className="pb-0 pt-2 px-2 flex-row items-center overflow-x-hidden gap-5">
+        <CardHeader className="pb-0 pt-2 px-1 flex-row items-center overflow-x-hidden sm:gap-2">
           <div className="flex flex-col">
-            <p className="text-tiny uppercase font-bold">{post.userName}</p>
-            <h4 className="font-bold text-large">{post.title}</h4>
+            <p className="text-[15px] uppercase font-bold">{post.userName}</p>
+            <h4 className="font-bold text-md">{post.title}</h4>
           </div>
 
           {post.email === session?.user?.email && (

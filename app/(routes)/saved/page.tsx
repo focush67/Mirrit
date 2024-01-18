@@ -1,18 +1,19 @@
 "use client";
 
 import PostCard from "@/components/post/post-card";
-import useFetchUserSavedPosts from "@/custom_hooks/fetching_hooks/useFetchUserSavedPosts";
 import { Post } from "@/types/post";
-import { useSession } from "next-auth/react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import React, { useEffect } from "react";
-import { GlobalState } from "@/types/state";
 import SkeletonRender from "@/components/post/skeleton";
+import {
+  selectAllPosts,
+  selectSavedCluster,
+} from "@/redux_store/slices/global-slices";
 
 const SavedPage = () => {
-  const savedCluster = useSelector((state: GlobalState) => state.saved);
+  const savedCluster = useSelector(selectSavedCluster);
 
-  const posts = useSelector((state: GlobalState) => state.posts);
+  const posts = useSelector(selectAllPosts);
 
   const filteredPosts = posts.filter((post: Post) =>
     savedCluster?.posts.includes(post._id)
@@ -36,6 +37,7 @@ const SavedPage = () => {
   }
   return (
     <div className="flex flex-col items-center justify-center mt-2 gap-4">
+      <h1>My Collection</h1>
       {filteredPosts?.map((post: Post) => (
         <PostCard post={post} key={post._id} />
       ))}
