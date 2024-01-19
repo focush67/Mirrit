@@ -31,8 +31,7 @@ const SavedPage = () => {
     );
   }
   return (
-    <div className="flex flex-col items-center justify-center mt-2 gap-4">
-      <h1>My Collection</h1>
+    <div className="lg:grid lg:grid-cols-4  md:grid-cols-2 sm:flex sm:flex-col items-center justify-center mt-2 gap-4">
       {savedPosts?.map((post: Post) => (
         <PostCard post={post} key={post._id} />
       ))}

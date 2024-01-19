@@ -34,7 +34,7 @@ export default function NavigationBar() {
         image: session?.user?.image,
       });
 
-      console.log(response.data);
+      // console.log(response.data);
     };
 
     handleRegister();

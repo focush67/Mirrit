@@ -145,7 +145,7 @@ export default function UploadModal() {
       const response = await axios.post("/api/posts", {
         newPost: state,
       });
-      console.log(response.data);
+      // console.log(response.data);
       toast.success("Post Uploaded");
     } catch (error: any) {
       console.log(error);
@@ -205,6 +205,7 @@ export default function UploadModal() {
                     Upload
                   </Button>
                 </div>
+                <p>{coverUrl}</p>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>

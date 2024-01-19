@@ -115,7 +115,7 @@ export default function EditModal({ post }: EditModalProps) {
 
   return (
     <>
-      <Button onPress={onOpen} className="bg-blue-900" size="sm">
+      <Button onPress={onOpen} variant="shadow" color="primary" size="sm">
         Edit
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">

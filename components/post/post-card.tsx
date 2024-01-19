@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Heart, SaveIcon } from "lucide-react";
 import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
 import Hover from "../hover/hover-pop";
@@ -59,7 +59,7 @@ export default function PostCard({ post }: PostCardProps) {
         }
       );
 
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data.status === 200 || response.data.status === 201) {
         // console.log("Dispatching post save");
         // console.log(session?.user?.email + " " + post._id);

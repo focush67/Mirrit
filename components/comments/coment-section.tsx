@@ -27,7 +27,6 @@ interface CommentSectionProps {
 
 export default function CommentSection({ currentPost }: CommentSectionProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [scrollBehaviour, setScrollBehaviour] = useState("inside");
   const [presentComment, setPresentComment] = useState<string>("");
   const { data: session } = useSession();
   const dispatch = useDispatch();
@@ -64,8 +63,6 @@ export default function CommentSection({ currentPost }: CommentSectionProps) {
           comment: composedComment,
         }
       );
-
-      console.log(response.data);
       toast.success("Comment Added");
     } catch (error: any) {
       console.log(error.message);

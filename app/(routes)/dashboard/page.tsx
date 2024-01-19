@@ -8,14 +8,11 @@ import {
   addAllSavedPosts,
   addAllUsers,
   addPostsChunk,
-  selectAllPosts,
-  selectAllUsers,
   selectCurrentUser,
   selectPostsForCurrentUser,
   selectSavedCluster,
 } from "@/redux_store/slices/global-slices";
 import { Post } from "@/types/post";
-import { UserProfile } from "@/types/profile";
 import { GlobalState } from "@/types/state";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
@@ -58,8 +55,8 @@ const Dashboard = () => {
     selectPostsForCurrentUser(state, session?.user?.email!)
   );
 
-  console.log("Filtered Posts: ", filteredPosts);
-  console.log("Current User: ", currentUserProfile);
+  // console.log("Filtered Posts: ", filteredPosts);
+  // console.log("Current User: ", currentUserProfile);
 
   return (
     <div className="flex flex-col">
@@ -68,7 +65,7 @@ const Dashboard = () => {
         <ProfileCard profile={currentUserProfile[0]} />
       </div>
       {/* Image cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 mt-4 gap-4 m-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:flex  xl:grid-cols-4 mt-4 gap-4 m-auto ml-auto items-center h-[100%]">
         {filteredPosts?.map((post: Post) => (
           <PostCard post={post} key={post._id} />
         ))}
