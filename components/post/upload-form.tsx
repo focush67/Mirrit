@@ -100,9 +100,9 @@ export default function UploadModal() {
     const imageRef = ref(PostsCluster, `${state.title}/${name}`);
     setIsUploading(true);
 
-    const uploadPromise = new Promise<void>((resolve) => {
-      uploadBytes(imageRef, coverPhoto).then(() => {
-        getDownloadURL(imageRef).then((imageUrl) => {
+    uploadBytes(imageRef, coverPhoto).then(() => {
+      getDownloadURL(imageRef)
+        .then((imageUrl) => {
           setCoverUrl(imageUrl);
           console.log("CoverURL: ", imageUrl);
           dispatch({
@@ -111,28 +111,15 @@ export default function UploadModal() {
               cover: imageUrl,
             },
           });
-          resolve();
-          toast.success("Image successfully uploaded");
-        });
-      });
-    });
 
-    try {
-      await Promise.race([
-        uploadPromise,
-        new Promise<void>((_, reject) => {
-          setTimeout(() => {
-            reject(new Error("Image Upload Timed Out"));
-          }, 10000);
-        }),
-      ]);
-    } catch (error: any) {
-      console.log(error.message);
-      toast.error("Something went wrong");
-    } finally {
-      setIsUploading(false);
-      setCoverPhoto(null);
-    }
+          toast.success("Image successfully uploaded");
+        })
+        .catch((error: any) => {
+          console.log(error.message);
+          alert(error.message);
+          toast.error("Error uploading image");
+        });
+    });
   };
 
   const handlePostSubmit = async () => {
@@ -158,7 +145,7 @@ export default function UploadModal() {
       <Button onPress={onOpen} color="primary" className="">
         New
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top">
         <ModalContent>
           {(onClose) => (
             <>
