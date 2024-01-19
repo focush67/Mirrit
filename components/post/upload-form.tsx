@@ -138,8 +138,8 @@ export default function UploadModal() {
   const handlePostSubmit = async () => {
     console.log("Present State: ", state);
     if (!coverUrl) {
-      alert("CoverURL could not be decoded");
-      return;
+      alert("CoverURL could not be decoded: ");
+      alert(coverUrl);
     }
     try {
       const response = await axios.post("/api/posts", {
