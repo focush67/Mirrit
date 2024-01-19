@@ -10,10 +10,13 @@ import {
   addPostsChunk,
   selectAllPosts,
   selectAllUsers,
+  selectCurrentUser,
+  selectPostsForCurrentUser,
   selectSavedCluster,
 } from "@/redux_store/slices/global-slices";
 import { Post } from "@/types/post";
 import { UserProfile } from "@/types/profile";
+import { GlobalState } from "@/types/state";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,23 +50,22 @@ const Dashboard = () => {
     }
   }, [posts, dispatch, users]);
 
-  const allPosts = useSelector(selectAllPosts);
-
-  const allUsers = useSelector(selectAllUsers);
-
-  const profile = allUsers.find(
-    (user: UserProfile) => user.email === session?.user?.email
+  const currentUserProfile = useSelector((state: GlobalState) =>
+    selectCurrentUser(state, session?.user?.email!)
   );
 
-  const filteredPosts: Post[] = allPosts.filter(
-    (post: Post) => post.email === session?.user?.email
+  const filteredPosts = useSelector((state: GlobalState) =>
+    selectPostsForCurrentUser(state, session?.user?.email!)
   );
+
+  console.log("Filtered Posts: ", filteredPosts);
+  console.log("Current User: ", currentUserProfile);
 
   return (
     <div className="flex flex-col">
       <div className="flex justify-center items-center">
         {/* Profile card */}
-        <ProfileCard profile={profile!} />
+        <ProfileCard profile={currentUserProfile[0]} />
       </div>
       {/* Image cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 mt-4 gap-4 m-auto">

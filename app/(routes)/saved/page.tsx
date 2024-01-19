@@ -6,25 +6,20 @@ import { useSelector } from "react-redux";
 import React, { useEffect } from "react";
 import SkeletonRender from "@/components/post/skeleton";
 import {
-  selectAllPosts,
   selectSavedCluster,
+  selectSavedPosts,
 } from "@/redux_store/slices/global-slices";
 
 const SavedPage = () => {
   const savedCluster = useSelector(selectSavedCluster);
 
-  const posts = useSelector(selectAllPosts);
+  const savedPosts = useSelector(selectSavedPosts);
 
-  const filteredPosts = posts.filter((post: Post) =>
-    savedCluster?.posts.includes(post._id)
-  );
+  console.log({ savedCluster, savedPosts });
 
-  console.log("Posts: ", { posts, savedCluster });
-  console.log("Filtered Posts: ", filteredPosts);
+  useEffect(() => {}, [savedCluster]);
 
-  useEffect(() => {}, [posts, savedCluster]);
-
-  if (!filteredPosts || filteredPosts?.length === 0) {
+  if (!savedPosts || savedPosts?.length === 0) {
     return (
       <div className="flex flex-col items-center ">
         <SkeletonRender />
@@ -38,7 +33,7 @@ const SavedPage = () => {
   return (
     <div className="flex flex-col items-center justify-center mt-2 gap-4">
       <h1>My Collection</h1>
-      {filteredPosts?.map((post: Post) => (
+      {savedPosts?.map((post: Post) => (
         <PostCard post={post} key={post._id} />
       ))}
     </div>

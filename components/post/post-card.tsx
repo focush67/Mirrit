@@ -47,7 +47,8 @@ export default function PostCard({ post }: PostCardProps) {
 
   const handleSavingCluster = async () => {
     if (!session || !session?.user || !session?.user?.email) {
-      toast.loading("Missing Email");
+      toast.error("Login required");
+      return;
     }
 
     try {

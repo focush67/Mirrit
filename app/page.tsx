@@ -5,35 +5,38 @@ import SkeletonRender from "@/components/post/skeleton";
 import { Post } from "@/types/post";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchCluster,
-  fetchPosts,
-  fetchUsers,
-} from "@/redux_store/slices/async-thunks";
+import { fetchPosts, fetchUsers } from "@/redux_store/slices/async-thunks";
 import { AppDispatch } from "@/redux_store/store";
 import {
+  addAllSavedPosts,
   selectAllPosts,
-  selectAllUsers,
-  selectSavedCluster,
 } from "@/redux_store/slices/global-slices";
+import { useSession } from "next-auth/react";
+import useFetchUserSavedPosts from "@/custom_hooks/fetching_hooks/useFetchUserSavedPosts";
 
 export default function Home() {
+  const { data: session } = useSession();
   const dispatch = useDispatch<AppDispatch>();
-
+  const { relevantPosts, savedPostsCluster } = useFetchUserSavedPosts({
+    email: session?.user?.email!,
+  });
   useEffect(() => {
-    console.log("dispatching");
     dispatch(fetchPosts());
     dispatch(fetchUsers());
-    dispatch(fetchCluster());
-  }, [dispatch]);
+
+    if (savedPostsCluster && savedPostsCluster.length > 0) {
+      dispatch(
+        addAllSavedPosts({
+          email: session?.user?.email!,
+          postIds: savedPostsCluster,
+        })
+      );
+    }
+  }, [dispatch, savedPostsCluster]);
+
+  console.log({ relevantPosts, savedPostsCluster });
 
   const posts = useSelector(selectAllPosts);
-
-  const users = useSelector(selectAllUsers);
-
-  const cluster = useSelector(selectSavedCluster);
-
-  console.log({ posts, users, cluster });
 
   if (!posts || posts?.length === 0) {
     return (

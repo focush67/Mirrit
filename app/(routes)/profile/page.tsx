@@ -3,28 +3,24 @@
 import React from "react";
 import { Card, CardBody, CardHeader, Image } from "@nextui-org/react";
 import { useSelector } from "react-redux";
-import {
-  selectAllPosts,
-  selectSavedCluster,
-} from "@/redux_store/slices/global-slices";
+import { selectPostsForCurrentUser } from "@/redux_store/slices/global-slices";
 import EditModal from "@/components/custom-modals/edit-post-modal";
-import { Post } from "@/types/post";
 import { useSession } from "next-auth/react";
 import UserAvatar from "@/components/profile/user-avatar";
+import { GlobalState } from "@/types/state";
 
 export default function Profile() {
-  const allPosts = useSelector(selectAllPosts);
   const { data: session } = useSession();
 
-  const profilePosts = allPosts.filter(
-    (post: Post) => post.email === session?.user?.email
+  const profilePosts = useSelector((state: GlobalState) =>
+    selectPostsForCurrentUser(state, session?.user?.email!)
   );
 
-  const relevantCluster = useSelector(selectSavedCluster);
-  console.log(relevantCluster);
+  console.log("Profile Posts: ", profilePosts);
 
   return (
-    <div className="gap-2 grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 m-2">
+    <div className="gap-2 grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 m-2  md:items-center justify-center">
+      <h1>My Posts</h1>
       {profilePosts.map((post, index) => (
         <Card
           className="py-0 h-auto flex flex-col w-[300px] justify-between"

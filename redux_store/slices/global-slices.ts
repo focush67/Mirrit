@@ -2,8 +2,8 @@ import { Comment } from "@/types/comment";
 import { Post } from "@/types/post";
 import { UserProfile } from "@/types/profile";
 import { GlobalState, SavedPosts } from "@/types/state";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchCluster, fetchPosts, fetchUsers } from "./async-thunks";
+import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
+import { fetchPosts, fetchUsers } from "./async-thunks";
 
 const defaultValue: GlobalState = {
   posts: [],
@@ -252,18 +252,6 @@ const globalSlice = createSlice({
       )
       .addCase(fetchUsers.rejected, (state) => {
         state.status = "failed";
-      })
-      .addCase(fetchCluster.pending, (state: GlobalState) => {
-        state.status = "loading";
-      })
-      .addCase(
-        fetchCluster.fulfilled,
-        (state: GlobalState, action: PayloadAction<SavedPosts>) => {
-          (state.status = "succeeded"), (state.saved = action.payload);
-        }
-      )
-      .addCase(fetchCluster.rejected, (state: GlobalState) => {
-        state.status = "failed";
       });
   },
 });
@@ -290,5 +278,29 @@ export const {
 export const selectAllPosts = (state: GlobalState) => state.posts;
 export const selectAllUsers = (state: GlobalState) => state.users;
 export const selectSavedCluster = (state: GlobalState) => state.saved;
+// export const selectPostsforCurrentUser = (state: GlobalState, user: string) =>
+//   state.posts.filter((post: Post) => post.email === user);
+
+export const selectPostsForCurrentUser = createSelector(
+  [selectAllPosts, (state: GlobalState, user: string) => user],
+  (posts: Post[], user: string) =>
+    posts.filter((post: Post) => post.email === user)
+);
+
+export const selectCurrentUser = (state: GlobalState, user: string) =>
+  state.users.filter((profile: UserProfile) => profile.email === user);
+
+export const selectSavedPosts = (state: GlobalState) => {
+  const { posts, saved } = state;
+  if (!saved || !saved.posts || saved.posts.length === 0) {
+    return [];
+  }
+
+  const savedPosts = posts.filter((post: Post) =>
+    saved.posts.includes(post._id)
+  );
+
+  return savedPosts;
+};
 
 export default globalSlice.reducer;

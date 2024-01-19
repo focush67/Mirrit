@@ -20,6 +20,7 @@ import { Post } from "@/types/post";
 import { SavedPosts } from "@/types/state";
 import Dashboard from "./(routes)/dashboard/page";
 import getUserVerification from "@/server_actions/getUserVerification";
+import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,12 +35,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession();
-  const posts: Post[] | null = await getAllPosts();
-  const users: UserProfile[] | null = await getAllUsers();
-  const cluster: SavedPosts | null = await getUserSavedCluster();
-
-  const verificationStatus = await getUserVerification({ session });
-  console.log(verificationStatus);
 
   return (
     <html lang="en">

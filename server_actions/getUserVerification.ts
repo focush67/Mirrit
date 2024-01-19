@@ -1,18 +1,16 @@
 import { Profiles } from "@/models/user-profile-schema";
-import { Session } from "next-auth";
+import { Session, getServerSession } from "next-auth";
 
-interface Props {
-  session: Session | null;
-}
-
-export default async function getUserVerification({ session }: Props) {
-  if (!session) {
+export default async function getUserVerification() {
+  const serverSession = await getServerSession();
+  console.log("Session: ", serverSession);
+  if (!serverSession) {
     console.log("No session found at server action");
     return null;
   }
 
   const verificationStatus = await Profiles.findOne({
-    email: session?.user?.email,
+    email: serverSession?.user?.email,
   });
 
   if (verificationStatus) {
@@ -20,9 +18,9 @@ export default async function getUserVerification({ session }: Props) {
     return verificationStatus;
   } else {
     const newlyVerifiedUser = await Profiles.create({
-      email: session.user?.email,
-      name: session?.user?.name,
-      image: session?.user?.image,
+      email: serverSession.user?.email,
+      name: serverSession?.user?.name,
+      image: serverSession?.user?.image,
     });
 
     await newlyVerifiedUser.save();
@@ -30,6 +28,4 @@ export default async function getUserVerification({ session }: Props) {
     console.log("Newly verified user: ", newlyVerifiedUser);
     return newlyVerifiedUser;
   }
-
-  return null;
 }

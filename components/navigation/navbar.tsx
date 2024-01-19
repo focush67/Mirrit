@@ -18,13 +18,27 @@ import { signOut, useSession } from "next-auth/react";
 import ToggleSwitch from "../switch/toggle-switch";
 import { signIn } from "next-auth/react";
 import UserAvatar from "../profile/user-avatar";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function NavigationBar() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const handleRegister = async () => {
+      const response = await axios.post("/api/register", {
+        email: session?.user?.email,
+        userName: session?.user?.name,
+        image: session?.user?.image,
+      });
+
+      console.log(response.data);
+    };
+
+    handleRegister();
+  }, [session]);
 
   const loggedInMenuItems = [
     <UserAvatar
@@ -47,7 +61,7 @@ export default function NavigationBar() {
       Messenger
     </Link>,
     <Button
-      key={5}
+      key={6}
       variant="shadow"
       onClick={() => signOut()}
       className={session ? "flex" : "hidden"}

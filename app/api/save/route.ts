@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Saved } from "@/models/saved-posts-schema";
 import connect from "@/utilities/mongoose";
 import { Posts } from "@/models/post-schema";
+import mongoose from "mongoose";
 
 export const GET = async (request: NextRequest) => {
   await connect();
@@ -81,24 +82,27 @@ export const POST = async (request: NextRequest) => {
       newResponse: createdCluster,
     });
   } else {
+    console.log("Post ID: ", _id);
+    console.log(SavedPostsCluster.posts);
     const result = SavedPostsCluster.posts.filter(
-      (postId: string) => postId === _id
+      (postId: mongoose.ObjectId) => postId.toString() === _id
     );
 
-    if (result && result.length > 0) {
+    console.log("Result: ", result);
+
+    if (result.length === 0) {
+      SavedPostsCluster.posts.push(_id);
+      await SavedPostsCluster.save();
+      return NextResponse.json({
+        message: "Post added to exisitng cluster",
+        status: 200,
+        cluster: SavedPostsCluster,
+      });
+    } else {
       return NextResponse.json({
         status: 303,
         result: result,
       });
     }
-
-    SavedPostsCluster.posts.push(_id);
-    await SavedPostsCluster.save();
-
-    return NextResponse.json({
-      message: "Post added to existing cluster",
-      status: 200,
-      cluster: SavedPostsCluster,
-    });
   }
 };
