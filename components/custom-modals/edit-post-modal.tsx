@@ -98,7 +98,7 @@ export default function EditModal({ post }: EditModalProps) {
         editedPost: state,
       });
 
-      console.log(response.data);
+      // console.log(response.data);
       stateDispatch(
         editPost({
           _id: state._id,

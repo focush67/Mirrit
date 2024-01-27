@@ -6,21 +6,7 @@ import SessionProvider from "@/providers/session-provider";
 import ReduxProvider from "@/providers/store-provider";
 import { getServerSession } from "next-auth";
 import NavigationBar from "@/components/navigation/navbar";
-import { Profiles } from "@/models/user-profile-schema";
 import { ToastProvider } from "@/providers/toast-provider";
-import { store } from "@/redux_store/store";
-import getAllPosts from "@/server_actions/getAllPosts";
-import getAllUsers from "@/server_actions/getAllUsers";
-import { addAllUsers } from "@/redux_store/slices/global-slices";
-import { UserProfile } from "@/types/profile";
-import getUserPosts from "@/server_actions/getUserPosts";
-import getUserSavedCluster from "@/server_actions/getSavedClusters";
-import Home from "./page";
-import { Post } from "@/types/post";
-import { SavedPosts } from "@/types/state";
-import Dashboard from "./(routes)/dashboard/page";
-import getUserVerification from "@/server_actions/getUserVerification";
-import axios from "axios";
 
 const inter = Inter({ subsets: ["latin"] });
 

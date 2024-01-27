@@ -65,7 +65,7 @@ const Dashboard = () => {
         <ProfileCard profile={currentUserProfile[0]} />
       </div>
       {/* Image cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:flex  xl:grid-cols-4 mt-4 gap-4 m-auto ml-auto items-center h-[100%]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  xl:grid-cols-4 mt-4 gap-4 m-auto ml-auto items-center h-[100%]">
         {filteredPosts?.map((post: Post) => (
           <PostCard post={post} key={post._id} />
         ))}

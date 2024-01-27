@@ -15,7 +15,7 @@ const SavedPage = () => {
 
   const savedPosts = useSelector(selectSavedPosts);
 
-  console.log({ savedCluster, savedPosts });
+  // console.log({ savedCluster, savedPosts });
 
   useEffect(() => {}, [savedCluster]);
 
@@ -31,11 +31,14 @@ const SavedPage = () => {
     );
   }
   return (
-    <div className="lg:grid lg:grid-cols-4  md:grid-cols-2 sm:flex sm:flex-col items-center justify-center mt-2 gap-4">
+    <>
+    
+    <div className="lg:grid lg:grid-cols-4 md:grid-cols-2 sm:flex sm:flex-col items-center justify-center mt-2 gap-4">
       {savedPosts?.map((post: Post) => (
         <PostCard post={post} key={post._id} />
       ))}
     </div>
+    </>
   );
 };
 
