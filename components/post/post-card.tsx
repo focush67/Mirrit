@@ -82,7 +82,6 @@ export default function PostCard({ post }: PostCardProps) {
   const handleDelete = async () => {
     try {
       const response = await axios.delete(`/api/posts/?_id=${post._id}`);
-      console.log(response.data);
       if (response.data.status === 200 || response.data.status === 201) {
         dispatch(deletePost({ _id: post._id }));
         toast.success("Deleted");

@@ -1,6 +1,5 @@
 "use client";
 
-import useFetchCurrentUser from "@/custom_hooks/fetching_hooks/useFetchCurrentUser";
 import useFetchUserPosts from "@/custom_hooks/fetching_hooks/useFetchUserPosts";
 import React, { useEffect } from "react";
 import PostCard from "@/components/post/post-card";
@@ -34,7 +33,6 @@ const Profile = ({ params }: any) => {
       dispatch(addAllUsers(users));
     }
     return () => {
-      console.log("Resetting state");
       dispatch(resetPosts());
     };
   }, [posts, users, dispatch]);

@@ -16,8 +16,6 @@ export default function Profile() {
     selectPostsForCurrentUser(state, session?.user?.email!)
   );
 
-  console.log("Profile Posts: ", profilePosts);
-
   return (
     <div className="text-center flex items-center flex-col">
       <div className="gap-2 grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 m-2 justify-center">

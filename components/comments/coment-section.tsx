@@ -33,7 +33,7 @@ export default function CommentSection({ currentPost }: CommentSectionProps) {
 
   const handleCommentUpload = async () => {
     if (!session) {
-      alert("Please Login to continue");
+      toast.error("Login required");
       return;
     }
 

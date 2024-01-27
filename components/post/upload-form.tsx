@@ -93,7 +93,7 @@ export default function UploadModal() {
   const uploadImage = async () => {
     const name = coverPhoto?.name;
     if (coverPhoto === null || coverPhoto === undefined) {
-      alert("No image was selected");
+      toast.error("No image was selected");
       return;
     }
 
@@ -104,7 +104,6 @@ export default function UploadModal() {
       getDownloadURL(imageRef)
         .then((imageUrl) => {
           setCoverUrl(imageUrl);
-          console.log("CoverURL: ", imageUrl);
           dispatch({
             type: "CHANGE_COVER_PHOTO",
             payload: {
@@ -125,14 +124,12 @@ export default function UploadModal() {
   const handlePostSubmit = async () => {
     console.log("Present State: ", state);
     if (!coverUrl) {
-      alert("CoverURL could not be decoded: ");
-      alert(coverUrl);
+      toast.error("CoverURL could not be decoded: ");
     }
     try {
       const response = await axios.post("/api/posts", {
         newPost: state,
       });
-      // console.log(response.data);
       toast.success("Post Uploaded");
     } catch (error: any) {
       console.log(error);
