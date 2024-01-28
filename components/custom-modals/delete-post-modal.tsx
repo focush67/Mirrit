@@ -22,7 +22,7 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
 
   return (
     <div>
-      <Button onPress={onOpen} className="w-[10px] bg-inherit">
+      <Button onPress={onOpen} className="w-[10px] bg-inherit" size="sm">
         <Trash />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

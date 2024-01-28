@@ -38,7 +38,7 @@ export default function CommentSection({ currentPost }: CommentSectionProps) {
     }
 
     if (presentComment.length <= 0) {
-      alert("Comment is empty");
+      toast.error("Comment is empty");
       return;
     }
 

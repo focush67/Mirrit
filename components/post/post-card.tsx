@@ -15,6 +15,7 @@ import { useSession } from "next-auth/react";
 import { addNewSavedPost } from "@/redux_store/slices/global-slices";
 import toast from "react-hot-toast";
 import DeleteModal from "../custom-modals/delete-post-modal";
+import EditModal from "../custom-modals/edit-post-modal";
 
 interface PostCardProps {
   post: Post;
@@ -28,7 +29,6 @@ export default function PostCard({ post }: PostCardProps) {
   const handleLike = async () => {
     try {
       const response = await axios.post(`/api/posts/like/?id=${post._id}`);
-      // console.log(response.data);
       dispatch(likePost({ _id: post._id }));
       toast.success("Liked");
     } catch (error: any) {
@@ -59,10 +59,7 @@ export default function PostCard({ post }: PostCardProps) {
         }
       );
 
-      // console.log(response.data);
       if (response.data.status === 200 || response.data.status === 201) {
-        // console.log("Dispatching post save");
-        // console.log(session?.user?.email + " " + post._id);
         dispatch(
           addNewSavedPost({
             email: session?.user?.email!,
@@ -93,7 +90,7 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <Card className="py-2 h-auto flex flex-col w-[300px]">
+    <Card className="py-2 h-auto flex flex-col w-[350px]">
       <div
         className="flex flex-row items-center h-auto"
         onClick={() => handleRouting(post.email!)}
@@ -102,13 +99,18 @@ export default function PostCard({ post }: PostCardProps) {
 
         <CardHeader className="pb-0 pt-2 px-1 flex-row items-center overflow-x-hidden sm:gap-2">
           <div className="flex flex-col">
-            <p className="text-[15px] uppercase font-bold">{post.userName}</p>
-            <h4 className="font-bold text-md">{post.title}</h4>
+            <p className="text-sm uppercase font-bold">{post.userName}</p>
+            <h4 className="font-bold text-sm">{post.title}</h4>
           </div>
 
-          {post.email === session?.user?.email && (
-            <DeleteModal post={post} handleDelete={handleDelete} />
-          )}
+          <div className="flex items-center justify-center">
+            {post.email === session?.user?.email && (
+              <div className="flex">
+                <DeleteModal post={post} handleDelete={handleDelete} />
+                <EditModal post={post} />
+              </div>
+            )}
+          </div>
         </CardHeader>
       </div>
       <CardBody className="overflow-visible py-2 text-center items-center">

@@ -64,7 +64,6 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
         const response = await axios.post(
           `/api/unfollow/?initiator=${initiator}&target=${target}`
         );
-        console.log(response.data);
 
         if (response.data.status === 200) {
           console.log("Dispatching unfollow");
@@ -88,7 +87,6 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
         const response = await axios.post(
           `/api/follow/?initiator=${session?.user?.email}&target=${profile?.email}`
         );
-        console.log(response.data);
         if (response.data.status !== 301) {
           dispatch(
             addRelationship({

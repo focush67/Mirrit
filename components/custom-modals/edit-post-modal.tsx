@@ -15,6 +15,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { editPost } from "@/redux_store/slices/global-slices";
+import { Edit3 } from "lucide-react";
 
 interface EditModalProps {
   post: Post;
@@ -98,7 +99,6 @@ export default function EditModal({ post }: EditModalProps) {
         editedPost: state,
       });
 
-      // console.log(response.data);
       stateDispatch(
         editPost({
           _id: state._id,
@@ -115,8 +115,8 @@ export default function EditModal({ post }: EditModalProps) {
 
   return (
     <>
-      <Button onPress={onOpen} variant="shadow" color="primary" size="sm">
-        Edit
+      <Button onPress={onOpen} className="bg-inherit" size="sm">
+        <Edit3 />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
         <ModalContent>
