@@ -99,7 +99,6 @@ export default function PostCard({ post, remove }: PostCardProps) {
                 Remove
               </Button>
             ) : (
-              // Render delete and edit modals only if post email and session email are equal
               post.email === session?.user?.email && (
                 <div className="inline-flex">
                   <DeleteModal post={post} handleDelete={handleDelete} />
