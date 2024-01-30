@@ -114,7 +114,7 @@ export default function EditModal({ post }: EditModalProps) {
   useEffect(() => {}, [stateDispatch]);
 
   return (
-    <>
+    <div className="abolute ml-10">
       <Button onPress={onOpen} className="bg-inherit" size="sm">
         <Edit3 />
       </Button>
@@ -170,6 +170,6 @@ export default function EditModal({ post }: EditModalProps) {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 }

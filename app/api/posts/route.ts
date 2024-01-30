@@ -24,7 +24,7 @@ export const POST = async (request: NextRequest) => {
   const requestBody = await request.json();
   const { newPost } = requestBody;
 
-  console.log(newPost);
+  // console.log(newPost);
 
   const {
     email,
@@ -83,7 +83,7 @@ export const DELETE = async (request: NextRequest) => {
 
   try {
     const deletedPost = await Posts.findByIdAndDelete(_id);
-    console.log(deletedPost);
+    // console.log(deletedPost);
     if (!deletedPost) {
       return NextResponse.json({
         message: "Deletion not done",
@@ -123,7 +123,7 @@ export const PUT = async (request: NextRequest) => {
     });
   }
 
-  console.log(exisitingPost);
+  // console.log(exisitingPost);
 
   const {
     title,

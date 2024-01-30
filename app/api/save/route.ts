@@ -5,8 +5,6 @@ import { Posts } from "@/models/post-schema";
 import mongoose from "mongoose";
 
 export const GET = async (request: NextRequest) => {
-  await connect();
-
   const email = request.nextUrl.searchParams.get("email");
 
   if (!email) {
@@ -19,7 +17,6 @@ export const GET = async (request: NextRequest) => {
 
   try {
     const SavedPostsCluster = await Saved.findOne({ email });
-    console.log("Cluster at backend: ", SavedPostsCluster);
 
     if (!SavedPostsCluster) {
       console.log("Saved Posts cluster not found");
@@ -40,7 +37,7 @@ export const GET = async (request: NextRequest) => {
       savedPosts: requestedClusterPosts,
     });
   } catch (error: any) {
-    console.error("Error fetching saved posts:", error);
+    console.error("Error fetching saved posts:");
     return NextResponse.json({
       message: "Internal Server Error",
       status: 500,
@@ -49,7 +46,6 @@ export const GET = async (request: NextRequest) => {
 };
 
 export const POST = async (request: NextRequest) => {
-  await connect();
   const email = request.nextUrl.searchParams.get("email");
 
   if (!email) {
@@ -74,7 +70,7 @@ export const POST = async (request: NextRequest) => {
 
     await createdCluster.save();
 
-    console.log("Created new cluster: ", createdCluster);
+    // console.log("Created new cluster: ", createdCluster);
     return NextResponse.json({
       message: "Cluster initialized and post saved",
       status: 201,
@@ -104,5 +100,48 @@ export const POST = async (request: NextRequest) => {
         result: result,
       });
     }
+  }
+};
+
+export const DELETE = async (request: NextRequest) => {
+  const email = request.nextUrl.searchParams.get("email");
+  const _id = request.nextUrl.searchParams.get("_id");
+
+  console.log({ email, _id });
+
+  if (!email || !_id) {
+    console.log("Email or _id missing at /api/saved post");
+    return NextResponse.json({
+      message: "Email or _id not passed",
+      status: 404,
+    });
+  }
+
+  try {
+    const savedPostsCluster = await Saved.findOne({ email });
+    if (!savedPostsCluster) {
+      return NextResponse.json({
+        message: "Cluster not found so not deleting anything",
+        status: 404,
+      });
+    }
+
+    savedPostsCluster.posts = savedPostsCluster.posts.filter(
+      (postId: any) => postId.toString() !== _id
+    );
+
+    await savedPostsCluster.save();
+
+    return NextResponse.json({
+      message: "Post removed from saved",
+      status: 201,
+      cluster: savedPostsCluster,
+    });
+  } catch (error: any) {
+    console.error("Error deleting post from cluster:", error.message);
+    return NextResponse.json({
+      message: "Internal Server Error",
+      status: 500,
+    });
   }
 };

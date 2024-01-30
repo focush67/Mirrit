@@ -1,7 +1,12 @@
 "use client";
 
-import { configureStore } from "@reduxjs/toolkit";
+import {
+  UnknownAction,
+  combineReducers,
+  configureStore,
+} from "@reduxjs/toolkit";
 import globalReducer from "@/redux_store/slices/global-slices";
+import notificationReducer from "@/redux_store/slices/notification-slice";
 import {
   persistReducer,
   persistStore,

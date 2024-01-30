@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -20,11 +20,14 @@ import { signIn } from "next-auth/react";
 import UserAvatar from "../profile/user-avatar";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { resetNotifications } from "@/redux_store/slices/notification-slice";
 
 export default function NavigationBar() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleRegister = async () => {
@@ -40,6 +43,15 @@ export default function NavigationBar() {
     handleRegister();
   }, [session]);
 
+  const handleLogin = async () => {
+    await signIn("google");
+  };
+
+  const handleLogout = () => {
+    signOut();
+    dispatch(resetNotifications());
+  };
+
   const loggedInMenuItems = [
     <UserAvatar
       src={session?.user?.image!}
@@ -48,9 +60,6 @@ export default function NavigationBar() {
       }}
       key={0}
     />,
-    <Link href={`/profile`} key={1}>
-      Profile
-    </Link>,
     <Link href={"/dashboard"} key={2}>
       Dashboard
     </Link>,
@@ -58,12 +67,15 @@ export default function NavigationBar() {
       Saved
     </Link>,
     <Link href={"https://chatter-woad-nine.vercel.app/login"} key={4}>
-      Messenger
+      Chats
+    </Link>,
+    <Link key={5} href={"/recents"}>
+      Recents
     </Link>,
     <Button
       key={6}
       variant="shadow"
-      onClick={() => signOut()}
+      onClick={handleLogout}
       className={session ? "flex" : "hidden"}
     >
       Logout
@@ -80,7 +92,7 @@ export default function NavigationBar() {
       className={`${
         session ? "hidden" : "inherit"
       } hover:text-white hover:bg-green-700 font-semibold`}
-      onClick={() => signIn("google")}
+      onClick={handleLogin}
     >
       Login
     </Button>,
@@ -107,9 +119,6 @@ export default function NavigationBar() {
         <NavbarItem>
           <Link href="/">Home</Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link href="/profile">Profile</Link>
-        </NavbarItem>
         <NavbarItem className={!session ? "hidden" : "block"}>
           <Link href="/dashboard">Dashboard</Link>
         </NavbarItem>
@@ -117,7 +126,10 @@ export default function NavigationBar() {
           <Link href={`/saved`}>Saved</Link>
         </NavbarItem>
         <NavbarItem className={!session ? "hidden" : "block"}>
-          <Link href="/messenger">Messenger</Link>
+          <Link href={"https://chatter-woad-nine.vercel.app/login"}>Chats</Link>
+        </NavbarItem>
+        <NavbarItem className={!session ? "hidden" : "block"}>
+          <Link href="/recents">Recents</Link>
         </NavbarItem>
       </NavbarContent>
 

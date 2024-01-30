@@ -12,7 +12,7 @@ export default function useLike({ postId }: LikeProps) {
     const postUserLike = async () => {
       try {
         const response = await axios.post(`/api/posts/like/?id=${postId}`);
-        console.log(response.data);
+        // console.log(response.data);
         setSuccess(true);
       } catch (error: any) {
         console.log(error.message);

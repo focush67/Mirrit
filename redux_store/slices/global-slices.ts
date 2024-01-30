@@ -1,7 +1,7 @@
 import { Comment } from "@/types/comment";
 import { Post } from "@/types/post";
 import { UserProfile } from "@/types/profile";
-import { GlobalState, SavedPosts } from "@/types/state";
+import { GlobalState } from "@/types/state";
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import { fetchPosts, fetchUsers } from "./async-thunks";
 
@@ -214,7 +214,7 @@ const globalSlice = createSlice({
       action: PayloadAction<{ _id: string; editedPost: Post }>
     ): GlobalState => {
       const { _id } = action.payload;
-      state.posts.map((post: Post) =>
+      state.posts?.map((post: Post) =>
         post._id === _id ? action.payload.editedPost : post
       );
       return state;
@@ -290,17 +290,10 @@ export const selectPostsForCurrentUser = createSelector(
 export const selectCurrentUser = (state: GlobalState, user: string) =>
   state.users.filter((profile: UserProfile) => profile.email === user);
 
-export const selectSavedPosts = (state: GlobalState) => {
-  const { posts, saved } = state;
-  if (!saved || !saved.posts || saved.posts.length === 0) {
-    return [];
-  }
-
-  const savedPosts = posts.filter((post: Post) =>
-    saved.posts.includes(post._id)
-  );
-
-  return savedPosts;
-};
+export const selectSavedPosts = createSelector(
+  [selectAllPosts, selectSavedCluster],
+  (posts, savedPostsIds) =>
+    posts.filter((post: Post) => savedPostsIds?.posts.includes(post._id))
+);
 
 export default globalSlice.reducer;

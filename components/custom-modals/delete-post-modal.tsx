@@ -21,8 +21,8 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <div>
-      <Button onPress={onOpen} className="w-[10px] bg-inherit" size="sm">
+    <div className="absolute">
+      <Button onPress={onOpen} className="bg-inherit" size="sm">
         <Trash />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

@@ -17,7 +17,7 @@ export default function useFollow({
       const response = await axios.post(
         `/api/follow/?initiator=${initiator}&target=${target}`
       );
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data.status === 201) {
         setIsFollowed(true);
       }

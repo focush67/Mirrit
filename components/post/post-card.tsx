@@ -1,78 +1,58 @@
 "use client";
 
-import React from "react";
-import { Heart, SaveIcon } from "lucide-react";
-import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
-import Hover from "../hover/hover-pop";
+import React, { useEffect, useState } from "react";
+import { Card, CardHeader, CardBody, Image, Button } from "@nextui-org/react";
 import { Post } from "@/types/post";
 import UserAvatar from "../profile/user-avatar";
-import CommentSection from "../comments/coment-section";
 import { useDispatch } from "react-redux";
-import { deletePost, likePost } from "@/redux_store/slices/global-slices";
+import { deletePost } from "@/redux_store/slices/global-slices";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { addNewSavedPost } from "@/redux_store/slices/global-slices";
 import toast from "react-hot-toast";
 import DeleteModal from "../custom-modals/delete-post-modal";
 import EditModal from "../custom-modals/edit-post-modal";
+import LikeButton from "../buttons/like";
+import CommentButton from "../buttons/comment";
+import ShareButton from "../buttons/save";
+import { AuthProfile } from "@/types/profile";
+import { useSocket } from "@/experiments/socket-context";
 
 interface PostCardProps {
   post: Post;
+  remove?: (post: Post) => void;
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, remove }: PostCardProps) {
   const dispatch = useDispatch();
   const router = useRouter();
   const { data: session } = useSession();
+  const { socket } = useSocket();
+  const [targetUser, setTargetUser] = useState<AuthProfile | null>(null);
+  const [currentUser, setCurrentUser] = useState<AuthProfile | null>(null);
 
-  const handleLike = async () => {
-    try {
-      const response = await axios.post(`/api/posts/like/?id=${post._id}`);
-      dispatch(likePost({ _id: post._id }));
-      toast.success("Liked");
-    } catch (error: any) {
-      console.log(error.message);
-      toast.error("Some error occured");
-    }
-  };
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const response = await axios.get(
+        `/api/user/?email=${session?.user?.email}`
+      );
+
+      setCurrentUser(response.data.user);
+    };
+
+    const fetchTargetProfile = async () => {
+      const response = await axios.get(`/api/user/?email=${post.email}`);
+      setTargetUser(response.data.user);
+    };
+
+    Promise.all([fetchCurrentUser(), fetchTargetProfile()]);
+  }, [post.email, session?.user?.email]);
 
   const handleRouting = (email: string) => {
     if (session?.user?.email === email) {
       router.push(`/dashboard`);
     } else {
       router.push(`/${email}`);
-    }
-  };
-
-  const handleSavingCluster = async () => {
-    if (!session || !session?.user || !session?.user?.email) {
-      toast.error("Login required");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `/api/save/?email=${session?.user?.email}`,
-        {
-          _id: post._id,
-        }
-      );
-
-      if (response.data.status === 200 || response.data.status === 201) {
-        dispatch(
-          addNewSavedPost({
-            email: session?.user?.email!,
-            postId: post._id,
-          })
-        );
-        toast.success("Saved to Cluster");
-      } else if (response.data.status === 303) {
-        toast.error("Post already exists in cluster");
-      }
-    } catch (error: any) {
-      console.log(error);
-      toast.error("Some error occured");
     }
   };
 
@@ -89,8 +69,18 @@ export default function PostCard({ post }: PostCardProps) {
     }
   };
 
+  useEffect(() => {
+    socket?.on("test", (text) => {
+      console.log("Test response:", text);
+    });
+  }, [socket]);
+
+  const handleEmit = () => {
+    socket?.emit("test");
+  };
+
   return (
-    <Card className="py-2 h-auto flex flex-col w-[350px]">
+    <Card className="py-2 h-auto flex flex-col w-[300px]">
       <div
         className="flex flex-row items-center h-auto"
         onClick={() => handleRouting(post.email!)}
@@ -103,12 +93,19 @@ export default function PostCard({ post }: PostCardProps) {
             <h4 className="font-bold text-sm">{post.title}</h4>
           </div>
 
-          <div className="flex items-center justify-center">
-            {post.email === session?.user?.email && (
-              <div className="flex">
-                <DeleteModal post={post} handleDelete={handleDelete} />
-                <EditModal post={post} />
-              </div>
+          <div>
+            {remove ? (
+              <Button onClick={() => remove(post)} className="text-sm">
+                Remove
+              </Button>
+            ) : (
+              // Render delete and edit modals only if post email and session email are equal
+              post.email === session?.user?.email && (
+                <div className="inline-flex">
+                  <DeleteModal post={post} handleDelete={handleDelete} />
+                  <EditModal post={post} />
+                </div>
+              )
             )}
           </div>
         </CardHeader>
@@ -124,20 +121,10 @@ export default function PostCard({ post }: PostCardProps) {
         <div className="mt-2 max-h-24 overflow-hidden">
           <p className="whitespace-pre-line">{post.description}</p>
         </div>
-        <div className="flex flex-row items-center justify-center mt-3 w-[100%]">
-          <Hover text="Like">
-            <Heart className="hover:cursor-pointer" onClick={handleLike} />
-            <p>{post.likes}</p>
-          </Hover>
-          <Hover text="Comment">
-            <CommentSection currentPost={post} />
-          </Hover>
-          <Hover text="Save">
-            <SaveIcon
-              className="hover:cursor-pointer"
-              onClick={handleSavingCluster}
-            />
-          </Hover>
+        <div className="flex flex-row items-center justify-center mt-3 w-[100%] gap-2">
+          <LikeButton post={post} from={currentUser} to={targetUser} />
+          <CommentButton post={post} from={currentUser} to={targetUser} />
+          <ShareButton post={post} session={session} />
         </div>
       </CardBody>
     </Card>
