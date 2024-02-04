@@ -21,8 +21,8 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <>
-      <Button onPress={onOpen}>
+    <div className="absolute">
+      <Button onPress={onOpen} className="bg-inherit" size="sm">
         <Trash />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -33,14 +33,22 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
                 Delete this post ?
               </ModalHeader>
               <ModalBody className="flex items-center">
-                <Image src={post.cover} width={300} alt="Post Cover" />
+                <Image
+                  src={post.cover}
+                  height={100}
+                  className="h-[200px]"
+                  alt="Post Cover"
+                />
                 <p>This action is irreversible</p>
               </ModalBody>
               <ModalFooter>
                 <Button color="secondary" variant="light" onPress={onClose}>
                   Cancel
                 </Button>
-                <Button color="warning" onClick={() => handleDelete(post._id)}>
+                <Button
+                  className="bg-red-800 text-white"
+                  onClick={() => handleDelete(post._id)}
+                >
                   Delete
                 </Button>
               </ModalFooter>
@@ -48,6 +56,6 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 }

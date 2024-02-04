@@ -1,6 +1,5 @@
 import { addAllSavedPosts } from "@/redux_store/slices/global-slices";
 import { Post } from "@/types/post";
-import { SavedPosts } from "@/types/state";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -18,7 +17,7 @@ export default function useFetchUserSavedPosts({ email }: SavedPostsProps) {
     const fetchAllSavedPosts = async () => {
       try {
         const response = await axios.get(`/api/save/?email=${email}`);
-        console.log("Custome hook for saved: ", response.data);
+        // console.log("Custome hook for saved: ", response.data);
 
         setSavedPostsCluster(response.data.cluster);
         dispatch(

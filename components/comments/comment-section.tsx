@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -20,26 +20,43 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { commentOnPost } from "@/redux_store/slices/global-slices";
 import toast from "react-hot-toast";
+// import { useSocket } from "@/experiments/socket-context";
+import { AuthProfile } from "@/types/profile";
+import { NotificationContext } from "@/experiments/notification-context";
 
 interface CommentSectionProps {
   currentPost: Post;
+  from: AuthProfile | null;
+  to: AuthProfile | null;
 }
 
-export default function CommentSection({ currentPost }: CommentSectionProps) {
+export default function CommentSection({
+  currentPost,
+  from,
+  to,
+}: CommentSectionProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [scrollBehaviour, setScrollBehaviour] = useState("inside");
   const [presentComment, setPresentComment] = useState<string>("");
   const { data: session } = useSession();
   const dispatch = useDispatch();
+  // const { socket } = useSocket();
+  // const { setNotifications } = useContext(NotificationContext) || {};
+
+  // useEffect(() => {
+  //   socket?.on("comment-added", (info) => {
+  //     console.log("Comment response: ", info);
+  //     setNotifications?.((prev) => new Set([...Array.from(prev), info]));
+  //   });
+  // }, [setNotifications, socket]);
 
   const handleCommentUpload = async () => {
     if (!session) {
-      alert("Please Login to continue");
+      toast.error("Login required");
       return;
     }
 
     if (presentComment.length <= 0) {
-      alert("Comment is empty");
+      toast.error("Comment is empty");
       return;
     }
 
@@ -50,13 +67,6 @@ export default function CommentSection({ currentPost }: CommentSectionProps) {
       content: presentComment,
     };
 
-    dispatch(
-      commentOnPost({
-        _id: currentPost._id,
-        comment: composedComment,
-      })
-    );
-
     try {
       const response = await axios.post(
         `/api/posts/comment/?id=${currentPost._id}`,
@@ -64,16 +74,28 @@ export default function CommentSection({ currentPost }: CommentSectionProps) {
           comment: composedComment,
         }
       );
+      dispatch(
+        commentOnPost({
+          _id: currentPost._id,
+          comment: composedComment,
+        })
+      );
 
-      console.log(response.data);
+      // socket?.emit("send-notification", {
+      //   type: "comment",
+      //   post: currentPost,
+      //   from: from,
+      //   to: to,
+      // });
       toast.success("Comment Added");
+      setPresentComment("");
     } catch (error: any) {
       console.log(error.message);
       toast.error("Some error occured");
     }
   };
   return (
-    <div className="flex items-center justify-center w-[20px]">
+    <div className="flex items-center justify-center ">
       <Button onPress={onOpen}>
         <MessageCircle />
         <p>{currentPost.comments.length}</p>
@@ -82,6 +104,7 @@ export default function CommentSection({ currentPost }: CommentSectionProps) {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         scrollBehavior={"inside"}
+        placement="center"
       >
         <ModalContent>
           {(onClose) => (

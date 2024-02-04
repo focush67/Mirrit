@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import {
   Modal,
   ModalContent,
@@ -11,30 +11,33 @@ import {
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { Post } from "@/types/post";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { PostsCluster } from "@/utilities/firebase";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { editPost } from "@/redux_store/slices/global-slices";
+import { Edit3 } from "lucide-react";
 
-export default function UploadModal() {
+interface EditModalProps {
+  post: Post;
+}
+
+export default function EditModal({ post }: EditModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { data: session } = useSession();
-  const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [coverUrl, setCoverUrl] = useState("");
+  const stateDispatch = useDispatch();
 
   const initialPost: Post = {
-    title: "",
+    title: post.title,
     email: session?.user?.email!,
-    _id: undefined,
-    description: "",
+    _id: post._id,
+    description: post.description,
     image: session?.user?.image!,
     userName: session?.user?.name!,
-    tags: [],
-    cover: "",
-    likes: 0,
-    comments: [],
-    shares: 0,
+    tags: post.tags,
+    cover: post.cover,
+    likes: post.likes,
+    comments: post.comments,
+    shares: post.shares,
   };
 
   interface PostModalActions {
@@ -90,78 +93,53 @@ export default function UploadModal() {
     }
   };
 
-  const uploadImage = async () => {
-    const name = coverPhoto?.name;
-    if (coverPhoto === null || coverPhoto === undefined) {
-      toast.error("No image was selected");
-      return;
-    }
-
-    const imageRef = ref(PostsCluster, `${state.title}/${name}`);
-    setIsUploading(true);
-
-    uploadBytes(imageRef, coverPhoto).then(() => {
-      getDownloadURL(imageRef)
-        .then((imageUrl) => {
-          setCoverUrl(imageUrl);
-          dispatch({
-            type: "CHANGE_COVER_PHOTO",
-            payload: {
-              cover: imageUrl,
-            },
-          });
-
-          toast.success("Image successfully uploaded");
-        })
-        .catch((error: any) => {
-          console.log(error.message);
-          alert(error.message);
-          toast.error("Error uploading image");
-        });
-    });
-  };
-
-  const handlePostSubmit = async () => {
-    console.log("Present State: ", state);
-    if (!coverUrl) {
-      toast.error("CoverURL could not be decoded: ");
-    }
+  const handlePostEdit = async () => {
     try {
-      const response = await axios.post("/api/posts", {
-        newPost: state,
+      const response = await axios.put("/api/posts", {
+        editedPost: state,
       });
-      toast.success("Post Uploaded");
-    } catch (error: any) {
-      console.log(error);
-      toast.error("Error uploading post");
+
+      stateDispatch(
+        editPost({
+          _id: state._id,
+          editedPost: state,
+        })
+      );
+      toast.success("Edited Post Successfully");
+    } catch (error) {
+      toast.error("Some error occured");
     }
   };
+
+  useEffect(() => {}, [stateDispatch]);
 
   return (
-    <>
-      <Button onPress={onOpen} color="primary" className="">
-        New
+    <div className="abolute ml-10">
+      <Button onPress={onOpen} className="bg-inherit" size="sm">
+        <Edit3 />
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top">
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Create a Post
+                Edit Post
               </ModalHeader>
               <ModalBody>
                 <Input
                   autoFocus
                   name="title"
                   label="Title"
-                  placeholder="Enter title of post"
+                  value={state.title}
+                  placeholder="Edit Title"
                   variant="bordered"
                   onChange={handleChange}
                 />
                 <Input
                   name="description"
                   label="Description"
-                  placeholder="Enter description"
+                  value={state.description}
+                  placeholder="Edit description"
                   type="text"
                   variant="bordered"
                   onChange={handleChange}
@@ -170,36 +148,20 @@ export default function UploadModal() {
                   name="tags"
                   label="Tags"
                   placeholder="Tags"
+                  value={state.tags.toString()}
                   type="text"
                   variant="bordered"
                   onChange={handleChange}
                 />
-                <div className="flex flex-row items-center">
-                  <Input
-                    type="file"
-                    variant="faded"
-                    onChange={(e: any) => setCoverPhoto(e.target.files[0])}
-                  />
-                  <Button
-                    variant="ghost"
-                    color="default"
-                    onClick={uploadImage}
-                    isLoading={isUploading && coverUrl.length <= 0}
-                  >
-                    Upload
-                  </Button>
-                </div>
-                <p>{coverUrl}</p>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>
                 <Button
-                  isLoading={isUploading && coverUrl.length <= 0}
                   color="primary"
                   onPress={onClose}
-                  onClick={handlePostSubmit}
+                  onClick={handlePostEdit}
                 >
                   Post
                 </Button>
@@ -208,6 +170,6 @@ export default function UploadModal() {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 }

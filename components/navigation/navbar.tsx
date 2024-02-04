@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -18,36 +18,48 @@ import { signOut, useSession } from "next-auth/react";
 import ToggleSwitch from "../switch/toggle-switch";
 import { signIn } from "next-auth/react";
 import UserAvatar from "../profile/user-avatar";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { resetNotifications } from "@/redux_store/slices/notification-slice";
 
 export default function NavigationBar() {
   const { data: session } = useSession();
-  const [register, setRegister] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    const isAlreadyRegistered = async () => {
+    const handleRegister = async () => {
       const response = await axios.post("/api/register", {
         email: session?.user?.email,
         userName: session?.user?.name,
         image: session?.user?.image,
       });
-      if (response.data.status === 303) setRegister(true);
+
+      // console.log(response.data);
     };
 
-    isAlreadyRegistered();
+    handleRegister();
   }, [session]);
+
+  const handleLogin = async () => {
+    await signIn("google");
+  };
+
+  const handleLogout = () => {
+    signOut();
+    dispatch(resetNotifications());
+  };
 
   const loggedInMenuItems = [
     <UserAvatar
       src={session?.user?.image!}
-      onClick={() => router.push("/")}
+      onClick={() => {
+        router.push("/");
+      }}
       key={0}
     />,
-    <Link href={`/${session?.user?.email}`} key={1}>
-      Profile
-    </Link>,
     <Link href={"/dashboard"} key={2}>
       Dashboard
     </Link>,
@@ -55,12 +67,15 @@ export default function NavigationBar() {
       Saved
     </Link>,
     <Link href={"https://chatter-woad-nine.vercel.app/login"} key={4}>
-      Messenger
+      Chats
+    </Link>,
+    <Link key={5} href={"/recents"}>
+      Recents
     </Link>,
     <Button
-      key={5}
+      key={6}
       variant="shadow"
-      onClick={() => signOut()}
+      onClick={handleLogout}
       className={session ? "flex" : "hidden"}
     >
       Logout
@@ -77,20 +92,14 @@ export default function NavigationBar() {
       className={`${
         session ? "hidden" : "inherit"
       } hover:text-white hover:bg-green-700 font-semibold`}
-      onClick={() => signIn("google")}
+      onClick={handleLogin}
     >
       Login
     </Button>,
+    <Link href={"/"} key={11}>
+      Home
+    </Link>,
   ];
-
-  const registerUser = async () => {
-    const response = await axios.post("/api/register", {
-      email: session?.user?.email,
-      userName: session?.user?.name,
-      image: session?.user?.image,
-    });
-    if (response.data.status === 303) setRegister(true);
-  };
 
   return (
     <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
@@ -117,7 +126,10 @@ export default function NavigationBar() {
           <Link href={`/saved`}>Saved</Link>
         </NavbarItem>
         <NavbarItem className={!session ? "hidden" : "block"}>
-          <Link href="/messenger">Messenger</Link>
+          <Link href={"https://chatter-woad-nine.vercel.app/login"}>Chats</Link>
+        </NavbarItem>
+        <NavbarItem className={!session ? "hidden" : "block"}>
+          <Link href="/recents">Recents</Link>
         </NavbarItem>
       </NavbarContent>
 
@@ -147,13 +159,6 @@ export default function NavigationBar() {
             </Button>
           )}
 
-          <Button
-            className={register || !session ? "hidden" : "flex"}
-            onClick={registerUser}
-          >
-            Verify Email
-          </Button>
-
           <ToggleSwitch />
         </NavbarItem>
       </NavbarContent>
@@ -162,7 +167,14 @@ export default function NavigationBar() {
         {session
           ? loggedInMenuItems.map((item, index) => (
               <NavbarMenuItem key={`${item}-${index}`}>
-                <Link className="w-full" href="#">
+                <Link
+                  className="w-full"
+                  href="#"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    return true;
+                  }}
+                >
                   {item}
                 </Link>
               </NavbarMenuItem>

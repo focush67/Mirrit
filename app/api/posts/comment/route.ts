@@ -34,7 +34,7 @@ export const POST = async (request: NextRequest) => {
   const requestBody = await request.json();
   const { comment } = requestBody;
 
-  console.log("Comment from frontend: ", comment);
+  // console.log("Comment from frontend: ", comment);
 
   try {
     const postToBeCommentedOn = await Posts.findById({ _id: postId });
@@ -48,6 +48,9 @@ export const POST = async (request: NextRequest) => {
     });
   } catch (error: any) {
     console.log("Error at /api/posts/comment");
-    return NextResponse.error();
+    return NextResponse.json({
+      message: error.message,
+      status: 500,
+    });
   }
 };

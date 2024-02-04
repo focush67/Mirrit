@@ -34,7 +34,7 @@ export const POST = async (request: NextRequest) => {
       user: newCreatedUser,
     });
   } catch (error: any) {
-    console.log("Error at /api/register", error.message);
+    console.log("Error at /api/register");
     return NextResponse.json({
       message: "Error at /api/register",
       status: 500,

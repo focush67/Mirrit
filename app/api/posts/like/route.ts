@@ -28,7 +28,6 @@ export const POST = async (request: NextRequest) => {
   }
 
   try {
-    console.log(postToBeLiked);
     postToBeLiked.likes = Number(postToBeLiked.likes) + 1;
     await postToBeLiked.save();
     return NextResponse.json({

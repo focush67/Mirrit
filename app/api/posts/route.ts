@@ -24,7 +24,7 @@ export const POST = async (request: NextRequest) => {
   const requestBody = await request.json();
   const { newPost } = requestBody;
 
-  console.log(newPost);
+  // console.log(newPost);
 
   const {
     email,
@@ -83,7 +83,7 @@ export const DELETE = async (request: NextRequest) => {
 
   try {
     const deletedPost = await Posts.findByIdAndDelete(_id);
-    console.log(deletedPost);
+    // console.log(deletedPost);
     if (!deletedPost) {
       return NextResponse.json({
         message: "Deletion not done",
@@ -103,4 +103,59 @@ export const DELETE = async (request: NextRequest) => {
       status: 500,
     });
   }
+};
+
+export const PUT = async (request: NextRequest) => {
+  const { editedPost } = await request.json();
+
+  // const existingPost = await Posts.findById({ _id: id });
+
+  const { _id } = editedPost;
+
+  const exisitingPost = await Posts.findById({
+    _id,
+  });
+
+  if (!exisitingPost) {
+    return NextResponse.json({
+      message: "No post found",
+      status: 404,
+    });
+  }
+
+  // console.log(exisitingPost);
+
+  const {
+    title,
+    email,
+    description,
+    image,
+    userName,
+    tags,
+    cover,
+    likes,
+    comments,
+    shares,
+  } = editedPost;
+
+  const updatedPost = await Posts.findByIdAndUpdate(_id, {
+    title,
+    email,
+    description,
+    image,
+    userName,
+    tags,
+    cover,
+    likes,
+    comments,
+    shares,
+  });
+
+  await updatedPost.save();
+
+  return NextResponse.json({
+    done: "yes",
+    status: 200,
+    editedPost: updatedPost,
+  });
 };
