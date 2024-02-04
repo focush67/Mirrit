@@ -57,19 +57,21 @@ const SavedPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full mt-2 mb-2">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4">
+      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4">
         My Collection
       </h1>
 
-      {savedPosts?.map((post: Post, index: number) => (
-        <div key={index} className="mb-3">
-          <PostCard
-            post={post}
-            key={post._id}
-            remove={handlePostRemovalFromSaved}
-          />
-        </div>
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-center">
+        {savedPosts?.map((post: Post, index: number) => (
+          <div key={index}>
+            <PostCard
+              post={post}
+              key={post._id}
+              remove={handlePostRemovalFromSaved}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

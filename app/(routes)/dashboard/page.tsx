@@ -2,50 +2,18 @@
 
 import PostCard from "@/components/post/post-card";
 import ProfileCard from "@/components/profile/profile-card";
-import useFetchAllUsers from "@/custom_hooks/fetching_hooks/useFetchAllUsers";
-import useFetchUserPosts from "@/custom_hooks/fetching_hooks/useFetchUserPosts";
 import {
-  addAllSavedPosts,
-  addAllUsers,
-  addPostsChunk,
   selectCurrentUser,
   selectPostsForCurrentUser,
-  selectSavedCluster,
 } from "@/redux_store/slices/global-slices";
 import { Post } from "@/types/post";
 import { GlobalState } from "@/types/state";
 import { useSession } from "next-auth/react";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
   const { data: session } = useSession();
-
-  const { posts } = useFetchUserPosts({ email: session?.user?.email! });
-  const { users } = useFetchAllUsers();
-
-  const dispatch = useDispatch();
-
-  const cluster = useSelector(selectSavedCluster);
-
-  useEffect(() => {
-    if (posts && posts.length > 0) {
-      dispatch(addPostsChunk(posts));
-    }
-
-    if (users && users.length > 0) {
-      dispatch(addAllUsers(users));
-    }
-
-    if (cluster) {
-      dispatch(
-        addAllSavedPosts({
-          email: cluster.email,
-          postIds: cluster.posts,
-        })
-      );
-    }
-  }, [posts, dispatch, users]);
 
   const currentUserProfile = useSelector((state: GlobalState) =>
     selectCurrentUser(state, session?.user?.email!)
@@ -56,14 +24,16 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="flex flex-col">
-      <div className="flex justify-center items-center">
+    <div className="flex flex-col items-center">
+      <div className="flex justify-center items-center w-full">
         <ProfileCard profile={currentUserProfile[0]} />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  xl:grid-cols-4 mt-4 gap-4 m-auto ml-auto items-center h-[100%]">
-        {filteredPosts?.map((post: Post) => (
-          <PostCard post={post} key={post._id} />
-        ))}
+      <div className="flex justify-center items-center mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-4">
+          {filteredPosts?.map((post: Post) => (
+            <PostCard post={post} key={post._id} />
+          ))}
+        </div>
       </div>
     </div>
   );

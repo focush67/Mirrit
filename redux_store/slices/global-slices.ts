@@ -1,6 +1,6 @@
 import { Comment } from "@/types/comment";
 import { Post } from "@/types/post";
-import { UserProfile } from "@/types/profile";
+import { AuthProfile, UserProfile } from "@/types/profile";
 import { GlobalState } from "@/types/state";
 import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 import { fetchPosts, fetchUsers } from "./async-thunks";
@@ -139,6 +139,12 @@ const globalSlice = createSlice({
       state: GlobalState,
       action: PayloadAction<UserProfile>
     ): GlobalState => {
+      const userExists = state.users.some(
+        (user) => user.email === action.payload.email
+      );
+      if (userExists) {
+        return state;
+      }
       return {
         ...state,
         users: [...state.users, action.payload],
@@ -159,22 +165,28 @@ const globalSlice = createSlice({
       state: GlobalState,
       action: PayloadAction<{ initiator: string; target: string }>
     ): GlobalState => {
-      const updatedUsers = state.users.map((user: UserProfile) =>
-        user.email === action.payload.initiator
-          ? { ...user, following: [...user.following, action.payload.target] }
-          : user
-      );
+      const { initiator, target } = action.payload;
+      const updatedUsers = state.users.map((user: any) => {
+        if (user.email === initiator) {
+          return {
+            ...user,
+            following: [...user.following, target],
+          };
+        } else if (user.email === target) {
+          return {
+            ...user,
+            followers: [...user.followers, initiator],
+          };
+        } else {
+          return user;
+        }
+      });
+
+      console.log("State after relationship follow: ", updatedUsers);
 
       return {
         ...state,
-        users: updatedUsers.map((user: any) =>
-          user.email === action.payload.target
-            ? {
-                ...user,
-                followers: [...user.followers, action.payload.initiator],
-              }
-            : user
-        ),
+        users: updatedUsers,
       };
     },
 
@@ -183,29 +195,33 @@ const globalSlice = createSlice({
       action: PayloadAction<{ initiator: string; target: string }>
     ): GlobalState => {
       console.log(action.payload);
-      const updatedUsers = state.users.map((user: any) =>
-        user.email === action.payload.initiator
-          ? {
-              ...user,
-              following: user.following.filter(
-                (email: string) => email !== action.payload.target
-              ),
-            }
-          : user
-      );
+      const { initiator, target } = action.payload;
+
+      const updatedUsers = state.users.map((user: UserProfile) => {
+        if (user.email === initiator) {
+          return {
+            ...user,
+            following: user.following.filter(
+              (follower: AuthProfile) => follower.email !== target
+            ),
+          };
+        } else if (user.email === target) {
+          return {
+            ...user,
+            followers: user.followers.filter(
+              (follower: AuthProfile) => follower.email !== initiator
+            ),
+          };
+        } else {
+          return user;
+        }
+      });
+
+      console.log("State after relationship unfollow: ", updatedUsers);
 
       return {
         ...state,
-        users: updatedUsers.map((user: any) =>
-          user.email === action.payload.target
-            ? {
-                ...user,
-                followers: user.followers.filter(
-                  (email: string) => email !== action.payload.initiator
-                ),
-              }
-            : user
-        ),
+        users: updatedUsers,
       };
     },
 

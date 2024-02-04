@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth";
 import NavigationBar from "@/components/navigation/navbar";
 import { ToastProvider } from "@/providers/toast-provider";
 import { NotificationProvider } from "@/experiments/notification-context";
-import { SocketProvider } from "@/experiments/socket-context";
+// import { SocketProvider } from "@/experiments/socket-context";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -26,20 +26,18 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SocketProvider>
-          <NotificationProvider>
-            <ToastProvider>
-              <Providers>
-                <SessionProvider session={session}>
-                  <ReduxProvider>
-                    <NavigationBar />
-                    <NotificationProvider>{children}</NotificationProvider>
-                  </ReduxProvider>
-                </SessionProvider>
-              </Providers>
-            </ToastProvider>
-          </NotificationProvider>
-        </SocketProvider>
+        <NotificationProvider>
+          <ToastProvider>
+            <Providers>
+              <SessionProvider session={session}>
+                <ReduxProvider>
+                  <NavigationBar />
+                  <NotificationProvider>{children}</NotificationProvider>
+                </ReduxProvider>
+              </SessionProvider>
+            </Providers>
+          </ToastProvider>
+        </NotificationProvider>
       </body>
     </html>
   );

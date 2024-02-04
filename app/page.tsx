@@ -3,32 +3,27 @@
 import PostCard from "@/components/post/post-card";
 import SkeletonRender from "@/components/post/skeleton";
 import { Post } from "@/types/post";
-import { useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts, fetchUsers } from "@/redux_store/slices/async-thunks";
 import { AppDispatch } from "@/redux_store/store";
 import {
   addAllSavedPosts,
+  addNewUser,
   selectAllPosts,
 } from "@/redux_store/slices/global-slices";
 import { useSession } from "next-auth/react";
 import useFetchUserSavedPosts from "@/custom_hooks/fetching_hooks/useFetchUserSavedPosts";
-import { useSocket } from "@/experiments/socket-context";
-import { Socket, io } from "socket.io-client";
+// import { useSocket } from "@/experiments/socket-context";
+// import { Socket, io } from "socket.io-client";
+
+import axios from "axios";
 export default function Home() {
   const { data: session } = useSession();
   const dispatch = useDispatch<AppDispatch>();
-  const { relevantPosts, savedPostsCluster } = useFetchUserSavedPosts({
+  const { savedPostsCluster } = useFetchUserSavedPosts({
     email: session?.user?.email!,
   });
-
-  const { socket } = useSocket();
-
-  useEffect(() => {
-    socket?.on("add-new-user", (rsp) => {
-      console.log("Connecion frontend: ", rsp);
-    });
-  }, [session, socket]);
 
   useEffect(() => {
     dispatch(fetchPosts());
@@ -42,13 +37,23 @@ export default function Home() {
         })
       );
     }
+  }, [dispatch, savedPostsCluster, session]);
 
-    socket?.emit("add-new-user", {
-      name: session?.user?.name,
-      email: session?.user?.email,
-      image: session?.user?.image,
-    });
-  }, [dispatch, savedPostsCluster, session, socket]);
+  useEffect(() => {
+    const registerUser = async () => {
+      const response = await axios.post(`/api/register`, {
+        email: session?.user?.email,
+        userName: session?.user?.name,
+        image: session?.user?.image,
+      });
+
+      if (response.data.status === 201) {
+        dispatch(addNewUser(response.data.user));
+      }
+    };
+
+    registerUser();
+  }, [session]);
 
   const posts = useSelector(selectAllPosts);
 

@@ -7,33 +7,31 @@ import {
   CardBody,
   CardFooter,
   Avatar,
-  Button,
 } from "@nextui-org/react";
 import useFetchUserPosts from "@/custom_hooks/fetching_hooks/useFetchUserPosts";
 import { UserProfile } from "@/types/profile";
 import UploadModal from "../post/upload-form";
 import { useSession } from "next-auth/react";
-import axios from "axios";
+
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addRelationship,
-  removeRelationship,
-} from "@/redux_store/slices/global-slices";
+
 import { GlobalState } from "@/types/state";
-import toast from "react-hot-toast";
+
+import Follow from "../buttons/follow";
+import Unfollow from "../buttons/unfollow";
 
 interface ProfileCardProps {
   profile: UserProfile | null;
 }
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
-  const [status, setStatus] = useState(false);
+  const [status, setStatus] = useState<boolean | null>(null);
   const { posts } = useFetchUserPosts({ email: profile?.email! });
   const { data: session } = useSession();
   const dispatch = useDispatch();
   const allUsers = useSelector((state: GlobalState) => state.users);
 
-  const isVisitor = session?.user?.email !== profile?.email;
+  const userProfile = allUsers.filter((user) => user.email === profile?.email);
 
   useEffect(() => {
     if (session && profile && allUsers?.length > 0) {
@@ -54,57 +52,6 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
       }
     }
   }, [profile, posts, session, allUsers, dispatch]);
-
-  const handleToggleRelationship = async () => {
-    if (status === true) {
-      /* dispatch unfollow request and set status to false */
-      const initiator = session?.user?.email;
-      const target = profile?.email;
-      try {
-        const response = await axios.post(
-          `/api/unfollow/?initiator=${initiator}&target=${target}`
-        );
-
-        if (response.data.status === 200) {
-          console.log("Dispatching unfollow");
-          dispatch(
-            removeRelationship({
-              initiator: initiator!,
-              target: target!,
-            })
-          );
-          toast.success("Unfollowed");
-        }
-      } catch (error: any) {
-        console.log(error.message);
-        toast.error("Some error occured in unfollowing");
-      } finally {
-        setStatus(false);
-      }
-    } else if (status === false) {
-      /* dispatch follow request and set isFollowed to Unfollow*/
-      try {
-        const response = await axios.post(
-          `/api/follow/?initiator=${session?.user?.email}&target=${profile?.email}`
-        );
-        if (response.data.status !== 301) {
-          dispatch(
-            addRelationship({
-              initiator: session?.user?.email!,
-              target: profile?.email!,
-            })
-          );
-        }
-      } catch (error: any) {
-        console.log(error.message);
-        toast.error("Some error occured while following");
-      } finally {
-        setStatus(true);
-      }
-    } else {
-      return null;
-    }
-  };
 
   return (
     <>
@@ -129,26 +76,33 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
             </div>
             {session?.user?.email === profile?.email ? (
               <UploadModal />
+            ) : status === true ? (
+              <Unfollow
+                targetUser={userProfile[0]?.email!}
+                initiatorUser={session?.user?.email!}
+                setStatus={setStatus}
+              />
             ) : (
-              <ToggleRelationshipButton
-                status={status}
-                handleClick={handleToggleRelationship}
+              <Follow
+                targetUser={userProfile[0]?.email!}
+                initiatorUser={session?.user?.email!}
+                setStatus={setStatus}
               />
             )}
           </CardHeader>
           <CardBody className="px-3 py-0 text-small text-default-400">
-            <span className="pt-2">#FrontendWithZoey</span>
+            <span className="pt-2"></span>
           </CardBody>
           <CardFooter className="gap-3">
             <div className="flex gap-1">
               <p className="font-semibold text-default-400 text-small">
-                {profile?.following.length}
+                {userProfile[0]?.following.length}
               </p>
               <p className=" text-default-400 text-small">Following</p>
             </div>
             <div className="flex gap-1">
               <p className="font-semibold text-default-400 text-small">
-                {profile?.followers?.length}
+                {userProfile[0]?.followers?.length}
               </p>
               <p className="text-default-400 text-small">Followers</p>
             </div>
@@ -158,21 +112,3 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
     </>
   );
 }
-
-interface ToggleProps {
-  status: boolean;
-  handleClick: () => void;
-}
-
-const ToggleRelationshipButton = ({ status, handleClick }: ToggleProps) => {
-  return (
-    <Button
-      color={status ? "secondary" : "primary"}
-      size="sm"
-      variant={status ? `bordered` : `flat`}
-      onClick={handleClick}
-    >
-      {status === true ? "Unfollow" : "Follow"}
-    </Button>
-  );
-};

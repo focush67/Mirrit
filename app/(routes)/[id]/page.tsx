@@ -50,16 +50,18 @@ const Profile = ({ params }: any) => {
   );
 
   return (
-    <>
-      <div className="flex items-center justify-center mt-1">
+    <div className="flex flex-col items-center">
+      <div className="flex justify-center items-center w-full">
         <ProfileCard profile={profileUser!} />
       </div>
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 mt-4 gap-4 ">
-        {filteredPosts?.map((post, index) => (
-          <PostCard post={post} key={index} />
-        ))}
+      <div className="flex justify-center items-center mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-4">
+          {filteredPosts?.map((post: Post) => (
+            <PostCard post={post} key={post._id} />
+          ))}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

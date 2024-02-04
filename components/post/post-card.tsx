@@ -16,7 +16,8 @@ import LikeButton from "../buttons/like";
 import CommentButton from "../buttons/comment";
 import ShareButton from "../buttons/save";
 import { AuthProfile } from "@/types/profile";
-import { useSocket } from "@/experiments/socket-context";
+import { Trash } from "lucide-react";
+// import { useSocket } from "@/experiments/socket-context";
 
 interface PostCardProps {
   post: Post;
@@ -27,7 +28,7 @@ export default function PostCard({ post, remove }: PostCardProps) {
   const dispatch = useDispatch();
   const router = useRouter();
   const { data: session } = useSession();
-  const { socket } = useSocket();
+  // const { socket } = useSocket();
   const [targetUser, setTargetUser] = useState<AuthProfile | null>(null);
   const [currentUser, setCurrentUser] = useState<AuthProfile | null>(null);
 
@@ -69,15 +70,15 @@ export default function PostCard({ post, remove }: PostCardProps) {
     }
   };
 
-  useEffect(() => {
-    socket?.on("test", (text) => {
-      console.log("Test response:", text);
-    });
-  }, [socket]);
+  // useEffect(() => {
+  //   socket?.on("test", (text) => {
+  //     console.log("Test response:", text);
+  //   });
+  // }, [socket]);
 
-  const handleEmit = () => {
-    socket?.emit("test");
-  };
+  // const handleEmit = () => {
+  //   socket?.emit("test");
+  // };
 
   return (
     <Card className="py-2 h-auto flex flex-col w-[300px]">
@@ -96,7 +97,7 @@ export default function PostCard({ post, remove }: PostCardProps) {
           <div>
             {remove ? (
               <Button onClick={() => remove(post)} className="text-sm">
-                Remove
+                <Trash />
               </Button>
             ) : (
               post.email === session?.user?.email && (
@@ -122,6 +123,7 @@ export default function PostCard({ post, remove }: PostCardProps) {
         </div>
         <div className="flex flex-row items-center justify-center mt-3 w-[100%] gap-2">
           <LikeButton post={post} from={currentUser} to={targetUser} />
+
           <CommentButton post={post} from={currentUser} to={targetUser} />
           <ShareButton post={post} session={session} />
         </div>
