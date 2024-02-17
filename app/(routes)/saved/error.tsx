@@ -3,7 +3,7 @@ import { Button } from "@nextui-org/react";
 import React from "react";
 import { useRouter } from "next/navigation";
 
-const error = () => {
+const Error = () => {
   const router = useRouter();
   return (
     <div className="flex flex-col items-center justify-center space-y-4 mt-[10%]">
@@ -25,4 +25,4 @@ const error = () => {
   );
 };
 
-export default error;
+export default Error;

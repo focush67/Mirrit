@@ -34,7 +34,7 @@ const LikeButton = ({ post, from, to }: LikeProps) => {
       console.log(error.message);
       toast.error("Some error occured");
     }
-  }, [post, session, dispatch, from, to]);
+  }, [post, session, dispatch]);
 
   return (
     <Hover text="Like">
