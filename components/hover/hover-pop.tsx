@@ -1,5 +1,3 @@
-"use client";
-
 import React, { ReactNode } from "react";
 import { Tooltip, Button } from "@nextui-org/react";
 

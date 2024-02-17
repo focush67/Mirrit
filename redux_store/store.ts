@@ -1,12 +1,10 @@
 "use client";
 
 import {
-  UnknownAction,
   combineReducers,
   configureStore,
+  createSelector,
 } from "@reduxjs/toolkit";
-import globalReducer from "@/redux_store/slices/global-slices";
-import notificationReducer from "@/redux_store/slices/notification-slice";
 import {
   persistReducer,
   persistStore,
@@ -19,11 +17,24 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
+import postsReducer from "./slices/posts/post-slice";
+import usersReducer from "./slices/users/user-slice";
+import savedPostsReducer from "./slices/saved/saved-slice";
+
 const persistConfig = {
   key: "root",
   storage,
   version: 1,
+  whitelist: ["posts", "users"],
 };
+
+const globalReducer = combineReducers({
+  posts: postsReducer,
+  users: usersReducer,
+  saved: savedPostsReducer,
+});
+
+export type StateType = ReturnType<typeof globalReducer>;
 
 const persistedReducer = persistReducer(persistConfig, globalReducer);
 

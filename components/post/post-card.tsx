@@ -5,7 +5,7 @@ import { Card, CardHeader, CardBody, Image, Button } from "@nextui-org/react";
 import { Post } from "@/types/post";
 import UserAvatar from "../profile/user-avatar";
 import { useDispatch } from "react-redux";
-import { deletePost } from "@/redux_store/slices/global-slices";
+import { deletePost } from "@/redux_store/slices/posts/post-slice";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -17,7 +17,6 @@ import CommentButton from "../buttons/comment";
 import ShareButton from "../buttons/save";
 import { AuthProfile } from "@/types/profile";
 import { Trash } from "lucide-react";
-// import { useSocket } from "@/experiments/socket-context";
 
 interface PostCardProps {
   post: Post;
@@ -28,7 +27,6 @@ export default function PostCard({ post, remove }: PostCardProps) {
   const dispatch = useDispatch();
   const router = useRouter();
   const { data: session } = useSession();
-  // const { socket } = useSocket();
   const [targetUser, setTargetUser] = useState<AuthProfile | null>(null);
   const [currentUser, setCurrentUser] = useState<AuthProfile | null>(null);
 
@@ -69,16 +67,6 @@ export default function PostCard({ post, remove }: PostCardProps) {
       toast.error("Couldn't delete post");
     }
   };
-
-  // useEffect(() => {
-  //   socket?.on("test", (text) => {
-  //     console.log("Test response:", text);
-  //   });
-  // }, [socket]);
-
-  // const handleEmit = () => {
-  //   socket?.emit("test");
-  // };
 
   return (
     <Card className="py-2 h-auto flex flex-col w-[300px]">

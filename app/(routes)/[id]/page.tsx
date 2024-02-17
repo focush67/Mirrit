@@ -6,15 +6,18 @@ import PostCard from "@/components/post/post-card";
 import ProfileCard from "@/components/profile/profile-card";
 import { useDispatch, useSelector } from "react-redux";
 import useFetchAllUsers from "@/custom_hooks/fetching_hooks/useFetchAllUsers";
+
 import {
   addAllUsers,
+  selectCurrentUser,
+} from "@/redux_store/slices/users/user-slice";
+import {
   addPostsChunk,
   resetPosts,
-  selectAllPosts,
-  selectAllUsers,
-} from "@/redux_store/slices/global-slices";
-import { UserProfile } from "@/types/profile";
+} from "@/redux_store/slices/posts/post-slice";
 import { Post } from "@/types/post";
+import { StateType } from "@/redux_store/store";
+import { selectPostsForCurrentUser } from "@/redux_store/slices/posts/post-slice";
 
 const Profile = ({ params }: any) => {
   let email = params.id.slice(0, params.id.indexOf("%"));
@@ -37,25 +40,21 @@ const Profile = ({ params }: any) => {
     };
   }, [posts, users, dispatch]);
 
-  const allUsers = useSelector(selectAllUsers);
-
-  const profileUser = allUsers.find(
-    (user: UserProfile) => user.email === email
+  const profile = useSelector((state: StateType) =>
+    selectCurrentUser(state, email)
   );
 
-  const allPosts = useSelector(selectAllPosts);
-
-  const filteredPosts: Post[] = allPosts.filter(
-    (post: Post) => post.email === email
+  const filteredPosts = useSelector((state: StateType) =>
+    selectPostsForCurrentUser(state, email)
   );
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex justify-center items-center w-full">
-        <ProfileCard profile={profileUser!} />
+      <div className="w-full">
+        <ProfileCard profile={profile!} />
       </div>
-      <div className="flex justify-center items-center mt-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-4">
+      <div className="w-full mt-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-2 gap-10">
           {filteredPosts?.map((post: Post) => (
             <PostCard post={post} key={post._id} />
           ))}

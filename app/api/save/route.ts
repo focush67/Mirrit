@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Saved } from "@/models/saved-posts-schema";
-import connect from "@/utilities/mongoose";
 import { Posts } from "@/models/post-schema";
 import mongoose from "mongoose";
 

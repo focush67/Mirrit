@@ -1,9 +1,9 @@
+"use server";
+
 import { Profiles } from "@/models/user-profile-schema";
 import { UserProfile } from "@/types/profile";
-import connect from "@/utilities/mongoose";
 
 export default async function getAllUsers() {
-  await connect();
   try {
     const users: UserProfile[] = await Profiles.find();
     if (!users) {
