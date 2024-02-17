@@ -14,7 +14,7 @@ import { Post } from "@/types/post";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { editPost } from "@/redux_store/slices/global-slices";
+import { editPost } from "@/redux_store/slices/posts/post-slice";
 import { Edit3 } from "lucide-react";
 
 interface EditModalProps {

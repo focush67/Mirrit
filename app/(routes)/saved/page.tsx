@@ -6,7 +6,7 @@ import {
   removeSavedPost,
   selectSavedCluster,
   selectSavedPosts,
-} from "@/redux_store/slices/global-slices";
+} from "@/redux_store/slices/saved/saved-slice";
 import { Post } from "@/types/post";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
@@ -14,18 +14,20 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 const SavedPage = () => {
+  const { data: session } = useSession();
   const savedCluster = useSelector(selectSavedCluster);
   const savedPosts = useSelector(selectSavedPosts);
-  const { data: session } = useSession();
+
   const dispatch = useDispatch();
 
+  console.log({ savedPosts });
   useEffect(() => {}, [savedCluster]);
 
   if (!savedPosts || savedPosts?.length === 0) {
     return (
       <div className="flex flex-col items-center h-full justify-center">
         <h1 className="text-[30px] text-white font-bold ">
-          Saved Posts appear here
+          Save Posts to access them here
         </h1>
         <SkeletonRender />
         <SkeletonRender />

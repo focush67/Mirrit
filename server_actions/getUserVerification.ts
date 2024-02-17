@@ -1,3 +1,5 @@
+"use server";
+
 import { Profiles } from "@/models/user-profile-schema";
 import { Session, getServerSession } from "next-auth";
 

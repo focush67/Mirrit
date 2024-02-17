@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -18,11 +18,9 @@ import { MessageCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { commentOnPost } from "@/redux_store/slices/global-slices";
+import { commentOnPost } from "@/redux_store/slices/posts/post-slice";
 import toast from "react-hot-toast";
-// import { useSocket } from "@/experiments/socket-context";
 import { AuthProfile } from "@/types/profile";
-import { NotificationContext } from "@/experiments/notification-context";
 
 interface CommentSectionProps {
   currentPost: Post;
@@ -39,15 +37,6 @@ export default function CommentSection({
   const [presentComment, setPresentComment] = useState<string>("");
   const { data: session } = useSession();
   const dispatch = useDispatch();
-  // const { socket } = useSocket();
-  // const { setNotifications } = useContext(NotificationContext) || {};
-
-  // useEffect(() => {
-  //   socket?.on("comment-added", (info) => {
-  //     console.log("Comment response: ", info);
-  //     setNotifications?.((prev) => new Set([...Array.from(prev), info]));
-  //   });
-  // }, [setNotifications, socket]);
 
   const handleCommentUpload = async () => {
     if (!session) {
@@ -80,13 +69,6 @@ export default function CommentSection({
           comment: composedComment,
         })
       );
-
-      // socket?.emit("send-notification", {
-      //   type: "comment",
-      //   post: currentPost,
-      //   from: from,
-      //   to: to,
-      // });
       toast.success("Comment Added");
       setPresentComment("");
     } catch (error: any) {

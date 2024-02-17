@@ -1,6 +1,6 @@
 "use client";
 
-import { removeRelationship } from "@/redux_store/slices/global-slices";
+import { removeRelationship } from "@/redux_store/slices/users/user-slice";
 import { Button } from "@nextui-org/react";
 import axios from "axios";
 import toast from "react-hot-toast";

@@ -4,7 +4,7 @@ import Hover from "../hover/hover-pop";
 import { toast } from "react-hot-toast";
 import { Post } from "@/types/post";
 import { useDispatch } from "react-redux";
-import { addNewSavedPost } from "@/redux_store/slices/global-slices";
+import { addNewSavedPost } from "@/redux_store/slices/saved/saved-slice";
 import axios from "axios";
 import { Session } from "next-auth";
 

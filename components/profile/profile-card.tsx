@@ -8,17 +8,16 @@ import {
   CardFooter,
   Avatar,
 } from "@nextui-org/react";
-import useFetchUserPosts from "@/custom_hooks/fetching_hooks/useFetchUserPosts";
 import { UserProfile } from "@/types/profile";
 import UploadModal from "../post/upload-form";
 import { useSession } from "next-auth/react";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { GlobalState } from "@/types/state";
-
 import Follow from "../buttons/follow";
 import Unfollow from "../buttons/unfollow";
+import { selectCurrentUser } from "@/redux_store/slices/users/user-slice";
+import { StateType } from "@/redux_store/store";
 
 interface ProfileCardProps {
   profile: UserProfile | null;
@@ -26,37 +25,27 @@ interface ProfileCardProps {
 
 export default function ProfileCard({ profile }: ProfileCardProps) {
   const [status, setStatus] = useState<boolean | null>(null);
-  const { posts } = useFetchUserPosts({ email: profile?.email! });
   const { data: session } = useSession();
   const dispatch = useDispatch();
-  const allUsers = useSelector((state: GlobalState) => state.users);
 
-  const userProfile = allUsers.filter((user) => user.email === profile?.email);
+  const userProfile = useSelector((state: StateType) =>
+    selectCurrentUser(state, profile?.email!)
+  );
 
   useEffect(() => {
-    if (session && profile && allUsers?.length > 0) {
-      const userWithEmail = allUsers.find(
-        (user: UserProfile) => user.email === profile.email
+    if (session && profile && userProfile) {
+      const isFollowing = profile.followers.some(
+        (follower) => follower.email === session?.user?.email
       );
 
-      if (userWithEmail) {
-        const isFollowing = profile.followers.some(
-          (follower) => follower.email === session?.user?.email
-        );
-
-        if (isFollowing) {
-          setStatus(true);
-        } else {
-          setStatus(false);
-        }
-      }
+      setStatus(isFollowing);
     }
-  }, [profile, posts, session, allUsers, dispatch]);
+  }, [profile, session, userProfile, dispatch]);
 
   return (
     <>
-      <div className="w-full flex justify-center md:w-3/4 lg:w-1/2 md:justify-center mt-2">
-        <Card className="w-full md:w-4/5 lg:w-full m-2 items-center">
+      <div className="w-full flex justify-center md:justify-center mt-2">
+        <Card className="w-full m-2 items-center">
           <CardHeader className="flex justify-between">
             <div className="flex gap-5">
               <Avatar
@@ -78,13 +67,13 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               <UploadModal />
             ) : status === true ? (
               <Unfollow
-                targetUser={userProfile[0]?.email!}
+                targetUser={userProfile?.email!}
                 initiatorUser={session?.user?.email!}
                 setStatus={setStatus}
               />
             ) : (
               <Follow
-                targetUser={userProfile[0]?.email!}
+                targetUser={userProfile?.email!}
                 initiatorUser={session?.user?.email!}
                 setStatus={setStatus}
               />
@@ -96,13 +85,13 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           <CardFooter className="gap-3">
             <div className="flex gap-1">
               <p className="font-semibold text-default-400 text-small">
-                {userProfile[0]?.following.length}
+                {userProfile?.following.length}
               </p>
               <p className=" text-default-400 text-small">Following</p>
             </div>
             <div className="flex gap-1">
               <p className="font-semibold text-default-400 text-small">
-                {userProfile[0]?.followers?.length}
+                {userProfile?.followers?.length}
               </p>
               <p className="text-default-400 text-small">Followers</p>
             </div>

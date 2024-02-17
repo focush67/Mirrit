@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -21,7 +21,6 @@ import UserAvatar from "../profile/user-avatar";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { resetNotifications } from "@/redux_store/slices/notification-slice";
 
 export default function NavigationBar() {
   const { data: session } = useSession();
@@ -36,8 +35,6 @@ export default function NavigationBar() {
         userName: session?.user?.name,
         image: session?.user?.image,
       });
-
-      // console.log(response.data);
     };
 
     handleRegister();
@@ -49,7 +46,6 @@ export default function NavigationBar() {
 
   const handleLogout = () => {
     signOut();
-    dispatch(resetNotifications());
   };
 
   const loggedInMenuItems = [

@@ -9,9 +9,7 @@ const error = () => {
     <div className="flex flex-col items-center justify-center space-y-4 mt-[10%]">
       <div className="m-auto space-y-5 text-center">
         <p className="text-5xl text-red-800 font-semibold">500</p>
-        <p className="text-4xl font-semibold">
-          Some Error Occured at Dashboard
-        </p>
+        <p className="text-4xl font-semibold">Some Error Occured</p>
       </div>
       <div>
         <Button

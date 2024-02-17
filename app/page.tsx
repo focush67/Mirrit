@@ -5,39 +5,28 @@ import SkeletonRender from "@/components/post/skeleton";
 import { Post } from "@/types/post";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, fetchUsers } from "@/redux_store/slices/async-thunks";
-import { AppDispatch } from "@/redux_store/store";
 import {
-  addAllSavedPosts,
-  addNewUser,
-  selectAllPosts,
-} from "@/redux_store/slices/global-slices";
+  fetchPosts,
+  fetchSaved,
+  fetchUsers,
+} from "@/redux_store/slices/async-thunks";
+import { AppDispatch } from "@/redux_store/store";
+
 import { useSession } from "next-auth/react";
-import useFetchUserSavedPosts from "@/custom_hooks/fetching_hooks/useFetchUserSavedPosts";
-// import { useSocket } from "@/experiments/socket-context";
-// import { Socket, io } from "socket.io-client";
+
+import { selectAllPosts } from "@/redux_store/slices/posts/post-slice";
+import { addNewUser } from "@/redux_store/slices/users/user-slice";
 
 import axios from "axios";
 export default function Home() {
   const { data: session } = useSession();
   const dispatch = useDispatch<AppDispatch>();
-  const { savedPostsCluster } = useFetchUserSavedPosts({
-    email: session?.user?.email!,
-  });
 
   useEffect(() => {
     dispatch(fetchPosts());
     dispatch(fetchUsers());
-
-    if (savedPostsCluster && savedPostsCluster.length > 0) {
-      dispatch(
-        addAllSavedPosts({
-          email: session?.user?.email!,
-          postIds: savedPostsCluster,
-        })
-      );
-    }
-  }, [dispatch, savedPostsCluster, session]);
+    dispatch(fetchSaved(session?.user?.email!));
+  }, [dispatch, session]);
 
   useEffect(() => {
     const registerUser = async () => {

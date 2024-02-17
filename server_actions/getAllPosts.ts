@@ -1,3 +1,5 @@
+"use server";
+
 import { Posts } from "@/models/post-schema";
 import { Post } from "@/types/post";
 import connect from "@/utilities/mongoose";
