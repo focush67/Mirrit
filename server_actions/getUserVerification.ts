@@ -1,7 +1,7 @@
 "use server";
 
 import { Profiles } from "@/models/user-profile-schema";
-import { Session, getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 
 export default async function getUserVerification() {
   const serverSession = await getServerSession();
