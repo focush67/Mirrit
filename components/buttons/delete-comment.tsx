@@ -5,7 +5,6 @@ import { Post } from "@/types/post";
 import { Button } from "@nextui-org/react";
 import axios from "axios";
 import { Minus } from "lucide-react";
-import { ElementRef } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 

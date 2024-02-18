@@ -34,9 +34,8 @@ const postsSlice = createSlice({
     },
 
     likePost: (state: PostState, action: PayloadAction<{ _id: string }>) => {
-      console.log("Inside liking redux");
       const { _id } = action.payload;
-      console.log(state);
+
       return {
         ...state,
         posts: state.posts.map((post: Post) =>

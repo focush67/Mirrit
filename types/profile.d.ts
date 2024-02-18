@@ -2,6 +2,7 @@ export interface AuthProfile {
   email: string;
   name: string;
   image: string;
+  _id?: string;
 }
 
 export interface UserProfile extends AuthProfile {

@@ -23,23 +23,6 @@ const Profile = ({ params }: any) => {
   let email = params.id.slice(0, params.id.indexOf("%"));
   email = email.concat("@gmail.com");
 
-  const { posts } = useFetchUserPosts({ email });
-  const { users } = useFetchAllUsers();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (posts && posts.length > 0) {
-      dispatch(addPostsChunk(posts));
-    }
-
-    if (users && users.length > 0) {
-      dispatch(addAllUsers(users));
-    }
-    return () => {
-      dispatch(resetPosts());
-    };
-  }, [posts, users, dispatch]);
-
   const profile = useSelector((state: StateType) =>
     selectCurrentUser(state, email)
   );
