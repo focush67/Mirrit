@@ -96,7 +96,12 @@ export default function CommentSection({
               </ModalHeader>
               <ModalBody>
                 {currentPost.comments.map((comment: Comment, index: number) => (
-                  <IndividualComment comment={comment} key={index} />
+                  <IndividualComment
+                    comment={comment}
+                    key={index}
+                    post={currentPost}
+                    requestedBy={session?.user?.email!}
+                  />
                 ))}
               </ModalBody>
               <ModalFooter className="items-center">

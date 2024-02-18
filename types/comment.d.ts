@@ -1,4 +1,5 @@
 export interface Comment {
+  _id?: any;
   content: string;
   user: string;
   image: string;
