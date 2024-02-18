@@ -129,7 +129,7 @@ export const selectSavedPosts = (state: StateType) => {
 
   console.log({ relevantPostsIds });
 
-  const savedPosts = allPosts?.filter((post) =>
+  const savedPosts = allPosts?.filter((post: Post) =>
     relevantPostsIds.saved.postIds?.includes(post._id)
   );
 

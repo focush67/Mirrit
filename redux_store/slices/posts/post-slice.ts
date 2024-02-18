@@ -34,9 +34,8 @@ const postsSlice = createSlice({
     },
 
     likePost: (state: PostState, action: PayloadAction<{ _id: string }>) => {
-      console.log("Inside liking redux");
       const { _id } = action.payload;
-      console.log(state);
+
       return {
         ...state,
         posts: state.posts.map((post: Post) =>
@@ -58,6 +57,39 @@ const postsSlice = createSlice({
             : post
         ),
       };
+    },
+
+    removeCommentFromPost: (
+      state: PostState,
+      action: PayloadAction<{ commentId: string; postId: string }>
+    ) => {
+      const { commentId, postId } = action.payload;
+
+      const postIndex = state.posts.findIndex(
+        (post: Post) => post._id === postId
+      );
+
+      if (postIndex !== -1) {
+        const updatedComments = state.posts[postIndex].comments.filter(
+          (comment) => comment._id !== commentId
+        );
+
+        const updatedPost = {
+          ...state.posts[postIndex],
+          comments: updatedComments,
+        };
+
+        const updatedPosts = [
+          ...state.posts.slice(0, postIndex),
+          updatedPost,
+          ...state.posts.slice(postIndex + 1),
+        ];
+
+        return {
+          ...state,
+          posts: updatedPosts,
+        };
+      }
     },
 
     deletePost: (state: PostState, action: PayloadAction<{ _id: string }>) => {
@@ -118,6 +150,7 @@ export const {
   addPostsChunk,
   likePost,
   commentOnPost,
+  removeCommentFromPost,
   editPost,
   deletePost,
   resetPosts,

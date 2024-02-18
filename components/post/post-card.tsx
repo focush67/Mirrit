@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Card, CardHeader, CardBody, Image, Button } from "@nextui-org/react";
 import { Post } from "@/types/post";
 import UserAvatar from "../profile/user-avatar";
 import { useDispatch } from "react-redux";
 import { deletePost } from "@/redux_store/slices/posts/post-slice";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import DeleteModal from "../custom-modals/delete-post-modal";
@@ -23,8 +23,9 @@ interface PostCardProps {
   remove?: (post: Post) => void;
 }
 
-export default function PostCard({ post, remove }: PostCardProps) {
+let PostCard = ({ post, remove }: PostCardProps) => {
   const dispatch = useDispatch();
+  const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
   const [targetUser, setTargetUser] = useState<AuthProfile | null>(null);
@@ -35,7 +36,6 @@ export default function PostCard({ post, remove }: PostCardProps) {
       const response = await axios.get(
         `/api/user/?email=${session?.user?.email}`
       );
-
       setCurrentUser(response.data.user);
     };
 
@@ -69,7 +69,7 @@ export default function PostCard({ post, remove }: PostCardProps) {
   };
 
   return (
-    <Card className="py-2 h-auto flex flex-col w-[300px]">
+    <Card className="py-2 h-auto max-h-auto flex flex-col w-[300px]">
       <div
         className="flex flex-row items-center h-auto"
         onClick={() => handleRouting(post.email!)}
@@ -107,7 +107,9 @@ export default function PostCard({ post, remove }: PostCardProps) {
           isZoomed
         />
         <div className="mt-2 max-h-24 overflow-hidden">
-          <p className="whitespace-pre-line">{post.description}</p>
+          {pathname !== "/dashboard" && (
+            <p className="whitespace-pre-line">{post.description}</p>
+          )}
         </div>
         <div className="flex flex-row items-center justify-center mt-3 w-[100%] gap-2">
           <LikeButton post={post} from={currentUser} to={targetUser} />
@@ -118,4 +120,6 @@ export default function PostCard({ post, remove }: PostCardProps) {
       </CardBody>
     </Card>
   );
-}
+};
+
+export default memo(PostCard);

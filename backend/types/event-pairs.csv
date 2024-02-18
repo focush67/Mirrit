@@ -1,0 +1,29 @@
+
+
+
+
+| add-new-user  | newUser:OnlineUser  | online-users   |  onlineUsers: OnlineUsers[] |  
+
+                
+| send-notification (like)  |   info: Notification   |    post-liked      | info: Notification  |
+
+
+| send-notification (comment) |   info: Notification    | comment-added  | info: Notification  |
+
+
+
+export interface Notification {
+  type: "like" | "comment";
+  from: UserProfile;
+  to: UserProfile;
+  post: Post;
+  content?: string;
+}
+
+
+export interface OnlineUser {
+  name: string;
+  email: string;
+  image: string;
+  socketId: string;
+}

@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import {
   Modal,
   ModalContent,
@@ -21,6 +27,9 @@ import { useDispatch } from "react-redux";
 import { commentOnPost } from "@/redux_store/slices/posts/post-slice";
 import toast from "react-hot-toast";
 import { AuthProfile } from "@/types/profile";
+import { useSocket } from "@/experiments/socket-context";
+import { NotificationContext } from "@/experiments/notification-context";
+import { saveNotification } from "@/server_actions/saveNotification";
 
 interface CommentSectionProps {
   currentPost: Post;
@@ -28,17 +37,25 @@ interface CommentSectionProps {
   to: AuthProfile | null;
 }
 
-export default function CommentSection({
-  currentPost,
-  from,
-  to,
-}: CommentSectionProps) {
+let CommentSection = ({ currentPost, from, to }: CommentSectionProps) => {
+  const { socket } = useSocket();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [presentComment, setPresentComment] = useState<string>("");
   const { data: session } = useSession();
   const dispatch = useDispatch();
+  const { setNotifications } = useContext(NotificationContext) || {};
 
-  const handleCommentUpload = async () => {
+  useEffect(() => {
+    socket?.on("comment-added", (response) => {
+      setNotifications?.((prev) => {
+        const newSet = new Set([...Array.from(prev), response.info]);
+
+        return newSet;
+      });
+    });
+  }, [socket]);
+
+  const handleCommentUploadMemo = useCallback(async () => {
     if (!session) {
       toast.error("Login required");
       return;
@@ -69,13 +86,29 @@ export default function CommentSection({
           comment: composedComment,
         })
       );
+
+      socket?.emit("send-notification", {
+        type: "comment",
+        from: from,
+        to: to,
+        post: currentPost,
+        content: presentComment,
+      });
       toast.success("Comment Added");
+      const res = await saveNotification({
+        type: "comment",
+        from,
+        to,
+        post: currentPost,
+      });
+      console.log("server action response for comment ", res);
       setPresentComment("");
     } catch (error: any) {
       console.log(error.message);
       toast.error("Some error occured");
     }
-  };
+  }, [session, presentComment, currentPost, dispatch]);
+
   return (
     <div className="flex items-center justify-center ">
       <Button onPress={onOpen}>
@@ -96,7 +129,12 @@ export default function CommentSection({
               </ModalHeader>
               <ModalBody>
                 {currentPost.comments.map((comment: Comment, index: number) => (
-                  <IndividualComment comment={comment} key={index} />
+                  <IndividualComment
+                    comment={comment}
+                    key={index}
+                    post={currentPost}
+                    requestedBy={session?.user?.email!}
+                  />
                 ))}
               </ModalBody>
               <ModalFooter className="items-center">
@@ -110,7 +148,7 @@ export default function CommentSection({
                 <Button
                   color="primary"
                   onPress={onClose}
-                  onClick={handleCommentUpload}
+                  onClick={handleCommentUploadMemo}
                 >
                   Post
                 </Button>
@@ -121,4 +159,6 @@ export default function CommentSection({
       </Modal>
     </div>
   );
-}
+};
+
+export default memo(CommentSection);

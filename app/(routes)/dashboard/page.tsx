@@ -1,4 +1,5 @@
 "use client";
+
 import PostCard from "@/components/post/post-card";
 import ProfileCard from "@/components/profile/profile-card";
 import { selectPostsForCurrentUser } from "@/redux_store/slices/posts/post-slice";
@@ -27,7 +28,7 @@ const Dashboard = () => {
         <ProfileCard profile={currentUserProfile!} />
       </div>
       <div className="flex justify-center items-center mt-4 overflow-hidden">
-        <div className="grid grid-cols-2 gap-2 lg:gap-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 ">
+        <div className="grid sm:grid-cols-2 gap-2 lg:gap-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 ">
           {filteredPosts?.map((post: Post) => (
             <PostCard post={post} key={post._id} />
           ))}

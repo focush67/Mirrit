@@ -1,4 +1,4 @@
-import { addAllSavedPosts } from "@/redux_store/slices/global-slices";
+import { addAllSavedPosts } from "@/redux_store/slices/saved/saved-slice";
 import { Post } from "@/types/post";
 import axios from "axios";
 import { useEffect, useState } from "react";

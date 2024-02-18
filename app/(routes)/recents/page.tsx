@@ -1,10 +1,10 @@
 import Notification from "@/components/notifications/notifications-container";
 import React from "react";
-import { getServerSession } from "next-auth";
+import { getNotifications } from "@/server_actions/getNotifications";
 
 const NotificationsContainer = async () => {
-  const session = await getServerSession();
-  console.log("Server Session: ", session);
+  const notifications = await getNotifications();
+  console.log({ notifications });
   return (
     <div>
       <Notification />
