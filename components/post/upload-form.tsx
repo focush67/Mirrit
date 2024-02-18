@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useReducer, useState } from "react";
 import {
   Modal,
@@ -185,6 +187,7 @@ export default function UploadModal() {
                     color="default"
                     onClick={uploadImage}
                     isLoading={isUploading && coverUrl.length <= 0}
+                    disabled={coverUrl.length > 0}
                   >
                     Upload
                   </Button>

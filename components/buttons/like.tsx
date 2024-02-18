@@ -1,7 +1,7 @@
 "use client";
 
 import { Post } from "@/types/post";
-import React, { useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import Hover from "../hover/hover-pop";
 import { Heart } from "lucide-react";
 import axios from "axios";
@@ -17,7 +17,7 @@ interface LikeProps {
   to: AuthProfile | null;
 }
 
-const LikeButton = ({ post, from, to }: LikeProps) => {
+let LikeButton = ({ post, from, to }: LikeProps) => {
   const dispatch = useDispatch();
   const { data: session } = useSession();
 
@@ -44,4 +44,4 @@ const LikeButton = ({ post, from, to }: LikeProps) => {
   );
 };
 
-export default LikeButton;
+export default memo(LikeButton);

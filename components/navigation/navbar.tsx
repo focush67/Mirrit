@@ -65,9 +65,7 @@ export default function NavigationBar() {
     <Link href={"https://chatter-woad-nine.vercel.app/login"} key={4}>
       Chats
     </Link>,
-    <Link key={5} href={"/recents"}>
-      Recents
-    </Link>,
+
     <Button
       key={6}
       variant="shadow"
@@ -123,9 +121,6 @@ export default function NavigationBar() {
         </NavbarItem>
         <NavbarItem className={!session ? "hidden" : "block"}>
           <Link href={"https://chatter-woad-nine.vercel.app/login"}>Chats</Link>
-        </NavbarItem>
-        <NavbarItem className={!session ? "hidden" : "block"}>
-          <Link href="/recents">Recents</Link>
         </NavbarItem>
       </NavbarContent>
 

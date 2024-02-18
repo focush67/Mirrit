@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, memo, useCallback } from "react";
 import {
   Modal,
   ModalContent,
@@ -28,17 +28,13 @@ interface CommentSectionProps {
   to: AuthProfile | null;
 }
 
-export default function CommentSection({
-  currentPost,
-  from,
-  to,
-}: CommentSectionProps) {
+let CommentSection = ({ currentPost, from, to }: CommentSectionProps) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [presentComment, setPresentComment] = useState<string>("");
   const { data: session } = useSession();
   const dispatch = useDispatch();
 
-  const handleCommentUpload = async () => {
+  const handleCommentUploadMemo = useCallback(async () => {
     if (!session) {
       toast.error("Login required");
       return;
@@ -69,13 +65,16 @@ export default function CommentSection({
           comment: composedComment,
         })
       );
+
       toast.success("Comment Added");
+
       setPresentComment("");
     } catch (error: any) {
       console.log(error.message);
       toast.error("Some error occured");
     }
-  };
+  }, [session, presentComment, currentPost, dispatch]);
+
   return (
     <div className="flex items-center justify-center ">
       <Button onPress={onOpen}>
@@ -115,7 +114,7 @@ export default function CommentSection({
                 <Button
                   color="primary"
                   onPress={onClose}
-                  onClick={handleCommentUpload}
+                  onClick={handleCommentUploadMemo}
                 >
                   Post
                 </Button>
@@ -126,4 +125,6 @@ export default function CommentSection({
       </Modal>
     </div>
   );
-}
+};
+
+export default memo(CommentSection);

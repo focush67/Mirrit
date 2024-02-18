@@ -1,7 +1,6 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchSaved } from "../async-thunks";
 import { Saved } from "@/types/saved";
-import { Post } from "@/types/post";
 import { StateType } from "@/redux_store/store";
 
 interface SavedState {

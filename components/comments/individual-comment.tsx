@@ -1,11 +1,8 @@
-"use client";
-
 import React from "react";
 import { User } from "@nextui-org/react";
 import { Comment } from "@/types/comment";
 import { Post } from "@/types/post";
 import DeleteComment from "../buttons/delete-comment";
-import { useSession } from "next-auth/react";
 
 interface IndividualCommentProps {
   comment: Comment;

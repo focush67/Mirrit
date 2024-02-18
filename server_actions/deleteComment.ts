@@ -14,7 +14,7 @@ export const deleteComment = async (
   console.log({ session });
 
   if (!session || session?.user?.email !== requestedBy) {
-    throw new Error("Unauthorized");
+    throw new Error("Unauthorized comment deletion");
   }
 
   const specificPost = await Posts.findById({ _id: post._id });
