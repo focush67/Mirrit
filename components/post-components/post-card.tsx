@@ -23,13 +23,12 @@ let PostCard = async ({
   size = "large",
   removeSaved = false,
 }: PostCardProps) => {
-  console.log(`${post.title} rendered`);
   const comments = await getCommentsForPost(post.id);
   const self = await getSelf();
   const owner = self as User;
   return (
     <Card
-      className={`py-2 flex flex-col ${size === "small" && "h-[420px]"} ${
+      className={`py-2 flex flex-col ${size === "small" && "h-auto"} ${
         size === "small" ? "w-[250px]" : "w-[300px]"
       } relative shadow-2xl`}
     >

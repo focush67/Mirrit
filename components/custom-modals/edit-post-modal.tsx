@@ -19,6 +19,8 @@ import { editPost } from "@/redux_store/slices/posts/post-slice";
 import { Edit3 } from "lucide-react";
 import { onEditPost } from "@/server_actions/posts";
 import toast from "react-hot-toast";
+import { UploadDropZone } from "@/utilities/uploadthing";
+import Image from "next/image";
 
 interface EditModalProps {
   post: Post & { owner: User };
@@ -30,6 +32,7 @@ export default function EditModal({ post }: EditModalProps) {
   const stateDispatch = useDispatch();
   const [title, setTitle] = useState(post.title);
   const [description, setDescription] = useState(post.description);
+  const [cover, setCover] = useState(post.cover);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
@@ -50,6 +53,7 @@ export default function EditModal({ post }: EditModalProps) {
         id: post.id,
         title: title,
         description: description,
+        cover: cover,
       }).then((data) => {
         toast.success(`Post edited!`);
         stateDispatch(
@@ -69,7 +73,12 @@ export default function EditModal({ post }: EditModalProps) {
       <Button onPress={onOpen} className="bg-inherit" size="sm">
         <Edit3 />
       </Button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        placement="center"
+        className="max-w-[70vw]"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -95,6 +104,37 @@ export default function EditModal({ post }: EditModalProps) {
                   variant="bordered"
                   onChange={handleChange}
                 />
+                <div className="flex flex-row items-center justify-center">
+                  <div className={`rounded-xl outline-muted mb-4`}>
+                    {!cover && (
+                      <UploadDropZone
+                        endpoint="thumbnailUploader"
+                        appearance={{
+                          label: {
+                            color: "#fff",
+                          },
+                          allowedContent: {
+                            color: "#ffff",
+                          },
+                        }}
+                        onClientUploadComplete={(res) => {
+                          setCover(res?.[0]?.url);
+                        }}
+                      ></UploadDropZone>
+                    )}
+                  </div>
+                  {cover && (
+                    <div className="mt-2">
+                      <Image
+                        src={cover}
+                        width={200}
+                        height={200}
+                        alt="Thumbnail"
+                        className="rounded-xl max-h-[350px] object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>

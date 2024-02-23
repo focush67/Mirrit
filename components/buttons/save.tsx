@@ -1,6 +1,6 @@
 "use client";
 
-import { SaveIcon } from "lucide-react";
+import { Download } from "lucide-react";
 import React, { useEffect, useTransition } from "react";
 import { toast } from "react-hot-toast";
 import { Post, User } from "@prisma/client";
@@ -49,7 +49,7 @@ const ShareButton = ({ post, owner }: SaveProps) => {
 
   return (
     <div>
-      <SaveIcon className="hover:cursor-pointer" onClick={handleSavingPost} />
+      <Download className="hover:cursor-pointer" onClick={handleSavingPost} />
     </div>
   );
 };

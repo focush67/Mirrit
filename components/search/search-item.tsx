@@ -1,7 +1,7 @@
-import { Card, CardHeader, Avatar, Button, CardBody } from "@nextui-org/react";
+import { Card, CardHeader, Avatar, CardBody } from "@nextui-org/react";
 import { User } from "@prisma/client";
 import RemoveFollower from "../buttons/remove-follower";
-import { Link } from "lucide-react";
+
 import UnfollowButton from "../buttons/unfollow-button";
 
 export const SearchItem = ({
@@ -14,7 +14,7 @@ export const SearchItem = ({
   owner: User;
 }) => {
   return (
-    <Card className="w-[50%] h-[40%] shadow-2xl">
+    <Card className="w-3/4 md:w-[60%] lg:w[40%] h-[40%] shadow-2xl">
       <CardHeader className="justify-between">
         <div className="flex gap-5">
           <Avatar isBordered radius="full" size="md" src={profile.imageUrl!} />

@@ -14,6 +14,5 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 export const fetchSaved = createAsyncThunk("saved/fetchSaved", async () => {
   const response = await axios.get("/api/save");
   const savedPosts = response.data.savedPostsIds;
-  console.log({ savedPosts });
   return savedPosts || [];
 });

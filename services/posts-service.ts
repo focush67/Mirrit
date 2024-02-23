@@ -2,7 +2,11 @@ import { db } from "@/utilities/database";
 import { getSelf } from "./auth-service";
 
 export const getPosts = async () => {
-  const posts = await db.post.findMany({});
+  const posts = await db.post.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
   return posts;
 };
 

@@ -3,7 +3,7 @@
 import { removeRelationship } from "@/redux_store/slices/users/user-slice";
 import { onRemoveFollower } from "@/server_actions/follow";
 import { Button } from "@nextui-org/react";
-import { Loader } from "lucide-react";
+import { Loader, CircleSlash } from "lucide-react";
 import { useTransition } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -43,7 +43,7 @@ const RemoveFollower = ({ ownerId, profileId }: RemoveFollowerProps) => {
         className="bg-red-800"
         onClick={handleFollowerRemoval}
       >
-        Remove
+        <CircleSlash />
       </Button>
     );
   }

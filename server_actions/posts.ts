@@ -11,6 +11,9 @@ export const getAllPosts = async () => {
     include: {
       owner: true,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   return posts;
 };

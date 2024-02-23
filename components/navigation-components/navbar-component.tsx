@@ -1,14 +1,15 @@
 import React from "react";
-import { SignInButton, UserButton, currentUser } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 import { Button } from "@nextui-org/react";
 import NavigationBar from "./Navbar";
+import { getSelf } from "@/services/auth-service";
 
 const NavbarComponent = async () => {
-  const self = await currentUser();
+  const self = await getSelf();
   const isLoggedIn = !!self;
   const loggedInMenuItems = ["Home", "dashboard", "saved", "messenger"];
 
-  const defaultMenuItems = ["Home"];
+  const defaultMenuItems: string[] = [];
 
   const menuItems = isLoggedIn ? loggedInMenuItems : defaultMenuItems;
   return <NavigationBar menuItems={menuItems} isLoggedIn={isLoggedIn} />;

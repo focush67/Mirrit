@@ -13,7 +13,6 @@ import Link from "next/link";
 import ToggleSwitch from "../switch/toggle-switch";
 import { UserButton } from "@clerk/nextjs";
 import { LoginButton } from "./navbar-component";
-import { useRouter } from "next/navigation";
 
 interface NavigationProps {
   menuItems: string[];
@@ -25,9 +24,14 @@ export default function NavigationBar({
   isLoggedIn,
 }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const router = useRouter();
+
   return (
-    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
+    <Navbar
+      isBordered
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+      className="w-full"
+    >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
