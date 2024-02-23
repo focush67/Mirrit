@@ -11,6 +11,7 @@ import { getSelf } from "@/services/auth-service";
 import DeleteModal from "../custom-modals/delete-post-modal";
 import EditModal from "../custom-modals/edit-post-modal";
 import RemoveSaved from "../buttons/remove-saved-button";
+import Description from "./description";
 
 interface PostCardProps {
   post: Post & { owner: User };
@@ -69,29 +70,18 @@ let PostCard = async ({
           )}
         </CardHeader>
       </div>
-      <CardBody className="overflow-visible py-2 text-center items-center ">
+      <CardBody className="overflow-visible py-2 text-center flex items-center relative justify-between">
         <Image
           alt="Card background"
           className="object-cover rounded-xl"
           src={post.cover}
           width={size === "small" ? (removeSaved ? "auto" : "180") : "270"}
-          height={size === "small" ? "180" : "270"}
           isZoomed
         />
-        {removeSaved === false && (
-          <div className="mt-2 max-h-24 overflow-hidden">
-            <p
-              className={`${
-                size === "small" ? "text-xs" : "text-sm"
-              } whitespace-pre-line`}
-            >
-              {post.description}
-            </p>
-          </div>
-        )}
+        <Description text={post.description!} size={size} />
         {removeSaved === false && (
           <div
-            className={`flex ${
+            className={`flex  ${
               size === "small" ? "justify-center" : "justify-between"
             } items-center  mt-3 ${
               size === "small" ? "w-[100px]" : "w-[200px]"

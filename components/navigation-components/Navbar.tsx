@@ -55,7 +55,9 @@ export default function NavigationBar({
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem>{isLoggedIn ? <UserButton /> : <LoginButton />}</NavbarItem>
+        <NavbarItem>
+          {isLoggedIn ? <UserButton afterSignOutUrl="/" /> : <LoginButton />}
+        </NavbarItem>
         <NavbarItem>
           <ToggleSwitch />
         </NavbarItem>

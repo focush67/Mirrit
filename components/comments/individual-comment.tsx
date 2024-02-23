@@ -5,7 +5,7 @@ import { T_Comment } from "@/types/comment";
 import DeleteComment from "../buttons/delete-comment";
 
 interface IndividualCommentProps {
-  comment: T_Comment;
+  comment: any;
   post: Post;
   loggedInUserId: string | undefined;
 }
@@ -22,18 +22,18 @@ export default function IndividualComment({
           name=""
           description=""
           avatarProps={{
-            src: `${comment?.commentor.imageUrl}`,
+            src: `${comment?.owner?.imageUrl}`,
           }}
         />
         <p>{comment?.content}</p>
       </div>
 
-      {(loggedInUserId === post.owner_Id ||
-        comment.commented_by_Id === loggedInUserId) && (
+      {(loggedInUserId === post?.owner_Id ||
+        comment?.commented_by_Id === loggedInUserId) && (
         <DeleteComment
           comment={comment}
           post={post}
-          commentOwner={comment.commentor.id}
+          commentOwner={comment?.commentor?.id}
         />
       )}
     </div>

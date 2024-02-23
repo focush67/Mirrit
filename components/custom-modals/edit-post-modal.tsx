@@ -21,6 +21,7 @@ import { onEditPost } from "@/server_actions/posts";
 import toast from "react-hot-toast";
 import { UploadDropZone } from "@/utilities/uploadthing";
 import Image from "next/image";
+import { removeTimeFields } from "@/utilities/remove-fields";
 
 interface EditModalProps {
   post: Post & { owner: User };
@@ -56,10 +57,11 @@ export default function EditModal({ post }: EditModalProps) {
         cover: cover,
       }).then((data) => {
         toast.success(`Post edited!`);
+        console.log(data);
         stateDispatch(
           editPost({
             id: post.id,
-            editedPost: data!,
+            editedPost: data,
           })
         );
       });
@@ -106,37 +108,39 @@ export default function EditModal({ post }: EditModalProps) {
                 />
                 <div className="flex flex-row items-center justify-center">
                   <div className={`rounded-xl outline-muted mb-4`}>
-                    {!cover && (
-                      <UploadDropZone
-                        endpoint="thumbnailUploader"
-                        appearance={{
-                          label: {
-                            color: "#fff",
-                          },
-                          allowedContent: {
-                            color: "#ffff",
-                          },
-                        }}
-                        onClientUploadComplete={(res) => {
-                          setCover(res?.[0]?.url);
-                        }}
-                      ></UploadDropZone>
-                    )}
-                  </div>
-                  {cover && (
-                    <div className="mt-2">
-                      <Image
-                        src={cover}
-                        width={200}
-                        height={200}
-                        alt="Thumbnail"
-                        className="rounded-xl max-h-[350px] object-cover"
-                      />
+                    <div className="flex flex-col md:flex-row lg:flex-row gap-x-2 items-center justify-center gap-y-2">
+                      {cover && (
+                        <div className="mt-2">
+                          <Image
+                            src={cover}
+                            width={200}
+                            height={200}
+                            alt="Thumbnail"
+                            className="rounded-xl max-h-[350px] object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="w-auto md:w-1/2 border-1 border-dashed rounded-lg">
+                        <UploadDropZone
+                          endpoint="thumbnailUploader"
+                          appearance={{
+                            label: {
+                              color: "#fff",
+                            },
+                            allowedContent: {
+                              color: "#ffff",
+                            },
+                          }}
+                          onClientUploadComplete={(res) => {
+                            setCover(res?.[0]?.url);
+                          }}
+                        ></UploadDropZone>
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               </ModalBody>
-              <ModalFooter>
+              <ModalFooter className="flex items-center justify-center gap-x-2">
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>

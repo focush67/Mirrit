@@ -1,8 +1,9 @@
 "use server";
 
 import { getSelf } from "@/services/auth-service";
-import { T_Comment } from "@/types/comment";
+import { getUserById } from "@/services/user-service";
 import { db } from "@/utilities/database";
+import { removeTimeFields } from "@/utilities/remove-fields";
 import { Post } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -28,15 +29,7 @@ export const getCommentsForPost = async (postId: string) => {
     },
   });
 
-  const formattedComments: T_Comment[] = comments.map((comment) => ({
-    commented_by_Id: comment.commented_by_Id,
-    content: comment.content,
-    commentor: comment.commentor,
-    createdAt: comment.createdAt,
-    updatedAt: comment.updatedAt,
-    post_Id: comment.post_Id,
-    id: comment.id,
-  }));
+  const formattedComments = removeTimeFields(comments);
 
   return formattedComments;
 };
@@ -109,7 +102,35 @@ export const onEditPost = async (values: Partial<Post>) => {
     },
   });
   revalidatePath("/dashboard");
-  return editedPost;
+
+  const editedSaved = removeTimeFields(editedPost.saved);
+  const editedLikes = removeTimeFields(editedPost.likes);
+
+  const comments = await Promise.all(
+    editedPost.comments.map(async ({ createdAt, updatedAt, ...comment }) => {
+      const owner = await getUserById(comment.commented_by_Id);
+      if (owner) {
+        return {
+          ...comment,
+          owner: removeTimeFields(owner),
+        };
+      }
+      return null;
+    })
+  );
+
+  const filteredComments = comments.filter(Boolean);
+
+  const finalEditPost = {
+    ...editedPost,
+    saved: editedSaved,
+    likes: editedLikes,
+    comments: filteredComments,
+  };
+
+  const edit = removeTimeFields(finalEditPost);
+
+  return edit;
 };
 
 export const deletePost = async (id: string) => {

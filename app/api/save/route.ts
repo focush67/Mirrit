@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSavedPostsIds } from "@/services/posts-service";
+import { removeTimeFields } from "@/utilities/remove-fields";
 
 export const GET = async (_: NextRequest) => {
   const results = await getSavedPostsIds();
@@ -7,16 +8,9 @@ export const GET = async (_: NextRequest) => {
 
   const finalResponse = {
     savedPosts: ids,
-    user: {
-      id: results?.id,
-      username: results?.username,
-      imageUrl: results?.imageUrl,
-      externalUserId: results?.externalUserId,
-      bio: results?.bio,
-      createdAt: Date,
-      updatedAt: Date,
-    },
+    user: removeTimeFields(results),
   };
+
   return NextResponse.json({
     message: "Returning all saved posts ids",
     status: 201,

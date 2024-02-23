@@ -15,14 +15,12 @@ import { Post } from "@prisma/client";
 import IndividualComment from "./individual-comment";
 import { MessageCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  commentOnPost,
-  selectPost,
-} from "@/redux_store/slices/posts/post-slice";
+import { commentOnPost } from "@/redux_store/slices/posts/post-slice";
 import toast from "react-hot-toast";
 import { CommentOnPost } from "@/server_actions/interactions";
 import { StateType } from "@/redux_store/store";
 import { T_Comment } from "@/types/comment";
+import { PostType } from "@/types/post";
 interface CommentSectionProps {
   post: Post;
   existingComments: T_Comment[];
@@ -39,9 +37,8 @@ let CommentSection = ({
   const [isPending, startTransition] = useTransition();
   const dispatch = useDispatch();
   const statePost = useSelector((state: StateType) =>
-    selectPost(state, post.id)
+    state.posts.posts.find((p: PostType) => p.id === post.id)
   );
-
   const handleCommenting = () => {
     startTransition(() => {
       CommentOnPost({ postId: post.id, content: presentComment })
@@ -79,7 +76,7 @@ let CommentSection = ({
                 {statePost?.title}
               </ModalHeader>
               <ModalBody>
-                {existingComments.map((comment: any, index: number) => (
+                {statePost?.comments?.map((comment: any, index: number) => (
                   <IndividualComment
                     comment={comment}
                     key={index}

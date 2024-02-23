@@ -4,8 +4,8 @@ import { fetchUsers } from "../async-thunks";
 import { StateType } from "@/redux_store/store";
 
 type StateUser = User & {
-  following: Follow[];
-  followedBy: Follow[];
+  following: Partial<Follow>[];
+  followedBy: Partial<Follow>[];
 };
 interface UserState {
   users: StateUser[];
@@ -74,14 +74,14 @@ const userSlice = createSlice({
           return {
             ...user,
             followedBy: user.followedBy.filter(
-              (follower: Follow) => follower.id !== target
+              (follower: Partial<Follow>) => follower.id !== target
             ),
           };
         } else if (user.id === target) {
           return {
             ...user,
             follower: user.following.filter(
-              (follower: Follow) => follower.id !== initiator
+              (follower: Partial<Follow>) => follower.id !== initiator
             ),
           };
         } else {

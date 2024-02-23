@@ -2,7 +2,7 @@
 
 import { Post } from "@prisma/client";
 import React, { memo, useTransition } from "react";
-import { Heart } from "lucide-react";
+import { Heart, Loader } from "lucide-react";
 import { LikePost } from "@/server_actions/interactions";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -43,8 +43,12 @@ let LikeButton = ({ post, isDashboard }: LikeProps) => {
 
   return (
     <div className="flex gap-2">
-      <Heart className={` hover:cursor-pointer`} onClick={onLike} />
-      <p>{statePost?.likes.length}</p>
+      {isPending ? (
+        <Loader className="w-6 h-6 animate-spin" />
+      ) : (
+        <Heart className={` hover:cursor-pointer`} onClick={onLike} />
+      )}
+      <p>{statePost?.likes?.length}</p>
     </div>
   );
 };

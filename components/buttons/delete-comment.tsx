@@ -2,7 +2,7 @@
 
 import { removeCommentFromPost } from "@/redux_store/slices/posts/post-slice";
 import { Button } from "@nextui-org/react";
-import { Minus } from "lucide-react";
+import { Loader, Minus } from "lucide-react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useTransition } from "react";
@@ -47,7 +47,11 @@ const DeleteComment = ({ comment, post, commentOwner }: DeleteCommentProps) => {
       className="rounded-lg"
       disabled={isPending}
     >
-      <Minus className="h-4 w-4" />
+      {isPending ? (
+        <Loader className="animate-spin h-4 w-4" />
+      ) : (
+        <Minus className="h-4 w-4" />
+      )}
     </Button>
   );
 };

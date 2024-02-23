@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import React, { useEffect, useTransition } from "react";
 import { toast } from "react-hot-toast";
 import { Post, User } from "@prisma/client";
@@ -41,7 +41,7 @@ const ShareButton = ({ post, owner }: SaveProps) => {
           );
         })
         .catch((error: any) => {
-          toast.error(`Error saving to Collections`);
+          toast.error("Already exists in cluster");
           console.log(error.message);
         });
     });
@@ -49,7 +49,11 @@ const ShareButton = ({ post, owner }: SaveProps) => {
 
   return (
     <div>
-      <Download className="hover:cursor-pointer" onClick={handleSavingPost} />
+      {isPending ? (
+        <Loader2 className="animate-spin" />
+      ) : (
+        <Download className="hover:cursor-pointer" onClick={handleSavingPost} />
+      )}
     </div>
   );
 };

@@ -1,10 +1,11 @@
-import { Follow, Post, User } from "@prisma/client";
-import { StateType } from "@/redux_store/store";
+import { User } from "@prisma/client";
+
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { fetchSaved } from "../async-thunks";
+import { UserType } from "@/types/user";
 
 interface SavedPost {
-  user: User;
+  user: UserType;
   savedPostsIds: string[];
 }
 
@@ -24,7 +25,7 @@ const savedSlice = createSlice({
   reducers: {
     addNewSavedPostState: (
       state: SavedState,
-      action: PayloadAction<{ postId: string; owner: User }>
+      action: PayloadAction<{ postId: string; owner: UserType }>
     ) => {
       const { postId, owner } = action.payload;
       if (!state.cluster) {

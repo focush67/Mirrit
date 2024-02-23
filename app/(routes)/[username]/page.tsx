@@ -11,8 +11,11 @@ interface UserProfileProps {
 const Page = async ({ params }: UserProfileProps) => {
   const { username } = params;
   const profile = await getUserByUsername(username);
+  if (!profile) {
+    throw new Error("No profile found, refresh");
+  }
   const user = await getSelf();
-  const followStatus = await isFollowingGivenUser(profile?.id!);
+  const followStatus = await isFollowingGivenUser(profile.id);
   return (
     <div>
       <UserProfileCard
