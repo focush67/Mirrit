@@ -1,11 +1,17 @@
-import { Post } from "@/types/post";
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Like, Post, Saved } from "@prisma/client";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchPosts } from "../async-thunks";
-import { Comment } from "@/types/comment";
+import { Comment } from "@prisma/client";
 import { StateType } from "@/redux_store/store";
 
+type StatePost = Post & {
+  likes: Like[];
+  comments: Comment[];
+  saved: Saved[];
+};
+
 interface PostState {
-  posts: Post[];
+  posts: StatePost[];
   postStatus: "loading" | "succeeded" | "failed";
 }
 
@@ -19,39 +25,35 @@ const postsSlice = createSlice({
   initialState,
 
   reducers: {
-    addPost: (state: PostState, action: PayloadAction<Post>) => {
+    addPost: (state: PostState, action: PayloadAction<StatePost>) => {
       return {
         ...state,
         posts: [...state.posts, action.payload],
       };
     },
 
-    addPostsChunk: (state: PostState, action: PayloadAction<Post[]>) => {
+    likePost: (
+      state: PostState,
+      action: PayloadAction<{ postId: string; like: Like }>
+    ) => {
+      const { postId, like } = action.payload;
       return {
         ...state,
-        posts: action.payload,
-      };
-    },
-
-    likePost: (state: PostState, action: PayloadAction<{ _id: string }>) => {
-      const { _id } = action.payload;
-      return {
-        ...state,
-        posts: state.posts.map((post: Post) =>
-          post._id === _id ? { ...post, likes: Number(post.likes) + 1 } : post
+        posts: state.posts.map((post: StatePost) =>
+          post.id === postId ? { ...post, likes: [...post.likes, like] } : post
         ),
       };
     },
 
     commentOnPost: (
       state: PostState,
-      action: PayloadAction<{ _id: string; comment: Comment }>
+      action: PayloadAction<{ id: string; comment: Comment }>
     ) => {
-      const { _id, comment } = action.payload;
+      const { id, comment } = action.payload;
       return {
         ...state,
-        posts: state.posts.map((post: Post) =>
-          post._id === _id
+        posts: state.posts.map((post: StatePost) =>
+          post.id === id
             ? { ...post, comments: [...post.comments, comment] }
             : post
         ),
@@ -65,12 +67,12 @@ const postsSlice = createSlice({
       const { commentId, postId } = action.payload;
 
       const postIndex = state.posts.findIndex(
-        (post: Post) => post._id === postId
+        (post: StatePost) => post.id === postId
       );
 
       if (postIndex !== -1) {
         const updatedComments = state.posts[postIndex].comments.filter(
-          (comment) => comment._id !== commentId
+          (comment) => comment.id !== commentId
         );
 
         const updatedPost = {
@@ -91,11 +93,11 @@ const postsSlice = createSlice({
       }
     },
 
-    deletePost: (state: PostState, action: PayloadAction<{ _id: string }>) => {
-      const { _id } = action.payload;
+    deletePost: (state: PostState, action: PayloadAction<{ id: string }>) => {
+      const { id } = action.payload;
       return {
         ...state,
-        posts: state.posts.filter((post: Post) => post._id !== _id),
+        posts: state.posts.filter((post: StatePost) => post.id !== id),
       };
     },
 
@@ -105,13 +107,13 @@ const postsSlice = createSlice({
 
     editPost: (
       state: PostState,
-      action: PayloadAction<{ _id: string; editedPost: Post }>
+      action: PayloadAction<{ id: string; editedPost: StatePost }>
     ) => {
-      const { _id, editedPost } = action.payload;
+      const { id, editedPost } = action.payload;
       return {
         ...state,
-        posts: state.posts.map((post: Post) =>
-          post._id === _id ? editedPost : post
+        posts: state.posts.map((post: StatePost) =>
+          post.id === id ? editedPost : post
         ),
       };
     },
@@ -127,7 +129,7 @@ const postsSlice = createSlice({
       })
       .addCase(
         fetchPosts.fulfilled,
-        (state: PostState, action: PayloadAction<Post[]>) => {
+        (state: PostState, action: PayloadAction<StatePost[]>) => {
           return {
             ...state,
             postStatus: "succeeded",
@@ -136,6 +138,7 @@ const postsSlice = createSlice({
         }
       )
       .addCase(fetchPosts.rejected, (state) => {
+        console.log("Posts loading failed, check thunk");
         return {
           ...state,
           postStatus: "failed",
@@ -146,7 +149,6 @@ const postsSlice = createSlice({
 
 export const {
   addPost,
-  addPostsChunk,
   likePost,
   commentOnPost,
   removeCommentFromPost,
@@ -160,9 +162,5 @@ export default postsSlice.reducer;
 // Selectors
 
 export const selectAllPosts = (state: StateType) => state.posts.posts;
-
-export const selectPostsForCurrentUser = createSelector(
-  [selectAllPosts, (_: StateType, user: string) => user],
-  (posts: Post[], user: string) =>
-    posts.filter((post: Post) => post.email === user)
-);
+export const selectPost = (state: StateType, postId: string) =>
+  state.posts.posts.find((post: StatePost) => post.id === postId);

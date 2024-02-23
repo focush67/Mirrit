@@ -1,17 +1,6 @@
-import { Comment } from "./comment";
+import { Post, User } from "@prisma/client";
 
-export interface Post {
-  _id: any;
-  email: string;
-  title: string;
-  description: string;
-  image: string;
-  userName: string;
-  tags: string[];
-  cover: string;
-  likes: number;
-  comments: Comment[];
-  shares: number;
-  createdAt?: any;
-  updatedAt?: any;
-}
+export type T_Post = {
+  post: Post;
+  postedBy: User;
+};

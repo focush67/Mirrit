@@ -1,15 +1,18 @@
 "use client";
 import { Button } from "@nextui-org/react";
+import { Bug } from "lucide-react";
 import React from "react";
 import { useRouter } from "next/navigation";
 
-const Error = () => {
+const ErrorAtSaved = () => {
   const router = useRouter();
   return (
     <div className="flex flex-col items-center justify-center space-y-4 mt-[10%]">
       <div className="m-auto space-y-5 text-center">
-        <p className="text-5xl text-red-800 font-semibold">500</p>
-        <p className="text-4xl font-semibold">Some Error Occured</p>
+        <div className="text-5xl text-red-800 font-semibold flex items-center justify-center">
+          <Bug className="h-10 w-10" />
+        </div>
+        <p className="text-4xl font-semibold">Some Error Occured at Saved</p>
       </div>
       <div>
         <Button
@@ -25,4 +28,4 @@ const Error = () => {
   );
 };
 
-export default Error;
+export default ErrorAtSaved;

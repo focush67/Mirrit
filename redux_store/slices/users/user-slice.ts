@@ -1,13 +1,16 @@
-import { AuthProfile, UserProfile } from "@/types/profile";
+import { Follow, User } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchUsers } from "../async-thunks";
 import { StateType } from "@/redux_store/store";
 
+type StateUser = User & {
+  following: Follow[];
+  followedBy: Follow[];
+};
 interface UserState {
-  users: UserProfile[];
+  users: StateUser[];
   userStatus: "loading" | "succeeded" | "failed";
 }
-
 const initialState: UserState = {
   users: [],
   userStatus: "loading" || "succeeded" || "failed",
@@ -17,9 +20,9 @@ const userSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    addNewUser: (state: UserState, action: PayloadAction<UserProfile>) => {
+    addNewUser: (state: UserState, action: PayloadAction<StateUser>) => {
       const userExists = state.users.some(
-        (user: UserProfile) => user.email === action.payload.email
+        (user: StateUser) => user.id === action.payload.id
       );
       if (userExists) {
         return state;
@@ -27,13 +30,6 @@ const userSlice = createSlice({
       return {
         ...state,
         users: [...state.users, action.payload],
-      };
-    },
-
-    addAllUsers: (state: UserState, action: PayloadAction<UserProfile[]>) => {
-      return {
-        ...state,
-        users: action.payload,
       };
     },
 
@@ -73,19 +69,19 @@ const userSlice = createSlice({
       console.log(action.payload);
       const { initiator, target } = action.payload;
 
-      const updatedUsers = state.users.map((user: UserProfile) => {
-        if (user.email === initiator) {
+      const updatedUsers = state.users.map((user: StateUser) => {
+        if (user.id === initiator) {
           return {
             ...user,
-            following: user.following.filter(
-              (follower: AuthProfile) => follower.email !== target
+            followedBy: user.followedBy.filter(
+              (follower: Follow) => follower.id !== target
             ),
           };
-        } else if (user.email === target) {
+        } else if (user.id === target) {
           return {
             ...user,
-            followers: user.followers.filter(
-              (follower: AuthProfile) => follower.email !== initiator
+            follower: user.following.filter(
+              (follower: Follow) => follower.id !== initiator
             ),
           };
         } else {
@@ -116,7 +112,7 @@ const userSlice = createSlice({
       })
       .addCase(
         fetchUsers.fulfilled,
-        (state, action: PayloadAction<UserProfile[]>) => {
+        (state, action: PayloadAction<StateUser[]>) => {
           return {
             ...state,
             userStatus: "succeeded",
@@ -125,6 +121,7 @@ const userSlice = createSlice({
         }
       )
       .addCase(fetchUsers.rejected, (state) => {
+        console.log("User loading failed, check thunk");
         return {
           ...state,
           userStatus: "failed",
@@ -133,19 +130,14 @@ const userSlice = createSlice({
   },
 });
 
-export const {
-  addNewUser,
-  addAllUsers,
-  addRelationship,
-  removeRelationship,
-  resetUser,
-} = userSlice.actions;
+export const { addNewUser, addRelationship, removeRelationship, resetUser } =
+  userSlice.actions;
 
 export default userSlice.reducer;
 
 // Selectors
 
-export const selectCurrentUser = (state: StateType, user: string) =>
-  state.users.users.find((profile: UserProfile) => profile.email === user);
+export const selectCurrentUser = (state: StateType, userId: string) =>
+  state.users.users.find((profile: StateUser) => profile.id === userId);
 
 export const selectAllUsers = (state: StateType) => state.users.users;

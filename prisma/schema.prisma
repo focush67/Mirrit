@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  username         String    @unique
+  imageUrl         String?
+  externalUserId   String    @unique
+  bio              String?
+  following        Follow[]  @relation("Following")
+  followedBy       Follow[]  @relation("FollowedBy")
+  posts            Post[]    @relation("PostsCreated")
+  likedPosts       Like[]    @relation("LikedPosts")
+  commentedOnPosts Comment[] @relation("CommentedOnPosts")
+  savedPosts       Saved[]   @relation("SavedPosts")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Follow {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  follower_Id  String   @db.ObjectId
+  following_Id String   @db.ObjectId
+  follower     User     @relation("Following", fields: [follower_Id], references: [id], onDelete: Cascade)
+  following    User     @relation("FollowedBy", fields: [following_Id], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+
+  @@unique([follower_Id, following_Id])
+  @@index([follower_Id])
+  @@index([following_Id])
+}
+
+model Post {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  owner_Id    String    @db.ObjectId
+  owner       User      @relation("PostsCreated", fields: [owner_Id], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  cover       String
+  likes       Like[]    @relation("LikedBy")
+  comments    Comment[] @relation("CommentedBy")
+  saved       Saved[]   @relation("SavedByUsers")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Like {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  liked_by_Id String   @db.ObjectId
+  post_Id     String   @db.ObjectId
+  liker       User     @relation("LikedPosts", fields: [liked_by_Id], references: [id], onDelete: Cascade)
+  target_post Post     @relation("LikedBy", fields: [post_Id], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Comment {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  commented_by_Id String @db.ObjectId
+  post_Id         String @db.ObjectId
+
+  commentor User @relation("CommentedOnPosts", fields: [commented_by_Id], references: [id], onDelete: Cascade)
+
+  target_post Post @relation("CommentedBy", fields: [post_Id], references: [id], onDelete: Cascade)
+
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Saved {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  saved_by_Id   String @db.ObjectId
+  saved_post_Id String @db.ObjectId
+  savedBy       User   @relation("SavedPosts", fields: [saved_by_Id], references: [id], onDelete: Cascade)
+  savedPost     Post   @relation("SavedByUsers", fields: [saved_post_Id], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([saved_by_Id, saved_post_Id])
+}

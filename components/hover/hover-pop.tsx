@@ -9,7 +9,7 @@ export default function Hover({
   text: string;
 }) {
   return (
-    <Tooltip content={text}>
+    <Tooltip content={text} className="w-2">
       <Button>{children}</Button>
     </Tooltip>
   );

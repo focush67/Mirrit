@@ -1,17 +1,24 @@
-import { Post } from "@/types/post";
-import React from "react";
+import { Post } from "@prisma/client";
+import React, { memo } from "react";
 import CommentSection from "../comments/comment-section";
-
-import { AuthProfile } from "@/types/profile";
+import { T_Comment } from "@/types/comment";
+import { getSelf } from "@/services/auth-service";
 
 interface CommentProps {
   post: Post;
-  from: AuthProfile | null;
-  to: AuthProfile | null;
+  existingComments: T_Comment[];
 }
 
-const CommentButton = ({ post, from, to }: CommentProps) => {
-  return <CommentSection currentPost={post} from={from} to={to} />;
+const CommentButton = async ({ post, existingComments }: CommentProps) => {
+  const self = await getSelf();
+  const loggedInUserId = self?.id;
+  return (
+    <CommentSection
+      post={post}
+      existingComments={existingComments}
+      loggedInUserId={loggedInUserId}
+    />
+  );
 };
 
-export default CommentButton;
+export default memo(CommentButton);

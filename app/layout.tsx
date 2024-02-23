@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/providers/ui-provider";
-import SessionProvider from "@/providers/session-provider";
 import ReduxProvider from "@/providers/store-provider";
-import { getServerSession } from "next-auth";
-import NavigationBar from "@/components/navigation/navbar";
+import NavbarComponent from "@/components/navigation-components/navbar-component";
 import { ToastProvider } from "@/providers/toast-provider";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,22 +20,20 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
-
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ToastProvider>
-          <Providers>
-            <SessionProvider session={session}>
+    <ClerkProvider appearance={{ baseTheme: dark }}>
+      <html lang="en">
+        <body className={inter.className}>
+          <ToastProvider>
+            <Providers>
               <ReduxProvider>
-                <NavigationBar />
+                <NavbarComponent />
                 {children}
               </ReduxProvider>
-            </SessionProvider>
-          </Providers>
-        </ToastProvider>
-      </body>
-    </html>
+            </Providers>
+          </ToastProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

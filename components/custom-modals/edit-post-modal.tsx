@@ -1,4 +1,6 @@
-import React, { useEffect, useReducer } from "react";
+"use client";
+
+import React, { useEffect, useState, useTransition } from "react";
 import {
   Modal,
   ModalContent,
@@ -8,113 +10,62 @@ import {
   Button,
   useDisclosure,
   Input,
+  Textarea,
 } from "@nextui-org/react";
-import { useSession } from "next-auth/react";
-import { Post } from "@/types/post";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { Post, User } from "@prisma/client";
+
 import { useDispatch } from "react-redux";
 import { editPost } from "@/redux_store/slices/posts/post-slice";
 import { Edit3 } from "lucide-react";
+import { onEditPost } from "@/server_actions/posts";
+import toast from "react-hot-toast";
 
 interface EditModalProps {
-  post: Post;
+  post: Post & { owner: User };
 }
 
 export default function EditModal({ post }: EditModalProps) {
+  const [isPending, startTransition] = useTransition();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { data: session } = useSession();
   const stateDispatch = useDispatch();
-
-  const initialPost: Post = {
-    title: post.title,
-    email: session?.user?.email!,
-    _id: post._id,
-    description: post.description,
-    image: session?.user?.image!,
-    userName: session?.user?.name!,
-    tags: post.tags,
-    cover: post.cover,
-    likes: post.likes,
-    comments: post.comments,
-    shares: post.shares,
-  };
-
-  interface PostModalActions {
-    type:
-      | "CHANGE_TITLE"
-      | "CHANGE_DESCRIPTION"
-      | "CHANGE_TAGS"
-      | "CHANGE_COVER_PHOTO";
-    payload: any;
-  }
-
-  const reducerFn = (state: Post, action: PostModalActions) => {
-    switch (action.type) {
-      case "CHANGE_TITLE":
-        return { ...state, title: action.payload.title };
-
-      case "CHANGE_DESCRIPTION":
-        return { ...state, description: action.payload.description };
-
-      case "CHANGE_TAGS":
-        const tags = action.payload.tags.split(" ");
-        return { ...state, tags: tags };
-
-      case "CHANGE_COVER_PHOTO":
-        return { ...state, cover: action.payload.cover };
-
-      default:
-        return state;
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducerFn, initialPost);
+  const [title, setTitle] = useState(post.title);
+  const [description, setDescription] = useState(post.description);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     const value = e.target.value;
 
-    switch (name) {
-      case "title":
-        dispatch({ type: "CHANGE_TITLE", payload: { title: value } });
-        break;
-      case "description":
-        dispatch({
-          type: "CHANGE_DESCRIPTION",
-          payload: { description: value },
-        });
-        break;
-      case "tags":
-        dispatch({ type: "CHANGE_TAGS", payload: { tags: value } });
-        break;
-      default:
-        break;
+    if (name === "title") {
+      setTitle(value);
+    }
+
+    if (name === "description") {
+      setDescription(value);
     }
   };
 
-  const handlePostEdit = async () => {
-    try {
-      const response = await axios.put("/api/posts", {
-        editedPost: state,
+  const handlePostEdit = () => {
+    startTransition(() => {
+      onEditPost({
+        id: post.id,
+        title: title,
+        description: description,
+      }).then((data) => {
+        toast.success(`Post edited!`);
+        stateDispatch(
+          editPost({
+            id: post.id,
+            editedPost: data!,
+          })
+        );
       });
-
-      stateDispatch(
-        editPost({
-          _id: state._id,
-          editedPost: state,
-        })
-      );
-      toast.success("Edited Post Successfully");
-    } catch (error) {
-      toast.error("Some error occured");
-    }
+    });
   };
 
   useEffect(() => {}, [stateDispatch]);
 
   return (
-    <div className="abolute ml-10">
+    <span className="w-auto">
       <Button onPress={onOpen} className="bg-inherit" size="sm">
         <Edit3 />
       </Button>
@@ -130,25 +81,16 @@ export default function EditModal({ post }: EditModalProps) {
                   autoFocus
                   name="title"
                   label="Title"
-                  value={state.title}
+                  value={title}
                   placeholder="Edit Title"
                   variant="bordered"
                   onChange={handleChange}
                 />
-                <Input
+                <Textarea
                   name="description"
                   label="Description"
-                  value={state.description}
+                  value={description!}
                   placeholder="Edit description"
-                  type="text"
-                  variant="bordered"
-                  onChange={handleChange}
-                />
-                <Input
-                  name="tags"
-                  label="Tags"
-                  placeholder="Tags"
-                  value={state.tags.toString()}
                   type="text"
                   variant="bordered"
                   onChange={handleChange}
@@ -162,6 +104,7 @@ export default function EditModal({ post }: EditModalProps) {
                   color="primary"
                   onPress={onClose}
                   onClick={handlePostEdit}
+                  disabled={isPending}
                 >
                   Post
                 </Button>
@@ -170,6 +113,6 @@ export default function EditModal({ post }: EditModalProps) {
           )}
         </ModalContent>
       </Modal>
-    </div>
+    </span>
   );
 }

@@ -1,40 +1,39 @@
 import React from "react";
-import { User } from "@nextui-org/react";
-import { Comment } from "@/types/comment";
-import { Post } from "@/types/post";
+import { User as UserData } from "@nextui-org/react";
+import { Post } from "@prisma/client";
+import { T_Comment } from "@/types/comment";
 import DeleteComment from "../buttons/delete-comment";
 
 interface IndividualCommentProps {
-  comment: Comment;
+  comment: T_Comment;
   post: Post;
-  requestedBy: string;
+  loggedInUserId: string | undefined;
 }
 
 export default function IndividualComment({
   comment,
   post,
-  requestedBy,
+  loggedInUserId,
 }: IndividualCommentProps) {
-  const isCommentOnOthersPost = comment.user_email === requestedBy;
-  const isOwnPost = post.email === requestedBy;
   return (
     <div className="flex items-center gap-2 justify-between">
       <div className="flex items-center gap-2">
-        <User
+        <UserData
           name=""
           description=""
           avatarProps={{
-            src: `${comment.image}`,
+            src: `${comment?.commentor.imageUrl}`,
           }}
         />
-        <p>{comment.content}</p>
+        <p>{comment?.content}</p>
       </div>
 
-      {(isCommentOnOthersPost || isOwnPost) && (
+      {(loggedInUserId === post.owner_Id ||
+        comment.commented_by_Id === loggedInUserId) && (
         <DeleteComment
-          requestedBy={requestedBy}
-          commentId={comment._id}
+          comment={comment}
           post={post}
+          commentOwner={comment.commentor.id}
         />
       )}
     </div>

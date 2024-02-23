@@ -1,23 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import connect from "@/utilities/mongoose";
-import { Profiles } from "@/models/user-profile-schema";
+import { db } from "@/utilities/database";
 
-export const GET = async (request: NextRequest) => {
-  await connect();
-
-  const allUsers = await Profiles.find();
-
-  const email = request.nextUrl.searchParams.get("email");
-
-  if (email) {
-    const requestedUser = await Profiles.findOne({ email });
-    return NextResponse.json({
-      message: "Giving requested user",
-      user: requestedUser,
-    });
-  }
-
+export const GET = async (_: NextRequest) => {
+  const users = await db.user.findMany({
+    include: {
+      following: true,
+      followedBy: true,
+    },
+  });
   return NextResponse.json({
-    users: allUsers,
+    message: "Returning all users",
+    users: users,
+    status: 201,
   });
 };

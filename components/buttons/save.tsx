@@ -1,58 +1,56 @@
-import { SaveIcon } from "lucide-react";
-import React from "react";
-import Hover from "../hover/hover-pop";
-import { toast } from "react-hot-toast";
-import { Post } from "@/types/post";
-import { useDispatch } from "react-redux";
-import { addNewSavedPost } from "@/redux_store/slices/saved/saved-slice";
-import axios from "axios";
-import { Session } from "next-auth";
+"use client";
 
-interface ShareProps {
+import { SaveIcon } from "lucide-react";
+import React, { useEffect, useTransition } from "react";
+import { toast } from "react-hot-toast";
+import { Post, User } from "@prisma/client";
+import { savePost } from "@/server_actions/posts";
+import { useDispatch } from "react-redux";
+import {
+  fetchPosts,
+  fetchSaved,
+  fetchUsers,
+} from "@/redux_store/slices/async-thunks";
+import { AppDispatch } from "@/redux_store/store";
+import { addNewSavedPostState } from "@/redux_store/slices/saved/saved-slice";
+
+interface SaveProps {
   post: Post;
-  session: Session | null;
+  owner: User;
 }
 
-const ShareButton = ({ post, session }: ShareProps) => {
-  const dispatch = useDispatch();
-  const handleSavingCluster = async () => {
-    if (!session || !session?.user || !session?.user?.email) {
-      toast.error("Login required");
-      return;
-    }
+const ShareButton = ({ post, owner }: SaveProps) => {
+  const [isPending, startTransition] = useTransition();
+  const dispatch: AppDispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchPosts());
+    dispatch(fetchUsers());
+    dispatch(fetchSaved());
+  }, []);
 
-    try {
-      const response = await axios.post(
-        `/api/save/?email=${session?.user?.email}`,
-        {
-          _id: post._id,
-        }
-      );
-
-      if (response.data.status === 200 || response.data.status === 201) {
-        dispatch(
-          addNewSavedPost({
-            email: session?.user?.email!,
-            postId: post._id,
-          })
-        );
-        toast.success("Saved to Cluster");
-      } else if (response.data.status === 303) {
-        toast.error("Post already exists in cluster");
-      }
-    } catch (error: any) {
-      console.log(error);
-      toast.error("Some error occured");
-    }
+  const handleSavingPost = () => {
+    startTransition(() => {
+      savePost(post.id)
+        .then((data) => {
+          toast.success(`Post saved to Collections`);
+          dispatch(
+            addNewSavedPostState({
+              postId: post.id,
+              owner: owner,
+            })
+          );
+        })
+        .catch((error: any) => {
+          toast.error(`Error saving to Collections`);
+          console.log(error.message);
+        });
+    });
   };
 
   return (
-    <Hover text="Save">
-      <SaveIcon
-        className="hover:cursor-pointer"
-        onClick={handleSavingCluster}
-      />
-    </Hover>
+    <div>
+      <SaveIcon className="hover:cursor-pointer" onClick={handleSavingPost} />
+    </div>
   );
 };
 

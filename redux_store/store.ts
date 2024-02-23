@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  combineReducers,
-  configureStore,
-  createSelector,
-} from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
   persistReducer,
   persistStore,
@@ -19,7 +15,7 @@ import storage from "redux-persist/lib/storage";
 
 import postsReducer from "./slices/posts/post-slice";
 import usersReducer from "./slices/users/user-slice";
-import savedPostsReducer from "./slices/saved/saved-slice";
+import savedReducer from "./slices/saved/saved-slice";
 
 const persistConfig = {
   key: "root",
@@ -31,7 +27,7 @@ const persistConfig = {
 const globalReducer = combineReducers({
   posts: postsReducer,
   users: usersReducer,
-  saved: savedPostsReducer,
+  saved: savedReducer,
 });
 
 export type StateType = ReturnType<typeof globalReducer>;

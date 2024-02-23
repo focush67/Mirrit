@@ -1,46 +1,51 @@
 "use client";
 
-import { Post } from "@/types/post";
-import React, { memo, useCallback } from "react";
-import Hover from "../hover/hover-pop";
+import { Post } from "@prisma/client";
+import React, { memo, useTransition } from "react";
 import { Heart } from "lucide-react";
-import axios from "axios";
+import { LikePost } from "@/server_actions/interactions";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { likePost } from "@/redux_store/slices/posts/post-slice";
-import { useSession } from "next-auth/react";
-import { AuthProfile } from "@/types/profile";
+import { likePost, selectPost } from "@/redux_store/slices/posts/post-slice";
+import { StateType } from "@/redux_store/store";
 
 interface LikeProps {
   post: Post;
-  from: AuthProfile | null;
-  to: AuthProfile | null;
+  isDashboard?: true;
 }
 
-let LikeButton = ({ post, from, to }: LikeProps) => {
+let LikeButton = ({ post, isDashboard }: LikeProps) => {
   const dispatch = useDispatch();
-  const { data: session } = useSession();
+  const statePost = useSelector((state: StateType) =>
+    selectPost(state, post.id)
+  );
+  const [isPending, startTransition] = useTransition();
 
-  const handleLikeMemo = useCallback(async () => {
-    try {
-      if (!session) {
-        toast.error("Requires Login for Liking");
-        return;
-      }
-      const response = await axios.post(`/api/posts/like/?id=${post._id}`);
-      dispatch(likePost({ _id: post._id }));
-      toast.success("Liked");
-    } catch (error: any) {
-      console.log(error.message);
-      toast.error("Some error occured");
-    }
-  }, [post, session, dispatch]);
+  const onLike = () => {
+    startTransition(() => {
+      LikePost(post.id)
+        .then((data) => {
+          toast.success("Liked Post");
+          dispatch(
+            likePost({
+              postId: post.id,
+              like: data!,
+            })
+          );
+        })
+        .catch((error) => {
+          toast.error("Error liking post");
+          console.log(error);
+        });
+    });
+  };
 
   return (
-    <Hover text="Like">
-      <Heart className="hover:cursor-pointer" onClick={handleLikeMemo} />
-      <p>{post.likes}</p>
-    </Hover>
+    <div className="flex gap-2">
+      <Heart className={` hover:cursor-pointer`} onClick={onLike} />
+      <p>{statePost?.likes.length}</p>
+    </div>
   );
 };
 

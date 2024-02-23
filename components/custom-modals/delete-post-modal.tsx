@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useTransition } from "react";
 import {
   Modal,
   ModalContent,
@@ -10,18 +12,31 @@ import {
   Image,
 } from "@nextui-org/react";
 import { Trash } from "lucide-react";
-import { Post } from "@/types/post";
+import { Post } from "@prisma/client";
+import { deletePost } from "@/server_actions/posts";
+import toast from "react-hot-toast";
 
 interface DeleteModalProps {
   post: Post;
-  handleDelete: (id: string) => void;
 }
 
-export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+export default function DeleteModal({ post }: DeleteModalProps) {
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isPending, startTransition] = useTransition();
+
+  const handlePostDeletion = () => {
+    startTransition(() => {
+      deletePost(post.id)
+        .then(() => {
+          toast.success(`Post was deleted successfully`);
+        })
+        .catch(() => toast.error(`Error occured in deletion`))
+        .finally(() => onClose());
+    });
+  };
 
   return (
-    <div className="absolute">
+    <span className="w-3">
       <Button onPress={onOpen} className="bg-inherit" size="sm">
         <Trash />
       </Button>
@@ -47,7 +62,8 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
                 </Button>
                 <Button
                   className="bg-red-800 text-white"
-                  onClick={() => handleDelete(post._id)}
+                  disabled={isPending}
+                  onClick={handlePostDeletion}
                 >
                   Delete
                 </Button>
@@ -56,6 +72,6 @@ export default function DeleteModal({ post, handleDelete }: DeleteModalProps) {
           )}
         </ModalContent>
       </Modal>
-    </div>
+    </span>
   );
 }

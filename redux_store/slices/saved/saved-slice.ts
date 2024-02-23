@@ -1,136 +1,77 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchSaved } from "../async-thunks";
-import { Saved } from "@/types/saved";
+import { Follow, Post, User } from "@prisma/client";
 import { StateType } from "@/redux_store/store";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { fetchSaved } from "../async-thunks";
+
+interface SavedPost {
+  user: User;
+  savedPostsIds: string[];
+}
 
 interface SavedState {
-  saved: Saved;
-  savedStatus: "loading" | "succeeded" | "failed";
+  cluster: SavedPost | null;
+  savedState: "loading" | "succeeded" | "failed";
 }
 
 const initialState: SavedState = {
-  saved: {
-    email: "",
-    postIds: [],
-  },
-  savedStatus: "loading" || "succeeded" || "failed",
+  cluster: null,
+  savedState: "loading",
 };
 
 const savedSlice = createSlice({
   name: "saved",
   initialState,
   reducers: {
-    addNewSavedPost: (
+    addNewSavedPostState: (
       state: SavedState,
-      action: PayloadAction<{ email: string; postId: string }>
-    ): SavedState => {
-      const { email, postId } = action.payload;
-      return {
-        ...state,
-        saved: { email, postIds: [...(state.saved.postIds || []), postId] },
-      };
+      action: PayloadAction<{ postId: string; owner: User }>
+    ) => {
+      const { postId, owner } = action.payload;
+      if (!state.cluster) {
+        state.cluster = {
+          user: owner,
+          savedPostsIds: [postId],
+        };
+      } else {
+        state.cluster.savedPostsIds?.push(postId);
+      }
     },
-
-    addAllSavedPosts: (
+    removeSavedPostState: (
       state: SavedState,
-      action: PayloadAction<{ email: string; postIds: string[] }>
-    ): SavedState => {
-      const { email, postIds } = action.payload;
-      const allPostIds = state.saved.postIds
-        ? [...state.saved.postIds, ...postIds]
-        : postIds;
-
-      const uniquePostIds = Array.from(new Set(allPostIds));
-
-      return {
-        ...state,
-        saved: {
-          email,
-          postIds: uniquePostIds,
-        },
-      };
-    },
-
-    removeSavedPost: (
-      state: SavedState,
-      action: PayloadAction<{ email: string; postId: string }>
-    ): SavedState => {
-      const { email, postId } = action.payload;
-      const newPosts =
-        state.saved.postIds.filter((pId: string) => pId !== postId) || [];
-      return {
-        ...state,
-        saved: { email, postIds: newPosts },
-      };
-    },
-
-    removeAllSavedPosts: (state: SavedState): SavedState => {
-      return {
-        ...state,
-        saved: {
-          email: "",
-          postIds: [],
-        },
-      };
+      action: PayloadAction<{ postId: string }>
+    ) => {
+      const { postId } = action.payload;
+      if (state.cluster) {
+        state.cluster.savedPostsIds = state.cluster.savedPostsIds.filter(
+          (id) => id !== postId
+        );
+      }
     },
   },
-
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSaved.pending, (state: SavedState) => {
+      .addCase(fetchSaved.pending, (state) => {
         return {
           ...state,
-          savedStatus: "loading",
+          savedState: "loading",
         };
       })
       .addCase(
         fetchSaved.fulfilled,
-        (
-          state: SavedState,
-          action: PayloadAction<{ savedPostsIds: string[]; email: string }>
-        ) => {
-          const { email, savedPostsIds } = action.payload;
-          return {
-            ...state,
-            saved: {
-              email: email,
-              postIds: savedPostsIds,
-            },
-            savedStatus: "succeeded",
-          };
+        (state, action: PayloadAction<SavedPost>) => {
+          state.savedState = "succeeded";
+          state.cluster = action.payload;
         }
       )
-      .addCase(fetchSaved.rejected, (state: SavedState) => {
+      .addCase(fetchSaved.rejected, (state) => {
         return {
           ...state,
-          savedStatus: "failed",
+          savedState: "failed",
         };
       });
   },
 });
 
-export const {
-  addNewSavedPost,
-  addAllSavedPosts,
-  removeSavedPost,
-  removeAllSavedPosts,
-} = savedSlice.actions;
-
+export const { addNewSavedPostState, removeSavedPostState } =
+  savedSlice.actions;
 export default savedSlice.reducer;
-
-// Selectors
-
-export const selectSavedCluster = (state: StateType) => state.saved.saved;
-
-export const selectSavedPosts = (state: StateType) => {
-  const allPosts = state.posts.posts;
-  const relevantPostsIds = state.saved;
-
-  console.log({ relevantPostsIds });
-
-  const savedPosts = allPosts?.filter((post) =>
-    relevantPostsIds.saved.postIds?.includes(post._id)
-  );
-
-  return savedPosts;
-};
