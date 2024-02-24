@@ -1,9 +1,16 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { Button, Input } from "@nextui-org/react";
+import { useCallback, useState, useTransition } from "react";
+import { Input } from "@nextui-org/react";
 import { User } from "@prisma/client";
 import { SearchItem } from "./search-item";
+import { onRemoveFollower, onUnfollow } from "@/server_actions/follow";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import {
+  removeFollower,
+  removeRelationship,
+} from "@/redux_store/slices/users/user-slice";
 
 interface SearchBarProps {
   profiles: User[];
@@ -14,6 +21,9 @@ interface SearchBarProps {
 const SearchBar = ({ profiles, owner, isFollowed }: SearchBarProps) => {
   const [filteredProfiles, setFilteredProfiles] = useState<User[]>(profiles);
   const [search, setSearch] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const [trigger, setTrigger] = useState(false);
+  const dispatch = useDispatch();
 
   const debouncedFilter = useCallback(
     debounced((searchText: string) => {
@@ -33,6 +43,36 @@ const SearchBar = ({ profiles, owner, isFollowed }: SearchBarProps) => {
     },
     [profiles]
   );
+
+  const handleUnfollow = (profile: User) => {
+    startTransition(() => {
+      onUnfollow(profile.id)
+        .then(() => {
+          toast.success(`Unfollowed ${profile.username}`);
+          dispatch(
+            removeRelationship({
+              initiator: owner.id,
+              target: profile.id,
+            })
+          );
+        })
+        .catch(() => toast.error(`Error unfollowing ${profile.username}`));
+    });
+  };
+
+  const handleRemoveFollower = (profile: User) => {
+    startTransition(() => {
+      onRemoveFollower(profile.id).then(() => {
+        toast.success(`Removed ${profile.username} from followers`);
+        dispatch(
+          removeFollower({
+            initiator: owner.id,
+            target: profile.id,
+          })
+        );
+      });
+    });
+  };
 
   return (
     <div className="w-full">
@@ -54,7 +94,8 @@ const SearchBar = ({ profiles, owner, isFollowed }: SearchBarProps) => {
               profile={profile}
               key={profile.id}
               isFollowed={isFollowed}
-              owner={owner}
+              handleUnfollow={handleUnfollow}
+              handleRemoveFollower={handleRemoveFollower}
             />
           ))
         )}

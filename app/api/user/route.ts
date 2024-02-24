@@ -9,11 +9,19 @@ export const GET = async (_: NextRequest) => {
       followedBy: true,
     },
   });
-  const finalResponse = removeTimeFields(users);
+  const allUsers = users.map((u) => ({
+    id: u.id,
+    username: u.username,
+    externalUserId: u.externalUserId,
+    bio: u.bio,
+    imageUrl: u.imageUrl,
+    followers: u.followedBy.map((f) => f.id),
+    followedProfiles: u.following.map((f) => f.id),
+  }));
 
   return NextResponse.json({
     message: "Returning all users",
-    users: finalResponse,
+    users: allUsers,
     status: 201,
   });
 };

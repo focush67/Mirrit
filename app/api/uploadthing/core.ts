@@ -1,5 +1,4 @@
 import { getSelf } from "@/services/auth-service";
-import { db } from "@/utilities/database";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 // Requires modification

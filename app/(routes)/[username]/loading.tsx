@@ -2,7 +2,6 @@
 import React from "react";
 import { Skeleton, Card } from "@nextui-org/react";
 import { PostCardSkeleton } from "@/app/loading";
-import { ProfileSkeleton } from "../test/page";
 
 export const Loading = () => {
   return (
@@ -23,7 +22,11 @@ export const Loading = () => {
 export const DashboardLoading = () => {
   return (
     <div className="flex flex-col space-y-6 ">
-      <ProfileSkeleton />
+      <div className="w-full flex justify-start sm:justify-center mt-2 h-auto">
+        <Card className="w-full m-2" radius="lg">
+          <Loading />
+        </Card>
+      </div>
 
       <div className="flex justify-center items-center overflow-hidden mt-2">
         <div className="grid sm:grid-cols-2 gap-2 lg:gap-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 justify-center items-center">

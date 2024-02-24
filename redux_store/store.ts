@@ -20,8 +20,7 @@ import savedReducer from "./slices/saved/saved-slice";
 const persistConfig = {
   key: "root",
   storage,
-  version: 1,
-  whitelist: ["users", "posts"],
+  version: 2,
 };
 
 const globalReducer = combineReducers({
@@ -29,8 +28,6 @@ const globalReducer = combineReducers({
   users: usersReducer,
   saved: savedReducer,
 });
-
-export type StateType = ReturnType<typeof globalReducer>;
 
 const persistedReducer = persistReducer(persistConfig, globalReducer);
 
@@ -45,5 +42,5 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
-
+export type StateType = ReturnType<typeof globalReducer>;
 export type AppDispatch = typeof store.dispatch;

@@ -28,6 +28,21 @@ export const getCurrentUserPosts = async () => {
   return posts;
 };
 
+export const getPostsByOwner = async (username: string) => {
+  const posts = await db.post.findMany({
+    where: {
+      owner: {
+        username: username,
+      },
+    },
+    include: {
+      owner: true,
+    },
+  });
+
+  return posts;
+};
+
 export const getSavedPosts = async () => {
   const self = await getSelf();
   if (!self) {

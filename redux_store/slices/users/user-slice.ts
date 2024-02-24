@@ -1,12 +1,8 @@
-import { Follow, User } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchUsers } from "../async-thunks";
 import { StateType } from "@/redux_store/store";
+import { StateUser } from "@/types/user";
 
-type StateUser = User & {
-  following: Partial<Follow>[];
-  followedBy: Partial<Follow>[];
-};
 interface UserState {
   users: StateUser[];
   userStatus: "loading" | "succeeded" | "failed";
@@ -38,63 +34,51 @@ const userSlice = createSlice({
       action: PayloadAction<{ initiator: string; target: string }>
     ) => {
       const { initiator, target } = action.payload;
-      const updatedUsers = state.users.map((user: any) => {
-        if (user.email === initiator) {
-          return {
-            ...user,
-            following: [...user.following, target],
-          };
-        } else if (user.email === target) {
-          return {
-            ...user,
-            followers: [...user.followers, initiator],
-          };
-        } else {
-          return user;
-        }
-      });
 
-      console.log("State after relationship follow: ", updatedUsers);
+      const targetUser = state.users.find((user) => user.id === target);
+      const initiatorUser = state.users.find((user) => user.id === initiator);
 
-      return {
-        ...state,
-        users: updatedUsers,
-      };
+      if (targetUser && initiatorUser) {
+        targetUser.followers.push(initiator);
+        initiatorUser.followedProfiles.push(target);
+      }
     },
 
     removeRelationship: (
       state: UserState,
       action: PayloadAction<{ initiator: string; target: string }>
     ) => {
-      console.log(action.payload);
       const { initiator, target } = action.payload;
 
-      const updatedUsers = state.users.map((user: StateUser) => {
-        if (user.id === initiator) {
-          return {
-            ...user,
-            followedBy: user.followedBy.filter(
-              (follower: Partial<Follow>) => follower.id !== target
-            ),
-          };
-        } else if (user.id === target) {
-          return {
-            ...user,
-            follower: user.following.filter(
-              (follower: Partial<Follow>) => follower.id !== initiator
-            ),
-          };
-        } else {
-          return user;
-        }
-      });
+      const targetUser = state.users.find((user) => user.id === target);
+      const initiatorUser = state.users.find((user) => user.id === initiator);
 
-      console.log("State after relationship unfollow: ", updatedUsers);
+      if (targetUser && initiatorUser) {
+        targetUser.followers = targetUser.followers.filter(
+          (follower) => follower !== initiator
+        );
+        initiatorUser.followedProfiles = initiatorUser.followedProfiles.filter(
+          (profile) => profile !== target
+        );
+      }
+    },
 
-      return {
-        ...state,
-        users: updatedUsers,
-      };
+    removeFollower: (
+      state: UserState,
+      action: PayloadAction<{ initiator: string; target: string }>
+    ) => {
+      const { initiator, target } = action.payload;
+
+      const initiatorUser = state.users.find((user) => user.id === initiator);
+      const targetUser = state.users.find((user) => user.id === target);
+      if (initiatorUser && targetUser) {
+        initiatorUser.followers = initiatorUser.followers.filter(
+          (follower) => follower !== target
+        );
+        targetUser.followedProfiles = targetUser.followedProfiles.filter(
+          (profile) => profile !== initiator
+        );
+      }
     },
 
     resetUser: () => {
@@ -130,8 +114,13 @@ const userSlice = createSlice({
   },
 });
 
-export const { addNewUser, addRelationship, removeRelationship, resetUser } =
-  userSlice.actions;
+export const {
+  addNewUser,
+  addRelationship,
+  removeRelationship,
+  resetUser,
+  removeFollower,
+} = userSlice.actions;
 
 export default userSlice.reducer;
 

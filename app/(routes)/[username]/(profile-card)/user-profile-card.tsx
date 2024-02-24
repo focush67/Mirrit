@@ -14,12 +14,11 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addRelationship,
   removeRelationship,
-  selectCurrentUser,
 } from "@/redux_store/slices/users/user-slice";
 import { StateType } from "@/redux_store/store";
 import { onFollow, onUnfollow } from "@/server_actions/follow";
 import toast from "react-hot-toast";
-import { Loader } from "lucide-react";
+import { Loader, Loader2 } from "lucide-react";
 
 interface UserProfileCardProps {
   profile: User;
@@ -35,9 +34,10 @@ export default function UserProfileCard({
   console.log("profile card rendered");
   const dispatch = useDispatch();
   const stateProfile = useSelector((state: StateType) =>
-    selectCurrentUser(state, profile.id)
+    state.users.users.find((user) => user.id === profile.id)
   );
-
+  console.log("Followed: ", stateProfile?.followedProfiles.length);
+  console.log("Following: ", stateProfile?.followers.length);
   const [isPending, startTransition] = useTransition();
   const initiateFollow = () => {
     startTransition(() => {
@@ -108,7 +108,11 @@ export default function UserProfileCard({
                   variant={"shadow"}
                   size="sm"
                   onClick={handleRelationship}
-                  className={followStatus ? "bg-red-600" : "bg-blue-700"}
+                  className={
+                    followStatus
+                      ? "bg-red-600 text-white"
+                      : "bg-blue-700 text-white"
+                  }
                 >
                   {followStatus ? "Unfollow" : "Follow"}
                 </Button>
@@ -121,13 +125,13 @@ export default function UserProfileCard({
           <CardFooter className="flex justify-start gap-x-5">
             <div className="flex gap-1">
               <p className="font-semibold text-default-400 text-small">
-                {stateProfile?.following?.length}
+                {stateProfile?.followedProfiles?.length}
               </p>
               <p className="text-default-400 text-small">Following</p>
             </div>
             <div className="flex gap-1">
               <p className="font-semibold text-default-400 text-small">
-                {stateProfile?.followedBy?.length}
+                {stateProfile?.followers?.length}
               </p>
               <p className="text-default-400 text-small">Followers</p>
             </div>

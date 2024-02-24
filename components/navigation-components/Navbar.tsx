@@ -37,7 +37,7 @@ export default function NavigationBar({
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         />
       </NavbarContent>
-      <NavbarContent className="hidden sm:flex gap-4">
+      <NavbarContent className="hidden sm:flex gap-4 shadow-2xl">
         <NavbarItem>
           <Link href="/">Home</Link>
         </NavbarItem>

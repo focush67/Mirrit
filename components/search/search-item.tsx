@@ -1,17 +1,19 @@
 import { Card, CardHeader, Avatar, CardBody } from "@nextui-org/react";
 import { User } from "@prisma/client";
 import RemoveFollower from "../buttons/remove-follower";
-
 import UnfollowButton from "../buttons/unfollow-button";
 
 export const SearchItem = ({
   profile,
   isFollowed,
-  owner,
+  handleRemoveFollower,
+  handleUnfollow,
 }: {
   profile: User;
   isFollowed: boolean;
-  owner: User;
+
+  handleUnfollow?: (profile: User) => void;
+  handleRemoveFollower?: (profile: User) => void;
 }) => {
   return (
     <Card className="w-3/4 md:w-[60%] lg:w[40%] h-[40%] shadow-2xl">
@@ -26,9 +28,12 @@ export const SearchItem = ({
         </div>
 
         {isFollowed ? (
-          <RemoveFollower profileId={profile.id} ownerId={owner.id} />
+          <RemoveFollower
+            profile={profile}
+            handleRemoveFollower={handleRemoveFollower!}
+          />
         ) : (
-          <UnfollowButton profile={profile} visitor={owner} />
+          <UnfollowButton profile={profile} handleUnfollow={handleUnfollow!} />
         )}
       </CardHeader>
       <CardBody className="px-3 py-0 text-small text-default-400">

@@ -24,7 +24,7 @@ export const onUnfollow = async (id: string) => {
   try {
     const user = await UnfollowGivenUser(id);
     if (user) {
-      revalidatePath(`/${user.following.username}`);
+      revalidatePath(`/following`);
     }
     return user;
   } catch (error: any) {
@@ -37,8 +37,9 @@ export const onRemoveFollower = async (id: string) => {
   try {
     const removedUser = await RemoveFollower(id);
     if (removedUser) {
-      revalidatePath("/follower");
+      revalidatePath("/followers");
     }
+    console.log(`revalidated /followers`);
     return removedUser;
   } catch (error: any) {
     console.log("Error at onRemoveFollower ", error.message);

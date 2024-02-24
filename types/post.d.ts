@@ -14,3 +14,4 @@ export type SavedType = Omit<Saved, "createdAt" | "updatedAt">;
 type X = Omit<Comment, "createdAt" | "updatedAt">;
 
 export type CommentType = X & { owner: UserType };
+

@@ -11,7 +11,7 @@ import { dark } from "@clerk/themes";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Social Media App Version 2 (DEV)",
+  title: "Social Media App Version 2",
   description: "Made with Next14 and TypeScript",
 };
 
@@ -24,14 +24,14 @@ export default async function RootLayout({
     <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en">
         <body className={inter.className}>
-          <ToastProvider>
-            <Providers>
-              <ReduxProvider>
+          <ReduxProvider>
+            <ToastProvider>
+              <Providers>
                 <NavbarComponent />
                 {children}
-              </ReduxProvider>
-            </Providers>
-          </ToastProvider>
+              </Providers>
+            </ToastProvider>
+          </ReduxProvider>
         </body>
       </html>
     </ClerkProvider>
