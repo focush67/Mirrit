@@ -21,6 +21,7 @@ import { CommentOnPost } from "@/server_actions/interactions";
 import { StateType } from "@/redux_store/store";
 import { T_Comment } from "@/types/comment";
 import { PostType } from "@/types/post";
+import { removeTimeFields } from "@/utilities/remove-fields";
 interface CommentSectionProps {
   post: Post;
   existingComments: T_Comment[];
@@ -44,10 +45,15 @@ let CommentSection = ({
       CommentOnPost({ postId: post.id, content: presentComment })
         .then((data) => {
           toast.success(`Comment added`);
+          const formattedComment = removeTimeFields(data);
+          console.log(
+            "formatted comment before dispatching ",
+            formattedComment
+          );
           dispatch(
             commentOnPost({
               id: post.id,
-              comment: data!,
+              comment: formattedComment!,
             })
           );
           setPresentComment("");

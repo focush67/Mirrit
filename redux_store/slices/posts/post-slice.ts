@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchPosts } from "../async-thunks";
 import { StateType } from "@/redux_store/store";
 import { CommentType, LikeType, PostType, SavedType } from "@/types/post";
+import { removeTimeFields } from "@/utilities/remove-fields";
 
 type StatePost = PostType & {
   likes: LikeType[];
@@ -53,7 +54,8 @@ const postsSlice = createSlice({
       action: PayloadAction<{ id: string; comment: CommentType }>
     ) => {
       const { id, comment } = action.payload;
-      console.log("commenting on post");
+
+      console.log(comment);
       return {
         ...state,
         posts: state.posts.map((post: StatePost) =>
