@@ -10,7 +10,7 @@ import {
 } from "@nextui-org/react";
 import { PostCardSkeleton } from "@/app/loading";
 
-export const Loading = () => {
+export const LoadingState = () => {
   return (
     <div className="p-4 w-full flex justify-start items-start md:justify-center ">
       <div className="w-[60%] flex items-center gap-3 justify-between">
