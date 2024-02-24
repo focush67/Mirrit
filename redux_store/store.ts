@@ -21,7 +21,7 @@ const persistConfig = {
   key: "root",
   storage,
   version: 1,
-  whitelist: ["posts", "users"],
+  whitelist: ["users"],
 };
 
 const globalReducer = combineReducers({
