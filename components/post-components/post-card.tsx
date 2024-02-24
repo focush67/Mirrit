@@ -55,7 +55,9 @@ let PostCard = async ({
           </div>
 
           {removeSaved === true ? (
-            <RemoveSaved postId={post.id} />
+            <div className="mx-3">
+              <RemoveSaved postId={post.id} />
+            </div>
           ) : (
             post.owner_Id === self?.id && (
               <div

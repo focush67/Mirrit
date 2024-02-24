@@ -1,24 +1,8 @@
 "use client";
-import React from "react";
-import { Skeleton, Card } from "@nextui-org/react";
-import { PostCardSkeleton } from "@/app/loading";
-import { ProfileSkeleton } from "../test/page";
 
-export const Loading = () => {
-  return (
-    <div className="p-4 w-full flex justify-start items-start md:justify-center ">
-      <div className="w-[60%] flex items-center gap-3 justify-between">
-        <div>
-          <Skeleton className="flex rounded-full w-12 h-12" />
-        </div>
-        <div className="w-full flex flex-col gap-2">
-          <Skeleton className="h-3 w-3/5 rounded-lg" />
-          <Skeleton className="h-3 w-4/5 rounded-lg" />
-        </div>
-      </div>
-    </div>
-  );
-};
+import React from "react";
+import { PostCardSkeleton } from "@/app/loading";
+import ProfileSkeleton from "@/components/skeletons/profile-card";
 
 export const DashboardLoading = () => {
   return (

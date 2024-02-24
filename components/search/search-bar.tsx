@@ -22,7 +22,6 @@ const SearchBar = ({ profiles, owner, isFollowed }: SearchBarProps) => {
   const [filteredProfiles, setFilteredProfiles] = useState<User[]>(profiles);
   const [search, setSearch] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [trigger, setTrigger] = useState(false);
   const dispatch = useDispatch();
 
   const debouncedFilter = useCallback(
@@ -41,7 +40,7 @@ const SearchBar = ({ profiles, owner, isFollowed }: SearchBarProps) => {
       setSearch(searchText);
       debouncedFilter(searchText);
     },
-    [profiles]
+    [profiles, debouncedFilter]
   );
 
   const handleUnfollow = (profile: User) => {
