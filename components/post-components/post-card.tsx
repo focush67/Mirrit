@@ -11,6 +11,8 @@ import { getSelf } from "@/services/auth-service";
 import DeleteModal from "../custom-modals/delete-post-modal";
 import EditModal from "../custom-modals/edit-post-modal";
 import RemoveSaved from "../buttons/remove-saved-button";
+import Description from "./description";
+import { distance } from "@/utilities/date-format";
 
 interface PostCardProps {
   post: Post & { owner: User };
@@ -26,6 +28,7 @@ let PostCard = async ({
   const comments = await getCommentsForPost(post.id);
   const self = await getSelf();
   const owner = self as User;
+  const dis = distance(post);
   return (
     <Card
       className={`py-2 flex flex-col ${size === "small" && "h-auto"} ${
@@ -37,61 +40,47 @@ let PostCard = async ({
 
         <CardHeader className="relative pb-0 pt-2 px-1 flex-row items-center overflow-x-hidden sm:gap-2">
           <div className="flex flex-col">
-            <p
-              className={`${
-                size === "small" ? "hidden" : "text-sm"
-              } uppercase font-bold`}
-            >
-              {post.owner.username}
-            </p>
             <h4
               className={`${
                 size === "small" ? "text-xs" : "text-sm"
-              } uppercase font-bold`}
+              }  font-semibold`}
             >
               {post.title}
             </h4>
+            <div className="text-xs mt-2 text-gray-600">{dis}</div>
           </div>
-
           {removeSaved === true ? (
-            <RemoveSaved postId={post.id} />
+            <div className="mx-2 mr-3">
+              <RemoveSaved postId={post.id} />
+            </div>
           ) : (
             post.owner_Id === self?.id && (
-              <div
+              <span
                 className={`${
-                  size === "large" ? "hidden" : "flex ml-0 gap-x-6"
-                } `}
+                  size === "large"
+                    ? "hidden"
+                    : "flex gap-x-5 bg-inherit w-auto rounded-full"
+                }`}
               >
                 <DeleteModal post={post} />
                 <EditModal post={post} />
-              </div>
+              </span>
             )
           )}
         </CardHeader>
       </div>
-      <CardBody className="overflow-visible py-2 text-center items-center ">
+      <CardBody className="overflow-visible py-2 text-center flex items-center relative justify-between">
         <Image
           alt="Card background"
           className="object-cover rounded-xl"
           src={post.cover}
           width={size === "small" ? (removeSaved ? "auto" : "180") : "270"}
-          height={size === "small" ? "180" : "270"}
           isZoomed
         />
-        {removeSaved === false && (
-          <div className="mt-2 max-h-24 overflow-hidden">
-            <p
-              className={`${
-                size === "small" ? "text-xs" : "text-sm"
-              } whitespace-pre-line`}
-            >
-              {post.description}
-            </p>
-          </div>
-        )}
+        <Description text={post.description!} size={size} />
         {removeSaved === false && (
           <div
-            className={`flex ${
+            className={`flex  ${
               size === "small" ? "justify-center" : "justify-between"
             } items-center  mt-3 ${
               size === "small" ? "w-[100px]" : "w-[200px]"

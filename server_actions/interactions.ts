@@ -2,6 +2,8 @@
 
 import { db } from "@/utilities/database";
 import { getSelf } from "@/services/auth-service";
+import { getUserById } from "@/services/user-service";
+import { UserType } from "@/types/user";
 
 export const LikePost = async (postId: string) => {
   const self = await getSelf();
@@ -18,7 +20,9 @@ export const LikePost = async (postId: string) => {
     },
   });
 
-  return likeData;
+  const finalLikeData = (({ createdAt, updatedAt, ...rest }) => rest)(likeData);
+
+  return finalLikeData;
 };
 
 export const CommentOnPost = async ({
@@ -42,7 +46,35 @@ export const CommentOnPost = async ({
     },
   });
 
-  return commentData;
+  const owner = (await getUserById(commentData.commented_by_Id)) as UserType;
+
+  const finalCommentData = (({ createdAt, updatedAt, ...rest }) => rest)(
+    commentData
+  );
+
+  const combinedData = {
+    owner: owner,
+    ...finalCommentData,
+  };
+
+  return combinedData;
+
+  /*
+    type X = {
+    id: string;
+    post_Id: string;
+    content: string;
+    commented_by_Id: string;
+}
+  owner:{
+    id: string;
+    username: string;
+    imageUrl: string | null;
+    externalUserId: string;
+    bio: string | null;
+}
+}
+  */
 };
 
 export const deleteComment = async (commentId: string) => {
@@ -57,7 +89,5 @@ export const deleteComment = async (commentId: string) => {
       id: commentId,
     },
   });
-
-  console.log({ deletedComment });
   return deletedComment;
 };

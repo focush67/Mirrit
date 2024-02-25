@@ -16,7 +16,7 @@ import { Post, User } from "@prisma/client";
 
 import { useDispatch } from "react-redux";
 import { editPost } from "@/redux_store/slices/posts/post-slice";
-import { Edit3 } from "lucide-react";
+import { Edit2, Edit3 } from "lucide-react";
 import { onEditPost } from "@/server_actions/posts";
 import toast from "react-hot-toast";
 import { UploadDropZone } from "@/utilities/uploadthing";
@@ -56,10 +56,11 @@ export default function EditModal({ post }: EditModalProps) {
         cover: cover,
       }).then((data) => {
         toast.success(`Post edited!`);
+        console.log(data);
         stateDispatch(
           editPost({
             id: post.id,
-            editedPost: data!,
+            editedPost: data,
           })
         );
       });
@@ -71,13 +72,14 @@ export default function EditModal({ post }: EditModalProps) {
   return (
     <span className="w-auto">
       <Button onPress={onOpen} className="bg-inherit" size="sm">
-        <Edit3 />
+        <Edit2 className="w-4 h-4" />
       </Button>
       <Modal
         isOpen={isOpen}
+        className="max-w-[70vw]"
         onOpenChange={onOpenChange}
         placement="center"
-        className="max-w-[70vw]"
+        size="sm"
       >
         <ModalContent>
           {(onClose) => (
@@ -106,37 +108,40 @@ export default function EditModal({ post }: EditModalProps) {
                 />
                 <div className="flex flex-row items-center justify-center">
                   <div className={`rounded-xl outline-muted mb-4`}>
-                    {!cover && (
-                      <UploadDropZone
-                        endpoint="thumbnailUploader"
-                        appearance={{
-                          label: {
-                            color: "#fff",
-                          },
-                          allowedContent: {
-                            color: "#ffff",
-                          },
-                        }}
-                        onClientUploadComplete={(res) => {
-                          setCover(res?.[0]?.url);
-                        }}
-                      ></UploadDropZone>
-                    )}
-                  </div>
-                  {cover && (
-                    <div className="mt-2">
-                      <Image
-                        src={cover}
-                        width={200}
-                        height={200}
-                        alt="Thumbnail"
-                        className="rounded-xl max-h-[350px] object-cover"
-                      />
+                    <div className="flex  md:flex-row lg:flex-row gap-x-2 items-center justify-center gap-y-2">
+                      {cover && (
+                        <div className="mt-2">
+                          <Image
+                            src={cover}
+                            width={150}
+                            height={150}
+                            alt="Thumbnail"
+                            className="rounded-xl max-h-[350px] object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="w-1/2 md:w-1/4 border-1 border-dashed rounded-lg">
+                        <UploadDropZone
+                          endpoint="thumbnailUploader"
+                          className="b ut-label:hidden ut-button:size-auto ut-button:text-xs md:ut-label:text-lg md:ut-button:size-10 md:ut-button:text-lg ut-button:mt-6"
+                          appearance={{
+                            label: {
+                              color: "#fff",
+                            },
+                            allowedContent: {
+                              color: "#fff",
+                            },
+                          }}
+                          onClientUploadComplete={(res) => {
+                            setCover(res?.[0]?.url);
+                          }}
+                        ></UploadDropZone>
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               </ModalBody>
-              <ModalFooter>
+              <ModalFooter className="flex items-center justify-center gap-x-2">
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>

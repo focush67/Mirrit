@@ -1,13 +1,13 @@
-import { Like, Post, Saved } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchPosts } from "../async-thunks";
-import { Comment } from "@prisma/client";
 import { StateType } from "@/redux_store/store";
+import { CommentType, LikeType, PostType, SavedType } from "@/types/post";
+import { removeTimeFields } from "@/utilities/remove-fields";
 
-type StatePost = Post & {
-  likes: Like[];
-  comments: Comment[];
-  saved: Saved[];
+type StatePost = PostType & {
+  likes: LikeType[];
+  comments: CommentType[];
+  saved: SavedType[];
 };
 
 interface PostState {
@@ -26,6 +26,7 @@ const postsSlice = createSlice({
 
   reducers: {
     addPost: (state: PostState, action: PayloadAction<StatePost>) => {
+      console.log("adding new post");
       return {
         ...state,
         posts: [...state.posts, action.payload],
@@ -34,22 +35,27 @@ const postsSlice = createSlice({
 
     likePost: (
       state: PostState,
-      action: PayloadAction<{ postId: string; like: Like }>
+      action: PayloadAction<{ postId: string; like: LikeType }>
     ) => {
       const { postId, like } = action.payload;
+      console.log("liking post ");
+      const LIKE = like as LikeType;
+      console.log(LIKE);
       return {
         ...state,
         posts: state.posts.map((post: StatePost) =>
-          post.id === postId ? { ...post, likes: [...post.likes, like] } : post
+          post.id === postId ? { ...post, likes: [...post.likes, LIKE] } : post
         ),
       };
     },
 
     commentOnPost: (
       state: PostState,
-      action: PayloadAction<{ id: string; comment: Comment }>
+      action: PayloadAction<{ id: string; comment: CommentType }>
     ) => {
       const { id, comment } = action.payload;
+
+      console.log(comment);
       return {
         ...state,
         posts: state.posts.map((post: StatePost) =>
@@ -65,7 +71,7 @@ const postsSlice = createSlice({
       action: PayloadAction<{ commentId: string; postId: string }>
     ) => {
       const { commentId, postId } = action.payload;
-
+      console.log("deleting commenting");
       const postIndex = state.posts.findIndex(
         (post: StatePost) => post.id === postId
       );
@@ -94,6 +100,7 @@ const postsSlice = createSlice({
     },
 
     deletePost: (state: PostState, action: PayloadAction<{ id: string }>) => {
+      console.log("deleting post");
       const { id } = action.payload;
       return {
         ...state,
@@ -110,6 +117,7 @@ const postsSlice = createSlice({
       action: PayloadAction<{ id: string; editedPost: StatePost }>
     ) => {
       const { id, editedPost } = action.payload;
+      console.log("editing post");
       return {
         ...state,
         posts: state.posts.map((post: StatePost) =>

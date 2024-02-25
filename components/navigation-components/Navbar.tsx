@@ -35,11 +35,14 @@ export default function NavigationBar({
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          disabled={!isLoggedIn}
         />
       </NavbarContent>
-      <NavbarContent className="hidden sm:flex gap-4">
+      <NavbarContent className="hidden sm:flex gap-4 shadow-2xl">
         <NavbarItem>
-          <Link href="/">Home</Link>
+          <Link href="/" className={`${isLoggedIn ? "block" : "hidden"}`}>
+            Home
+          </Link>
         </NavbarItem>
         <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
           <Link href="/dashboard">Dashboard</Link>
@@ -55,12 +58,14 @@ export default function NavigationBar({
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem>{isLoggedIn ? <UserButton /> : <LoginButton />}</NavbarItem>
+        <NavbarItem>
+          {isLoggedIn ? <UserButton afterSignOutUrl="/" /> : <LoginButton />}
+        </NavbarItem>
         <NavbarItem>
           <ToggleSwitch />
         </NavbarItem>
       </NavbarContent>
-      <NavbarMenu className="flex items-center">
+      <NavbarMenu className={"flex items-center"}>
         {menuItems.map((item: string, index: number) => (
           <NavbarMenuItem key={`${item}-${index}`}>
             {item === "Home" ? (

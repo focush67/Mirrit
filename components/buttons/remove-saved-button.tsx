@@ -3,7 +3,7 @@
 import { removeSavedPostState } from "@/redux_store/slices/saved/saved-slice";
 import { removeSavedPost } from "@/server_actions/posts";
 import { Button } from "@nextui-org/react";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, MinusCircleIcon } from "lucide-react";
 import { useTransition } from "react";
 import toast from "react-hot-toast";
 interface RemoveSavedProps {
@@ -30,14 +30,11 @@ const RemoveSaved = ({ postId }: RemoveSavedProps) => {
     return <Loader2Icon className="animate-spin" />;
   } else {
     return (
-      <Button
-        size="sm"
-        variant="ghost"
-        className="text-xs"
-        onClick={onRemovePost}
-      >
-        Remove
-      </Button>
+      <div>
+        <Button size="sm" onClick={onRemovePost}>
+          <p className="text-xs">Remove</p>
+        </Button>
+      </div>
     );
   }
 };

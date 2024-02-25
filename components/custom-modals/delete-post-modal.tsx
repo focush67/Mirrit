@@ -11,16 +11,20 @@ import {
   useDisclosure,
   Image,
 } from "@nextui-org/react";
-import { Trash } from "lucide-react";
 import { Post } from "@prisma/client";
 import { deletePost } from "@/server_actions/posts";
 import toast from "react-hot-toast";
+import { Trash2Icon } from "lucide-react";
 
 interface DeleteModalProps {
   post: Post;
+  onCloseDropDown?: () => void;
 }
 
-export default function DeleteModal({ post }: DeleteModalProps) {
+export default function DeleteModal({
+  post,
+  onCloseDropDown,
+}: DeleteModalProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isPending, startTransition] = useTransition();
 
@@ -31,14 +35,19 @@ export default function DeleteModal({ post }: DeleteModalProps) {
           toast.success(`Post was deleted successfully`);
         })
         .catch(() => toast.error(`Error occured in deletion`))
-        .finally(() => onClose());
+        .finally(() => {
+          onClose();
+          if (onCloseDropDown) {
+            onCloseDropDown();
+          }
+        });
     });
   };
 
   return (
     <span className="w-3">
       <Button onPress={onOpen} className="bg-inherit" size="sm">
-        <Trash />
+        <Trash2Icon className="w-4 h-4 " />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>

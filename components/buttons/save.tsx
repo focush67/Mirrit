@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import React, { useEffect, useTransition } from "react";
 import { toast } from "react-hot-toast";
 import { Post, User } from "@prisma/client";
@@ -13,6 +13,7 @@ import {
 } from "@/redux_store/slices/async-thunks";
 import { AppDispatch } from "@/redux_store/store";
 import { addNewSavedPostState } from "@/redux_store/slices/saved/saved-slice";
+import { useUser } from "@clerk/nextjs";
 
 interface SaveProps {
   post: Post;
@@ -20,15 +21,20 @@ interface SaveProps {
 }
 
 const ShareButton = ({ post, owner }: SaveProps) => {
+  const { isSignedIn } = useUser();
   const [isPending, startTransition] = useTransition();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchPosts());
     dispatch(fetchUsers());
     dispatch(fetchSaved());
-  }, []);
+  }, [dispatch]);
 
   const handleSavingPost = () => {
+    if (!isSignedIn) {
+      toast.error("Please Login for saving");
+      return;
+    }
     startTransition(() => {
       savePost(post.id)
         .then((data) => {
@@ -41,7 +47,7 @@ const ShareButton = ({ post, owner }: SaveProps) => {
           );
         })
         .catch((error: any) => {
-          toast.error(`Error saving to Collections`);
+          toast.error("Already exists in cluster");
           console.log(error.message);
         });
     });
@@ -49,7 +55,11 @@ const ShareButton = ({ post, owner }: SaveProps) => {
 
   return (
     <div>
-      <Download className="hover:cursor-pointer" onClick={handleSavingPost} />
+      {isPending ? (
+        <Loader2 className="animate-spin" />
+      ) : (
+        <Download className="hover:cursor-pointer" onClick={handleSavingPost} />
+      )}
     </div>
   );
 };

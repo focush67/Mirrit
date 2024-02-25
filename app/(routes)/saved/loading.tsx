@@ -6,7 +6,7 @@ const LoadingSaved = () => {
   return (
     <div className="flex gap-2 justify-center w-[90%]">
       {[...Array(3)].map((_, index) => (
-        <PostCardSkeleton key={index} />
+        <PostCardSkeleton key={index} size="small" />
       ))}
     </div>
   );
