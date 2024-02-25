@@ -13,6 +13,7 @@ import {
 } from "@/redux_store/slices/async-thunks";
 import { AppDispatch } from "@/redux_store/store";
 import { addNewSavedPostState } from "@/redux_store/slices/saved/saved-slice";
+import { useUser } from "@clerk/nextjs";
 
 interface SaveProps {
   post: Post;
@@ -20,6 +21,7 @@ interface SaveProps {
 }
 
 const ShareButton = ({ post, owner }: SaveProps) => {
+  const { isSignedIn } = useUser();
   const [isPending, startTransition] = useTransition();
   const dispatch: AppDispatch = useDispatch();
   useEffect(() => {
@@ -29,6 +31,10 @@ const ShareButton = ({ post, owner }: SaveProps) => {
   }, []);
 
   const handleSavingPost = () => {
+    if (!isSignedIn) {
+      toast.error("Please Login for saving");
+      return;
+    }
     startTransition(() => {
       savePost(post.id)
         .then((data) => {

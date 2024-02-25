@@ -86,6 +86,7 @@ export const onEditPost = async (values: Partial<Post>) => {
   const validData = {
     title: values.title,
     description: values.description,
+    cover: values.cover,
   };
 
   const editedPost = await db.post.update({

@@ -33,7 +33,6 @@ const DeleteComment = ({ comment, post, commentOwner }: DeleteCommentProps) => {
               postId: post.id,
             })
           );
-          router.refresh();
         })
         .catch(() => toast.error("Comment successfully deleted"));
     });
@@ -44,7 +43,7 @@ const DeleteComment = ({ comment, post, commentOwner }: DeleteCommentProps) => {
       variant="ghost"
       size="sm"
       onClick={handleCommentDeletion}
-      className="rounded-lg"
+      className="rounded-full"
       disabled={isPending}
     >
       {isPending ? (

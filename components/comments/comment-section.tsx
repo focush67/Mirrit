@@ -22,6 +22,7 @@ import { StateType } from "@/redux_store/store";
 import { T_Comment } from "@/types/comment";
 import { PostType } from "@/types/post";
 import { removeTimeFields } from "@/utilities/remove-fields";
+import { useUser } from "@clerk/nextjs";
 interface CommentSectionProps {
   post: Post;
   existingComments: T_Comment[];
@@ -36,11 +37,16 @@ let CommentSection = ({
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [presentComment, setPresentComment] = useState<string>("");
   const [isPending, startTransition] = useTransition();
+  const { isSignedIn } = useUser();
   const dispatch = useDispatch();
   const statePost = useSelector((state: StateType) =>
     state.posts.posts.find((p: PostType) => p.id === post.id)
   );
   const handleCommenting = () => {
+    if (!isSignedIn) {
+      toast.error("Please Login for commenting");
+      return;
+    }
     startTransition(() => {
       CommentOnPost({ postId: post.id, content: presentComment })
         .then((data) => {

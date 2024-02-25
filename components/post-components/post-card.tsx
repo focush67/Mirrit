@@ -12,6 +12,7 @@ import DeleteModal from "../custom-modals/delete-post-modal";
 import EditModal from "../custom-modals/edit-post-modal";
 import RemoveSaved from "../buttons/remove-saved-button";
 import Description from "./description";
+import { distance } from "@/utilities/date-format";
 
 interface PostCardProps {
   post: Post & { owner: User };
@@ -27,6 +28,7 @@ let PostCard = async ({
   const comments = await getCommentsForPost(post.id);
   const self = await getSelf();
   const owner = self as User;
+  const dis = distance(post);
   return (
     <Card
       className={`py-2 flex flex-col ${size === "small" && "h-auto"} ${
@@ -38,36 +40,31 @@ let PostCard = async ({
 
         <CardHeader className="relative pb-0 pt-2 px-1 flex-row items-center overflow-x-hidden sm:gap-2">
           <div className="flex flex-col">
-            <p
-              className={`${
-                size === "small" ? "hidden" : "text-sm"
-              } uppercase font-bold`}
-            >
-              {post.owner.username}
-            </p>
             <h4
               className={`${
                 size === "small" ? "text-xs" : "text-sm"
-              } uppercase font-bold`}
+              }  font-semibold`}
             >
               {post.title}
             </h4>
+            <div className="text-xs mt-2 text-gray-600">{dis}</div>
           </div>
-
           {removeSaved === true ? (
-            <div className="mx-3">
+            <div className="mx-2 mr-3">
               <RemoveSaved postId={post.id} />
             </div>
           ) : (
             post.owner_Id === self?.id && (
-              <div
+              <span
                 className={`${
-                  size === "large" ? "hidden" : "flex ml-0 gap-x-6"
-                } `}
+                  size === "large"
+                    ? "hidden"
+                    : "flex gap-x-5 bg-inherit w-auto rounded-full"
+                }`}
               >
                 <DeleteModal post={post} />
                 <EditModal post={post} />
-              </div>
+              </span>
             )
           )}
         </CardHeader>
