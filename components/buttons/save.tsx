@@ -28,7 +28,7 @@ const ShareButton = ({ post, owner }: SaveProps) => {
     dispatch(fetchPosts());
     dispatch(fetchUsers());
     dispatch(fetchSaved());
-  }, []);
+  }, [dispatch]);
 
   const handleSavingPost = () => {
     if (!isSignedIn) {
