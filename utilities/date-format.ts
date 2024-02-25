@@ -11,6 +11,8 @@ export const distance = (input: any) => {
   });
   if (distanceToNow.startsWith("about")) {
     return distanceToNow.substring("about".length);
+  } else if (distanceToNow.startsWith("less than")) {
+    return distanceToNow.substring("less than".length);
   } else {
     return distanceToNow;
   }

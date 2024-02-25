@@ -11,7 +11,7 @@ import { dark } from "@clerk/themes";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Social Media App Version 2 dev",
+  title: "Social Media App Version 2",
   description: "Made with Next14 and TypeScript",
 };
 
