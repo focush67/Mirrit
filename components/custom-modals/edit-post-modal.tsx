@@ -16,7 +16,7 @@ import { Post, User } from "@prisma/client";
 
 import { useDispatch } from "react-redux";
 import { editPost } from "@/redux_store/slices/posts/post-slice";
-import { Edit2, Edit3 } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { onEditPost } from "@/server_actions/posts";
 import toast from "react-hot-toast";
 import { UploadDropZone } from "@/utilities/uploadthing";

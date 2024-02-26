@@ -1,5 +1,5 @@
 import { db } from "@/utilities/database";
-import { getSelf } from "./auth-service";
+import { getSelf } from "@/services/auth-service";
 
 export const getPosts = async () => {
   const posts = await db.post.findMany({
@@ -88,26 +88,4 @@ export const getSavedPostsIds = async () => {
   }
 
   return user;
-};
-
-export const removeSavedPost = async (id: string) => {
-  const self = await getSelf();
-  if (!self) {
-    console.log(
-      "You need to be logged in to remove saved post from your cluster"
-    );
-    return null;
-  }
-
-  const savedPost = await db.saved.delete({
-    where: {
-      saved_by_Id_saved_post_Id: {
-        saved_by_Id: self.id,
-        saved_post_Id: id,
-      },
-    },
-  });
-
-  console.log("Action for removing savedPost ", savedPost);
-  return savedPost;
 };

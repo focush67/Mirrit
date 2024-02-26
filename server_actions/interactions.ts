@@ -3,7 +3,9 @@
 import { db } from "@/utilities/database";
 import { getSelf } from "@/services/auth-service";
 import { getUserById } from "@/services/user-service";
-import { UserType } from "@/types/user";
+import { pusherServer } from "@/utilities/pusher";
+import { removeTimeFields } from "@/utilities/remove-fields";
+import { toPusherKey } from "@/utilities/pusher-key";
 
 export const LikePost = async (postId: string) => {
   const self = await getSelf();
@@ -20,9 +22,52 @@ export const LikePost = async (postId: string) => {
     },
   });
 
-  const finalLikeData = (({ createdAt, updatedAt, ...rest }) => rest)(likeData);
+  const likeResponse = await db.like.findUnique({
+    where: {
+      id: likeData.id,
+    },
+    include: {
+      liker: true,
+      target_post: true,
+    },
+  });
 
-  return finalLikeData;
+  const targetPostOwner = await db.user.findUnique({
+    where: {
+      id: likeResponse?.target_post.owner_Id,
+    },
+  });
+
+  console.log(
+    `Sending like notification to channel ${targetPostOwner?.externalUserId}`
+  );
+
+  const newNotif = await db.notification.create({
+    data: {
+      type: "like",
+      senderId: self.id,
+      receiverId: targetPostOwner?.id!,
+      postId: postId,
+    },
+  });
+
+  const like = await db.notification.findUnique({
+    where: {
+      id: newNotif.id,
+    },
+    include: {
+      sender: true,
+      receiver: true,
+      post: true,
+    },
+  });
+
+  pusherServer.trigger(
+    `${targetPostOwner?.externalUserId}`,
+    "like-notification",
+    like
+  );
+  return likeResponse;
 };
 
 export const CommentOnPost = async ({
@@ -46,35 +91,56 @@ export const CommentOnPost = async ({
     },
   });
 
-  const owner = (await getUserById(commentData.commented_by_Id)) as UserType;
+  const owner = await getUserById(commentData.commented_by_Id);
 
-  const finalCommentData = (({ createdAt, updatedAt, ...rest }) => rest)(
-    commentData
-  );
+  const x = await db.post.findUnique({
+    where: {
+      id: postId,
+    },
+    include: {
+      owner: true,
+    },
+  });
 
-  const combinedData = {
-    owner: owner,
-    ...finalCommentData,
+  const commentResponse = {
+    id: commentData.id,
+    post_Id: commentData.post_Id,
+    content: commentData.content,
+    commented_by_Id: commentData.commented_by_Id,
+    owner: removeTimeFields(owner),
   };
 
-  return combinedData;
+  console.log(
+    `Sending comment notification to channel ${x?.owner.externalUserId}`
+  );
 
-  /*
-    type X = {
-    id: string;
-    post_Id: string;
-    content: string;
-    commented_by_Id: string;
-}
-  owner:{
-    id: string;
-    username: string;
-    imageUrl: string | null;
-    externalUserId: string;
-    bio: string | null;
-}
-}
-  */
+  const newNotif = await db.notification.create({
+    data: {
+      type: "comment",
+      senderId: commentData.commented_by_Id,
+      receiverId: owner?.id!,
+      postId: postId,
+    },
+  });
+
+  const comment = await db.notification.findUnique({
+    where: {
+      id: newNotif.id,
+    },
+    include: {
+      sender: true,
+      receiver: true,
+      post: true,
+    },
+  });
+
+  await pusherServer.trigger(
+    `${x?.owner.externalUserId}`,
+    `comment-notification`,
+    comment
+  );
+
+  return commentResponse;
 };
 
 export const deleteComment = async (commentId: string) => {

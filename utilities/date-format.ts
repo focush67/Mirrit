@@ -1,12 +1,15 @@
 import { format, formatDistanceToNow } from "date-fns";
 
 export const timeStamps = (input: any) => {
-  const formattedDate = format(input.createdAt, "dd MMM yyyy, HH:mm");
+  const formattedDate = format(input?.createdAt, "dd MMM yyyy, HH:mm");
   return formattedDate;
 };
 
 export const distance = (input: any) => {
-  const distanceToNow = formatDistanceToNow(input.updatedAt, {
+  if (!input) {
+    return null;
+  }
+  const distanceToNow = formatDistanceToNow(input?.updatedAt, {
     addSuffix: true,
   });
   if (distanceToNow.startsWith("about")) {

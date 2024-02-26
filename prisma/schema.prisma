@@ -11,19 +11,21 @@ datasource db {
 }
 
 model User {
-  id               String    @id @default(auto()) @map("_id") @db.ObjectId
-  username         String    @unique
-  imageUrl         String?
-  externalUserId   String    @unique
-  bio              String?
-  following        Follow[]  @relation("Following")
-  followedBy       Follow[]  @relation("FollowedBy")
-  posts            Post[]    @relation("PostsCreated")
-  likedPosts       Like[]    @relation("LikedPosts")
-  commentedOnPosts Comment[] @relation("CommentedOnPosts")
-  savedPosts       Saved[]   @relation("SavedPosts")
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id                    String         @id @default(auto()) @map("_id") @db.ObjectId
+  username              String         @unique
+  imageUrl              String?
+  externalUserId        String         @unique
+  bio                   String?
+  following             Follow[]       @relation("Following")
+  followedBy            Follow[]       @relation("FollowedBy")
+  posts                 Post[]         @relation("PostsCreated")
+  likedPosts            Like[]         @relation("LikedPosts")
+  commentedOnPosts      Comment[]      @relation("CommentedOnPosts")
+  savedPosts            Saved[]        @relation("SavedPosts")
+  notificationsSent     Notification[] @relation("sentNotifications")
+  notificationsReceiver Notification[] @relation("receivedNotifications")
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
 }
 
 model Follow {
@@ -40,17 +42,18 @@ model Follow {
 }
 
 model Post {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  owner_Id    String    @db.ObjectId
-  owner       User      @relation("PostsCreated", fields: [owner_Id], references: [id], onDelete: Cascade)
-  title       String
-  description String?
-  cover       String
-  likes       Like[]    @relation("LikedBy")
-  comments    Comment[] @relation("CommentedBy")
-  saved       Saved[]   @relation("SavedByUsers")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  owner_Id      String         @db.ObjectId
+  owner         User           @relation("PostsCreated", fields: [owner_Id], references: [id], onDelete: Cascade)
+  title         String
+  description   String?
+  cover         String
+  likes         Like[]         @relation("LikedBy")
+  comments      Comment[]      @relation("CommentedBy")
+  saved         Saved[]        @relation("SavedByUsers")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  notifications Notification[] @relation("postNotification")
 }
 
 model Like {
@@ -88,4 +91,21 @@ model Saved {
   updatedAt DateTime @updatedAt
 
   @@unique([saved_by_Id, saved_post_Id])
+}
+
+model Notification {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  type       String
+  senderId   String   @db.ObjectId
+  receiverId String   @db.ObjectId
+  postId     String?  @db.ObjectId
+  sender     User     @relation("sentNotifications", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User     @relation("receivedNotifications", fields: [receiverId], references: [id], onDelete: Cascade)
+  post       Post?    @relation("postNotification", fields: [postId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([type])
 }

@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
-
+import Link from "next/link";
 import LikeButton from "@/components/buttons/like";
 import { Post, User } from "@prisma/client";
 import UserAvatar from "../profile/user-avatar";
@@ -70,13 +70,16 @@ let PostCard = async ({
         </CardHeader>
       </div>
       <CardBody className="overflow-visible py-2 text-center flex items-center relative justify-between">
-        <Image
-          alt="Card background"
-          className="object-cover rounded-xl"
-          src={post.cover}
-          width={size === "small" ? (removeSaved ? "auto" : "180") : "270"}
-          isZoomed
-        />
+        <Link href={`/posts/${post.id}`}>
+          <Image
+            alt="Card background"
+            className="object-cover rounded-xl"
+            src={post.cover}
+            width={size === "small" ? (removeSaved ? "auto" : "180") : "270"}
+            isZoomed
+          />
+        </Link>
+
         <Description text={post.description!} size={size} />
         {removeSaved === false && (
           <div

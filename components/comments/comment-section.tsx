@@ -49,9 +49,15 @@ let CommentSection = ({
     }
     startTransition(() => {
       CommentOnPost({ postId: post.id, content: presentComment })
-        .then((data) => {
+        .then((data: any) => {
           toast.success(`Comment added`);
-          const formattedComment = removeTimeFields(data);
+          const formattedComment = {
+            post_Id: data?.post_Id!,
+            commented_by_Id: data?.commented_by_Id!,
+            content: data?.content!,
+            id: data?.id!,
+            owner: data?.owner,
+          };
           console.log(
             "formatted comment before dispatching ",
             formattedComment

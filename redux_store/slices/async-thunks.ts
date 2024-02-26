@@ -1,4 +1,4 @@
-import { getAllPosts, getPostsForThunks } from "@/server_actions/posts";
+import { getPostsForThunks } from "@/server_actions/posts";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 

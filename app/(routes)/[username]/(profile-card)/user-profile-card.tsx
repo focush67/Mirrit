@@ -18,7 +18,7 @@ import {
 import { StateType } from "@/redux_store/store";
 import { onFollow, onUnfollow } from "@/server_actions/follow";
 import toast from "react-hot-toast";
-import { Loader, Loader2 } from "lucide-react";
+import { Loader } from "lucide-react";
 
 interface UserProfileCardProps {
   profile: User;
@@ -31,13 +31,11 @@ export default function UserProfileCard({
   visitor,
   followStatus,
 }: UserProfileCardProps) {
-  console.log("profile card rendered");
   const dispatch = useDispatch();
   const stateProfile = useSelector((state: StateType) =>
     state.users.users.find((user) => user.id === profile.id)
   );
-  console.log("Followed: ", stateProfile?.followedProfiles.length);
-  console.log("Following: ", stateProfile?.followers.length);
+
   const [isPending, startTransition] = useTransition();
   const initiateFollow = () => {
     startTransition(() => {
@@ -71,7 +69,8 @@ export default function UserProfileCard({
     });
   };
 
-  const handleRelationship = () => {
+  const handleRelationship = (e: any) => {
+    e.stopPropagation();
     if (followStatus) {
       initiateUnfollow();
     } else {

@@ -3,7 +3,7 @@ const nextConfig = {
   images: {
     domains: ["img.clerk.com", "utfs.io"],
   },
-  reactStrictMode: false,
+  reactStrictMode: true,
 };
 
 module.exports = nextConfig;
