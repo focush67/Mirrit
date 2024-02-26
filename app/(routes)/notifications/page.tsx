@@ -26,12 +26,7 @@ const Notifications = ({ notifications }: NotificationProps) => {
     NotificationsType[]
   >([]);
 
-  const router = useRouter();
   const { user } = useUser();
-  if (!user) {
-    router.push("/");
-    return;
-  }
 
   useEffect(() => {
     pusherClient.subscribe(`${user?.id}`);
