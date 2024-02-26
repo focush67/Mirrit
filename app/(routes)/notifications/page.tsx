@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import NotificationCard from "@/components/notification-components/notification-card";
 import { Post, User } from "@prisma/client";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 
 interface NotificationsType {
   id: string;
