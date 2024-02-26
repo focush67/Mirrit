@@ -6,7 +6,7 @@ import NotificationCard from "@/components/notification-components/notification-
 import { Post, User } from "@prisma/client";
 import { useUser } from "@clerk/nextjs";
 
-interface NotificationsType {
+export interface NotificationsType {
   id: string;
   type: string;
   senderId: string;
@@ -16,11 +16,11 @@ interface NotificationsType {
   post: Post | null;
 }
 
-interface NotificationProps {
+interface Props {
   notifications: NotificationsType[];
 }
 
-const Notifications = ({ notifications }: NotificationProps) => {
+const Notifications = ({ notifications }: Props) => {
   const [currentNotifications, setCurrentNotifications] = useState<
     NotificationsType[]
   >([]);

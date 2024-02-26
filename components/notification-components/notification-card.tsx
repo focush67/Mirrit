@@ -1,18 +1,8 @@
+import { NotificationsType } from "@/app/(routes)/notifications/page";
 import { distance } from "@/utilities/date-format";
 import { Card, Avatar, Image } from "@nextui-org/react";
-import { Post, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React from "react";
-
-interface NotificationsType {
-  id: string;
-  type: string;
-  senderId: string;
-  receiverId: string;
-  sender: User;
-  receiver: User;
-  post: Post | null;
-}
 
 interface NotificationCardProps {
   notification: NotificationsType;
