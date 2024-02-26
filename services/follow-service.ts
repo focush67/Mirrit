@@ -1,5 +1,6 @@
 import { db } from "@/utilities/database";
 import { getSelf } from "./auth-service";
+import { pusherServer } from "@/utilities/pusher";
 
 export const isFollowingGivenUser = async (id: string) => {
   const self = await getSelf();
@@ -72,6 +73,34 @@ export const FollowGivenUser = async (id: string) => {
       following: true,
     },
   });
+
+  const notification = await db.notification.create({
+    data: {
+      senderId: self.id,
+      receiverId: targetUser.id,
+      type: "follow",
+    },
+  });
+
+  const newNotif = await db.notification.findUnique({
+    where: {
+      id: notification.id,
+    },
+    include: {
+      sender: true,
+      receiver: true,
+    },
+  });
+
+  console.log(
+    `Sending follow notification to ${followRequest.following.externalUserId}`
+  );
+
+  await pusherServer.trigger(
+    `${followRequest.following.externalUserId}`,
+    "follow-notification",
+    newNotif
+  );
 
   return followRequest;
 };

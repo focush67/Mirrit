@@ -30,7 +30,7 @@ export default function NavigationBar({
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="w-full"
+      className="w-auto"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
@@ -54,7 +54,7 @@ export default function NavigationBar({
           <Link href={"https://chatter-woad-nine.vercel.app/login"}>Chats</Link>
         </NavbarItem>
         <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
-          <Link href="/recents">Recents</Link>
+          <Link href="/notifications">Notifications</Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">

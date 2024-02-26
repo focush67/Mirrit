@@ -1,7 +1,7 @@
 "use client";
 
 import { Post } from "@prisma/client";
-import React, { memo, useEffect, useTransition } from "react";
+import React, { memo, useEffect, useState, useTransition } from "react";
 import { Heart, Loader } from "lucide-react";
 import { LikePost } from "@/server_actions/interactions";
 import toast from "react-hot-toast";
@@ -18,7 +18,6 @@ interface LikeProps {
 
 let LikeButton = ({ post, isDashboard }: LikeProps) => {
   const { isSignedIn } = useUser();
-
   const dispatch = useDispatch();
   const statePost = useSelector((state: StateType) =>
     selectPost(state, post.id)
@@ -34,10 +33,15 @@ let LikeButton = ({ post, isDashboard }: LikeProps) => {
       LikePost(post.id)
         .then((data) => {
           toast.success("Liked Post");
+          const formattedData = {
+            id: data?.id!,
+            liked_by_Id: data?.liked_by_Id!,
+            post_Id: data?.post_Id!,
+          };
           dispatch(
             likePost({
               postId: post.id,
-              like: data!,
+              like: formattedData!,
             })
           );
         })

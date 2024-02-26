@@ -7,7 +7,13 @@ import { getSelf } from "@/services/auth-service";
 const NavbarComponent = async () => {
   const self = await getSelf();
   const isLoggedIn = !!self;
-  const loggedInMenuItems = ["Home", "dashboard", "saved", "messenger"];
+  const loggedInMenuItems = [
+    "Home",
+    "dashboard",
+    "saved",
+    "notifications",
+    "messenger",
+  ];
 
   const defaultMenuItems: string[] = [];
 
