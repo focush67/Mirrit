@@ -1,4 +1,4 @@
-import { NotificationsType } from "@/app/(routes)/notifications/page";
+import { NotificationsType } from "@/components/notification-components/notification-component";
 import { distance } from "@/utilities/date-format";
 import { Card, Avatar, Image } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
