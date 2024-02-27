@@ -7,17 +7,19 @@ const HomePage = async () => {
   const posts = await getAllPosts();
   return (
     <div className="flex h-screen w-full">
-      <div className="px-2 h-full z-10 overflow-y-auto w-1/3 ">
+      <div className="px-2 h-full z-10 overflow-y-auto w-1/3 py-8">
+        <h1 className="text-xl font-semibold">Stories</h1>
         <StorySidebar />
       </div>
-      <div className="p-3 w-2/3">
+      <div className="py-8 w-2/3 mt-10">
         <div className="flex flex-col gap-3 items-center justify-center">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>
       </div>
-      <div className="w-1/3 px-2 py-2 h-screen">
+      <div className="w-1/3 mt-10 py-8 px-2 h-screen">
+        <h1 className="text-xl font-semibold text-center">Users</h1>
         <ProfilesWrapper />
       </div>
     </div>

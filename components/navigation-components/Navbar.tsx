@@ -77,7 +77,7 @@ export default function NavigationBar({
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="w-auto items-center z-[100]"
+      className="w-auto h-15 fixed top-0 z-50"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle

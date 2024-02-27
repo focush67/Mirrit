@@ -17,10 +17,6 @@ const StorySidebar = async () => {
   }));
   return (
     <div className="flex flex-col space-y-2 mt-2">
-      <span className="text-xs md:text-sm lg:text-xl xl:text-2xl font-semibold">
-        Stories
-      </span>
-
       <Story stories={formattedStories} />
     </div>
   );

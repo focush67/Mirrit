@@ -4,13 +4,14 @@ import React from "react";
 
 const Loading = () => {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between p-2 space-y-2 mt-2">
+    <div className="flex flex-col gap-3 items-center justify-center mt-10 py-8">
       {[...Array(3)].map((_, index) => (
         <PostCardSkeleton key={index} size="large" />
       ))}
     </div>
   );
 };
+
 export default Loading;
 
 export const PostCardSkeleton = ({ size }: { size: "small" | "large" }) => {

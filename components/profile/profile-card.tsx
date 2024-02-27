@@ -35,7 +35,7 @@ interface ProfileCardProps {
 
 export default async function ProfileCard({ profile }: ProfileCardProps) {
   return (
-    <div className="w-full flex justify-center md:justify-center mt-2">
+    <div className="w-full flex justify-center md:justify-center mt-2 py-6">
       <Card className="w-full m-2 items-center shadow-2xl">
         <CardHeader className="flex justify-between">
           <div className="flex gap-5">

@@ -1,5 +1,3 @@
-import { getAllUsers } from "@/server_actions/user";
-
 import { Profile } from "./profile-home-card";
 import { db } from "@/utilities/database";
 import { getSelf } from "@/services/auth-service";

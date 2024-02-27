@@ -23,18 +23,19 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const singlePost = posts.find((post) => post.id === params.id);
   const comments = await getCommentsForPost(singlePost?.id!);
   return (
-    <div className="w-[80vw] h-[50vh] mt-5 ml-5">
+    <div className="w-[80vw] h-[50vh] mt-10 ml-5 py-8">
       <Card className="col-span-12 sm:col-span-4 ">
         <CardHeader className="absolute z-10 top-1 flex items-center gap-x-2">
           <Avatar src={singlePost?.owner.imageUrl!} size="lg" />
           <h4 className="text-white font-medium text-large">
             {singlePost?.owner?.username}
           </h4>
+          <div></div>
         </CardHeader>
         <Image
           removeWrapper
           alt="Card background"
-          className="z-0 w-full h-full object-cover"
+          className="z-0 w-fit h-fit object-cover"
           src={singlePost?.cover}
         />
         <Card className="border-white h-[8vh] mt-0 grid grid-cols-3 items-center justify-evenly ml-6">

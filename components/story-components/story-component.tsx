@@ -9,6 +9,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Progress,
   useDisclosure,
 } from "@nextui-org/react";
 import { LikeForStory, Story, User } from "@prisma/client";
@@ -54,6 +55,7 @@ export const StoryComponent = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [seen, setSeen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [progress, setProgress] = useState(0);
   const [hasLike, setHasLike] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -83,6 +85,25 @@ export const StoryComponent = ({
       setSeen(true);
       return () => clearTimeout(timeout);
     }
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
+    let interval: any;
+    if (isOpen) {
+      const start = Date.now();
+      interval = setInterval(() => {
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - start;
+        const duration = 10000;
+        const percentage = (elapsedTime / duration) * 100;
+        setProgress(percentage);
+
+        if (elapsedTime >= duration) {
+          onClose();
+        }
+      }, 100);
+    }
+    return () => clearInterval(interval);
   }, [isOpen, onClose]);
 
   useEffect(() => {
@@ -118,6 +139,7 @@ export const StoryComponent = ({
         backdrop="blur"
         className="w-auto h-fit rounded-full"
         placement="center"
+        radius="lg"
       >
         <ModalContent>
           <>
@@ -134,12 +156,13 @@ export const StoryComponent = ({
               />
               <p>{story.title}</p>
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter className="flex items-center">
               <Heart
                 className="w-5 h-5 hover:cursor-pointer"
                 onClick={handleStoryLike}
                 fill={hasLike || story.status ? "red" : "none"}
               />
+              <Progress color="primary" className="h-2" value={progress} />
             </ModalFooter>
           </>
         </ModalContent>

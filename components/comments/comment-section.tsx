@@ -40,7 +40,7 @@ let CommentSection = ({
   const { isSignedIn } = useUser();
   const dispatch = useDispatch();
   const statePost = useSelector((state: StateType) =>
-    state.posts.posts.find((p: PostType) => p.id === post.id)
+    state.posts?.posts?.find((p: PostType) => p.id === post.id)
   );
   const handleCommenting = () => {
     if (!isSignedIn) {
