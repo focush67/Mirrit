@@ -30,7 +30,7 @@ const Story = ({ stories }: StoryProps) => {
       <div className="flex items-center">
         <ul>
           {stories.map((story, index) => (
-            <div className="mt-2 mb-4">
+            <div className="mt-2 mb-4" key={story.id}>
               <StoryComponent story={story} key={index} />
             </div>
           ))}
