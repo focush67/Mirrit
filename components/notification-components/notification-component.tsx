@@ -27,8 +27,6 @@ const Notifications = ({ notifications }: Props) => {
 
   const { user } = useUser();
   console.log(user?.id);
-  console.log(pusherClient);
-  console.log(pusherServer);
   useEffect(() => {
     pusherClient.subscribe(`${user?.id}`);
     pusherClient.bind("like-notification", (data: NotificationsType) => {

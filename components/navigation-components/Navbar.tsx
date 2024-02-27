@@ -70,7 +70,7 @@ export default function NavigationBar({
       pusherClient.unbind("follow-notification");
       pusherClient.unsubscribe(`${user?.id}`);
     };
-  }, [currentNotifications]);
+  }, [currentNotifications, user]);
 
   return (
     <Navbar
@@ -101,7 +101,9 @@ export default function NavigationBar({
           <Link href={"https://chatter-woad-nine.vercel.app/login"}>Chats</Link>
         </NavbarItem>
         <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
-          <Link href="/notifications">Notifications</Link>
+          <Link href="/notifications">
+            Notifications ({currentNotifications.length})
+          </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
