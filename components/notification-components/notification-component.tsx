@@ -70,7 +70,7 @@ const Notifications = ({ notifications }: Props) => {
   }, [currentNotifications]);
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center py-8 mt-10">
       <div>
         {notifications.map((notification, index) => {
           if (notification.type === "like") {
