@@ -38,9 +38,9 @@ const postsSlice = createSlice({
       action: PayloadAction<{ postId: string; like: LikeType }>
     ) => {
       const { postId, like } = action.payload;
-      console.log("liking post ");
+
       const LIKE = like as LikeType;
-      console.log(LIKE);
+
       return {
         ...state,
         posts: state.posts.map((post: StatePost) =>
@@ -171,4 +171,4 @@ export default postsSlice.reducer;
 
 export const selectAllPosts = (state: StateType) => state.posts.posts;
 export const selectPost = (state: StateType, postId: string) =>
-  state.posts.posts.find((post: StatePost) => post.id === postId);
+  state.posts?.posts?.find((post: StatePost) => post.id === postId);

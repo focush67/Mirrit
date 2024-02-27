@@ -24,6 +24,8 @@ model User {
   savedPosts            Saved[]        @relation("SavedPosts")
   notificationsSent     Notification[] @relation("sentNotifications")
   notificationsReceiver Notification[] @relation("receivedNotifications")
+  createdStories        Story[]        @relation("StoriesCreated")
+  likedStories          LikeForStory[] @relation("LikedStories")
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
 }
@@ -67,28 +69,24 @@ model Like {
 }
 
 model Comment {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  commented_by_Id String @db.ObjectId
-  post_Id         String @db.ObjectId
-
-  commentor User @relation("CommentedOnPosts", fields: [commented_by_Id], references: [id], onDelete: Cascade)
-
-  target_post Post @relation("CommentedBy", fields: [post_Id], references: [id], onDelete: Cascade)
-
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  commented_by_Id String   @db.ObjectId
+  post_Id         String   @db.ObjectId
+  commentor       User     @relation("CommentedOnPosts", fields: [commented_by_Id], references: [id], onDelete: Cascade)
+  target_post     Post     @relation("CommentedBy", fields: [post_Id], references: [id], onDelete: Cascade)
+  content         String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Saved {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  saved_by_Id   String @db.ObjectId
-  saved_post_Id String @db.ObjectId
-  savedBy       User   @relation("SavedPosts", fields: [saved_by_Id], references: [id], onDelete: Cascade)
-  savedPost     Post   @relation("SavedByUsers", fields: [saved_post_Id], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  saved_by_Id   String   @db.ObjectId
+  saved_post_Id String   @db.ObjectId
+  savedBy       User     @relation("SavedPosts", fields: [saved_by_Id], references: [id], onDelete: Cascade)
+  savedPost     Post     @relation("SavedByUsers", fields: [saved_post_Id], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@unique([saved_by_Id, saved_post_Id])
 }
@@ -108,4 +106,27 @@ model Notification {
   @@index([senderId])
   @@index([receiverId])
   @@index([type])
+}
+
+model Story {
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  ownerId    String         @db.ObjectId
+  owner      User           @relation("StoriesCreated", fields: [ownerId], references: [id], onDelete: Cascade)
+  title      String
+  storyCover String
+  likes      LikeForStory[] @relation("StoryLikes")
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model LikeForStory {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  liked_by_Id  String   @db.ObjectId
+  story_Id     String   @db.ObjectId
+  liker        User     @relation("LikedStories", fields: [liked_by_Id], references: [id], onDelete: Cascade)
+  target_story Story    @relation("StoryLikes", fields: [story_Id], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([story_Id, liked_by_Id])
 }

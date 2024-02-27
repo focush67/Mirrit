@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   NavbarContent,
@@ -11,8 +11,10 @@ import {
 } from "@nextui-org/react";
 import Link from "next/link";
 import ToggleSwitch from "../switch/toggle-switch";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { LoginButton } from "./navbar-component";
+import { NotificationsType } from "../notification-components/notification-component";
+import { pusherClient } from "@/utilities/pusher";
 
 interface NavigationProps {
   menuItems: string[];
@@ -24,13 +26,58 @@ export default function NavigationBar({
   isLoggedIn,
 }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentNotifications, setCurrentNotifications] = useState<
+    NotificationsType[]
+  >([]);
+
+  const { user } = useUser();
+
+  useEffect(() => {
+    pusherClient.subscribe(`${user?.id}`);
+    pusherClient.bind("like-notification", (data: NotificationsType) => {
+      console.log("Like notification: ", data);
+      if (
+        !currentNotifications.some(
+          (notification) => notification.id === data.id
+        )
+      ) {
+        setCurrentNotifications((prev: NotificationsType[]) => [...prev, data]);
+      }
+    });
+    pusherClient.bind("comment-notification", (data: NotificationsType) => {
+      console.log("Comment notification: ", data);
+      if (
+        !currentNotifications.some(
+          (notification) => notification.id === data.id
+        )
+      ) {
+        setCurrentNotifications((prev: NotificationsType[]) => [...prev, data]);
+      }
+    });
+    pusherClient.bind("follow-notification", (data: NotificationsType) => {
+      console.log("Follow notification ", data);
+      if (
+        !currentNotifications.some(
+          (notification) => notification.id === data.id
+        )
+      ) {
+        setCurrentNotifications((prev: NotificationsType[]) => [...prev, data]);
+      }
+    });
+    return () => {
+      pusherClient.unbind("comment-notification");
+      pusherClient.unbind("like-notification");
+      pusherClient.unbind("follow-notification");
+      pusherClient.unsubscribe(`${user?.id}`);
+    };
+  }, [currentNotifications]);
 
   return (
     <Navbar
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="w-auto"
+      className="w-auto items-center z-[100]"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle

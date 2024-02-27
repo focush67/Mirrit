@@ -32,7 +32,7 @@ let PostCard = async ({
   return (
     <Card
       className={`py-2 flex flex-col ${size === "small" && "h-auto"} ${
-        size === "small" ? "w-[250px]" : "w-[300px]"
+        size === "small" ? "w-[250px]" : "w-[280px]"
       } relative shadow-2xl`}
     >
       <div className="flex flex-row items-center h-auto ">

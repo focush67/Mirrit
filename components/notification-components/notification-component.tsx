@@ -1,6 +1,6 @@
 "use client";
 
-import { pusherClient } from "@/utilities/pusher";
+import { pusherClient, pusherServer } from "@/utilities/pusher";
 import { useEffect, useState } from "react";
 import NotificationCard from "@/components/notification-components/notification-card";
 import { Post, User } from "@prisma/client";
@@ -26,7 +26,9 @@ const Notifications = ({ notifications }: Props) => {
   >([]);
 
   const { user } = useUser();
-
+  console.log(user?.id);
+  console.log(pusherClient);
+  console.log(pusherServer);
   useEffect(() => {
     pusherClient.subscribe(`${user?.id}`);
     pusherClient.bind("like-notification", (data: NotificationsType) => {

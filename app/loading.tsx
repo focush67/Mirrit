@@ -16,9 +16,9 @@ export default Loading;
 export const PostCardSkeleton = ({ size }: { size: "small" | "large" }) => {
   return (
     <Card
-      className={`py-2 flex flex-col ${
-        size === "small" ? "w-[250px] h-[250px]" : "w-[300px] h-[300px]"
-      } relaitve shadow-2xl p-4`}
+      className={`py-2 px-2 flex flex-col ${
+        size === "small" ? "w-[250px]" : "w-[300px]"
+      } relaitve shadow-2xl h-[500px]`}
       radius="lg"
     >
       <Skeleton className="rounded-xl h-8 mb-5" />
