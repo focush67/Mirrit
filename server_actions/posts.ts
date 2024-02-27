@@ -195,6 +195,18 @@ export const savePost = async (saved_post_Id: string) => {
     console.log("You need to be logged in to save a post");
     return null;
   }
+  const isAlreadySaved = await db.saved.count({
+    where: {
+      saved_by_Id: self.id,
+      id: saved_post_Id,
+    },
+  });
+
+  if (isAlreadySaved > 0) {
+    console.log("Post is already saved, so returning null");
+    return null;
+  }
+
   const newSavedPost = await db.saved.create({
     data: {
       saved_by_Id: self.id,

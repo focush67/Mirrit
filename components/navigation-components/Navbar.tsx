@@ -35,7 +35,7 @@ export default function NavigationBar({
   useEffect(() => {
     pusherClient.subscribe(`${user?.id}`);
     pusherClient.bind("like-notification", (data: NotificationsType) => {
-      console.log("Like notification: ", data);
+      console.log(currentNotifications);
       if (
         !currentNotifications.some(
           (notification) => notification.id === data.id
@@ -45,7 +45,7 @@ export default function NavigationBar({
       }
     });
     pusherClient.bind("comment-notification", (data: NotificationsType) => {
-      console.log("Comment notification: ", data);
+      console.log(currentNotifications);
       if (
         !currentNotifications.some(
           (notification) => notification.id === data.id
@@ -101,8 +101,9 @@ export default function NavigationBar({
           <Link href={"https://chatter-woad-nine.vercel.app/login"}>Chats</Link>
         </NavbarItem>
         <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
-          <Link href="/notifications">
-            Notifications ({currentNotifications.length})
+          <Link href="/notifications" className="flex items-center gap-x-1">
+            <div>Notifications</div>
+            <div>({currentNotifications?.length})</div>
           </Link>
         </NavbarItem>
       </NavbarContent>
@@ -146,3 +147,17 @@ export default function NavigationBar({
     </Navbar>
   );
 }
+
+interface BadgeProps {
+  children: React.ReactNode;
+}
+
+export const BadgeComponent = ({ children }: BadgeProps) => {
+  return (
+    <div className="ml-2 relative inline-block">
+      <div className="bg-red-500 text-white text-xs font-semibold rounded-full px-2 py-1 leading-none absolute top-0 right-0 transform -translate-x-1/2 -translate-y-1/2">
+        {children}
+      </div>
+    </div>
+  );
+};

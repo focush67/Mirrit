@@ -79,7 +79,6 @@ const Notifications = ({ notifications }: Props) => {
         })}
 
         <div className="mt-3 mb-1 flex flex-col items-center justify-center">
-          <h1>Recents</h1>
           <div>
             {currentNotifications?.map((current, index) => (
               <NotificationCard key={index} notification={current} />
