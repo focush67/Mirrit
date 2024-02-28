@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Navbar,
   NavbarContent,
@@ -15,6 +15,9 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import { LoginButton } from "./navbar-component";
 import { NotificationsType } from "../notification-components/notification-component";
 import { pusherClient } from "@/utilities/pusher";
+import { NotificationContext } from "@/context/notification-context";
+import { BellDot } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface NavigationProps {
   menuItems: string[];
@@ -25,43 +28,52 @@ export default function NavigationBar({
   menuItems,
   isLoggedIn,
 }: NavigationProps) {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentNotifications, setCurrentNotifications] = useState<
     NotificationsType[]
   >([]);
+  const { notificationCount, setNotificationCount } =
+    useContext(NotificationContext) || {};
 
   const { user } = useUser();
 
   useEffect(() => {
     pusherClient.subscribe(`${user?.id}`);
     pusherClient.bind("like-notification", (data: NotificationsType) => {
-      console.log(currentNotifications);
+      console.log(`like notification received from ${data.sender.username}`);
       if (
         !currentNotifications.some(
           (notification) => notification.id === data.id
         )
       ) {
         setCurrentNotifications((prev: NotificationsType[]) => [...prev, data]);
+        setNotificationCount?.((prev: number) => prev + 1);
+        console.log("Count: ", notificationCount);
       }
     });
     pusherClient.bind("comment-notification", (data: NotificationsType) => {
-      console.log(currentNotifications);
+      console.log(`comment notification received from ${data.sender.username}`);
       if (
         !currentNotifications.some(
           (notification) => notification.id === data.id
         )
       ) {
         setCurrentNotifications((prev: NotificationsType[]) => [...prev, data]);
+        setNotificationCount?.((prev: number) => prev + 1);
+        console.log("Count: ", notificationCount);
       }
     });
     pusherClient.bind("follow-notification", (data: NotificationsType) => {
-      console.log("Follow notification ", data);
+      console.log(`follow notification received from ${data.sender.username}`);
       if (
         !currentNotifications.some(
           (notification) => notification.id === data.id
         )
       ) {
         setCurrentNotifications((prev: NotificationsType[]) => [...prev, data]);
+        setNotificationCount?.((prev: number) => prev + 1);
+        console.log("Count: ", notificationCount);
       }
     });
     return () => {
@@ -70,7 +82,7 @@ export default function NavigationBar({
       pusherClient.unbind("follow-notification");
       pusherClient.unsubscribe(`${user?.id}`);
     };
-  }, [currentNotifications, user]);
+  }, [currentNotifications, user, notificationCount]);
 
   return (
     <Navbar
@@ -103,11 +115,22 @@ export default function NavigationBar({
         <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
           <Link href="/notifications" className="flex items-center gap-x-1">
             <div>Notifications</div>
-            <div>({currentNotifications?.length})</div>
+            <div>({notificationCount})</div>
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
+        <NavbarItem className="hidden sm:hidden">
+          <div className="flex gap-x-1">
+            <BellDot
+              fill="bg-red-900"
+              onClick={() => router.push("/notifications")}
+            />
+            {notificationCount && notificationCount > 0 && (
+              <div>({notificationCount})</div>
+            )}
+          </div>
+        </NavbarItem>
         <NavbarItem>
           {isLoggedIn ? <UserButton afterSignOutUrl="/" /> : <LoginButton />}
         </NavbarItem>

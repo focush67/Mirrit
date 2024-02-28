@@ -16,7 +16,7 @@ const ProfilesWrapper = async () => {
     },
   });
   return (
-    <div className="w-auto">
+    <div className="w-auto flex flex-col justify-end items-center">
       {profiles.map((profile, index) => (
         <Profile profile={profile} key={index} />
       ))}

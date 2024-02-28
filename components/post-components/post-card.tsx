@@ -32,8 +32,8 @@ let PostCard = async ({
   return (
     <Card
       className={`py-2 flex flex-col ${size === "small" && "h-auto"} ${
-        size === "small" ? "w-[250px]" : "w-[280px]"
-      } relative shadow-2xl`}
+        size === "small" ? "w-[250px]" : "w-[260px]"
+      } relative shadow-2xl md:w-[400px]`}
     >
       <div className="flex flex-row items-center h-auto ">
         <UserAvatar user={post.owner} postOwner={self?.id} isDashboard={true} />

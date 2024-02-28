@@ -7,7 +7,6 @@ import { useTheme } from "next-themes";
 export default function ToggleSwitch() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [count, setCount] = useState(0);
 
   useEffect(() => {
     setMounted(true);

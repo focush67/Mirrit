@@ -8,21 +8,8 @@ import { removeTimeFields } from "@/utilities/remove-fields";
 
 export const LikePost = async (postId: string) => {
   const self = await getSelf();
-
   if (!self) {
     console.log("You need to login to like the post");
-    return null;
-  }
-
-  const isAlreadyLiked = await db.like.count({
-    where: {
-      id: postId,
-      liked_by_Id: self.id,
-    },
-  });
-
-  if (isAlreadyLiked > 0) {
-    console.log("Already Liked post , so returning null");
     return null;
   }
 
@@ -104,7 +91,7 @@ export const CommentOnPost = async ({
 
   const owner = await getUserById(commentData.commented_by_Id); // Who commented
 
-  const x = await db.post.findUnique({
+  const postOwner = await db.post.findUnique({
     where: {
       id: postId,
     },
@@ -122,14 +109,14 @@ export const CommentOnPost = async ({
   };
 
   console.log(
-    `Sending comment notification to channel ${x?.owner.externalUserId} and user ${x?.owner.username}`
+    `Sending comment notification to channel ${postOwner?.owner.externalUserId} and user ${postOwner?.owner.username}`
   );
 
   const newNotif = await db.notification.create({
     data: {
       type: "comment",
       senderId: commentData.commented_by_Id,
-      receiverId: x?.owner?.id!,
+      receiverId: postOwner?.owner?.id!,
       postId: postId,
     },
   });
@@ -146,7 +133,7 @@ export const CommentOnPost = async ({
   });
 
   await pusherServer.trigger(
-    `${x?.owner.externalUserId}`,
+    `${postOwner?.owner.externalUserId}`,
     `comment-notification`,
     comment
   );

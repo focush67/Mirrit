@@ -7,6 +7,7 @@ import NavbarComponent from "@/components/navigation-components/navbar-component
 import { ToastProvider } from "@/providers/toast-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { NotificationProvider } from "@/context/notification-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,14 +25,16 @@ export default async function RootLayout({
     <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en">
         <body className={inter.className}>
-          <ReduxProvider>
-            <ToastProvider>
-              <Providers>
-                <NavbarComponent />
-                {children}
-              </Providers>
-            </ToastProvider>
-          </ReduxProvider>
+          <NotificationProvider>
+            <ReduxProvider>
+              <ToastProvider>
+                <Providers>
+                  <NavbarComponent />
+                  {children}
+                </Providers>
+              </ToastProvider>
+            </ReduxProvider>
+          </NotificationProvider>
         </body>
       </html>
     </ClerkProvider>
