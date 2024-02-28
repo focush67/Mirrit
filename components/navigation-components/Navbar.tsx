@@ -120,16 +120,17 @@ export default function NavigationBar({
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden sm:hidden">
-          <div className="flex gap-x-1">
+        <NavbarItem
+          className={`{
+          } flex gap-x-1 md:hidden lg:hidden hover:cursor-pointer`}
+        >
+          <div>
             <BellDot
-              fill="bg-red-900"
+              fill={notificationCount! > 0 ? "red" : "white"}
               onClick={() => router.push("/notifications")}
             />
-            {notificationCount && notificationCount > 0 && (
-              <div>({notificationCount})</div>
-            )}
           </div>
+          <div>{notificationCount}</div>
         </NavbarItem>
         <NavbarItem>
           {isLoggedIn ? <UserButton afterSignOutUrl="/" /> : <LoginButton />}

@@ -6,7 +6,7 @@ import { getAllPosts } from "@/server_actions/posts";
 const HomePage = async () => {
   const posts = await getAllPosts();
   return (
-    <div className="flex h-screen w-full min-h-screen">
+    <div className="flex h-screen w-full min-h-screen justify-between sm:justify-center">
       <div className="px-2 h-full w-fit">
         <div className="py-8">
           <h1 className="text-lg font-semibold mt-9">View</h1>
