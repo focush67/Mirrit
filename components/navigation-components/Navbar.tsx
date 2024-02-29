@@ -110,13 +110,7 @@ export default function NavigationBar({
           <Link href={`/saved`}>Saved</Link>
         </NavbarItem>
         <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
-          <Link href={"https://chatter-woad-nine.vercel.app/login"}>Chats</Link>
-        </NavbarItem>
-        <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
-          <Link href="/notifications" className="flex items-center gap-x-1">
-            <div>Notifications</div>
-            <div>({notificationCount})</div>
-          </Link>
+          <Link href={"/chat"}>Chat</Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">

@@ -26,6 +26,7 @@
     "lucide-react": "^0.309.0",
     "mongodb": "^6.3.0",
     "mongoose": "^8.0.4",
+    "nanoid": "^5.0.6",
     "next": "14.0.4",
     "next-auth": "^4.24.5",
     "next-themes": "^0.2.1",
@@ -35,6 +36,7 @@
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-redux": "^9.0.4",
+    "react-textarea-autosize": "^8.5.3",
     "redux-persist": "^6.0.0",
     "socket.io-client": "^4.7.4",
     "uploadthing": "^6.4.1"

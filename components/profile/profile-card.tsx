@@ -56,7 +56,7 @@ export default async function ProfileCard({ profile }: ProfileCardProps) {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex  gap-1">
             <StoryModal ownerId={profile?.id!} />
             <EditBioModal initialBio={profile?.bio} />
             <PostUploadModal />

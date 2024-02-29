@@ -4,8 +4,8 @@ import { getSelf } from "./auth-service";
 export const getAllStories = async () => {
   const stories = await db.story.findMany({
     include: {
-      owner: true,
       likes: true,
+      owner: true,
     },
   });
 
@@ -27,6 +27,6 @@ export const hasLikedThisStory = async (storyId: string) => {
     },
   });
 
-  const status = story?.likes.some((like) => like.liked_by_Id === self.id);
+  const status = story?.likes.some((like) => like.story_liker_id === self.id);
   return !!status;
 };

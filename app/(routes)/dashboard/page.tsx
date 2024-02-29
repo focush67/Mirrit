@@ -15,7 +15,7 @@ const Dashboard = async () => {
       <div className="flex justify-center items-center overflow-hidden">
         <div className="grid sm:grid-cols-2 gap-2 lg:gap-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {posts?.map((post) => (
-            <PostCard post={post} key={post.id} size="small" />
+            <PostCard post={post} key={post.id} size="small" option={true} />
           ))}
         </div>
       </div>

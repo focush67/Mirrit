@@ -26,6 +26,11 @@ model User {
   notificationsReceiver Notification[] @relation("receivedNotifications")
   createdStories        Story[]        @relation("StoriesCreated")
   likedStories          LikeForStory[] @relation("LikedStories")
+  messagesSent          Message[]      @relation("messageSent")
+  groupsJoined          GroupMember[]  @relation("groupJoined")
+  groupsAdmin           Group[]        @relation("groupOwner")
+  groupMessagesSent     GroupMessage[] @relation("groupMessage")
+  messagesReceived      Message[]      @relation("messageReceived")
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
 }
@@ -60,7 +65,7 @@ model Post {
 
 model Like {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  liked_by_Id String   @db.ObjectId
+  liked_by_Id String   @unique @db.ObjectId
   post_Id     String   @db.ObjectId
   liker       User     @relation("LikedPosts", fields: [liked_by_Id], references: [id], onDelete: Cascade)
   target_post Post     @relation("LikedBy", fields: [post_Id], references: [id], onDelete: Cascade)
@@ -82,7 +87,7 @@ model Comment {
 model Saved {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   saved_by_Id   String   @db.ObjectId
-  saved_post_Id String   @db.ObjectId
+  saved_post_Id String   @unique @db.ObjectId
   savedBy       User     @relation("SavedPosts", fields: [saved_by_Id], references: [id], onDelete: Cascade)
   savedPost     Post     @relation("SavedByUsers", fields: [saved_post_Id], references: [id], onDelete: Cascade)
   createdAt     DateTime @default(now())
@@ -120,13 +125,58 @@ model Story {
 }
 
 model LikeForStory {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  liked_by_Id  String   @db.ObjectId
-  story_Id     String   @db.ObjectId
-  liker        User     @relation("LikedStories", fields: [liked_by_Id], references: [id], onDelete: Cascade)
-  target_story Story    @relation("StoryLikes", fields: [story_Id], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  story_liker_id String   @db.ObjectId
+  story_Id       String   @db.ObjectId
+  storyLiker     User     @relation("LikedStories", fields: [story_liker_id], references: [id], onDelete: Cascade)
+  target_story   Story    @relation("StoryLikes", fields: [story_Id], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  @@unique([story_Id, liked_by_Id])
+  @@unique([story_Id, story_liker_id])
+}
+
+model Message {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  messageSenderId   String   @db.ObjectId
+  messageReceiverId String   @db.ObjectId
+  sentBy            User     @relation("messageSent", fields: [messageSenderId], references: [id], onDelete: Cascade)
+  receivedBy        User     @relation("messageReceived", fields: [messageReceiverId], references: [id], onDelete: Cascade)
+  messageContent    String
+  createdAt         DateTime @default(now())
+}
+
+model Group {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  uniqueGroupID String
+  groupAdminId  String         @db.ObjectId
+  name          String
+  description   String?
+  groupCover    String
+  groupAdmin    User           @relation("groupOwner", fields: [groupAdminId], references: [id], onDelete: Cascade)
+  members       GroupMember[]  @relation("groupMember")
+  messages      GroupMessage[] @relation("groupMessage")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model GroupMember {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  groupId   String   @db.ObjectId
+  user      User     @relation("groupJoined", fields: [userId], references: [id], onDelete: Cascade)
+  group     Group    @relation("groupMember", fields: [groupId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, groupId])
+}
+
+model GroupMessage {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  groupId             String   @db.ObjectId
+  group               Group    @relation("groupMessage", fields: [groupId], references: [id], onDelete: Cascade)
+  senderId            String   @db.ObjectId
+  sender              User     @relation("groupMessage", fields: [senderId], references: [id], onDelete: Cascade)
+  groupMessageContent String
+  createdAt           DateTime @default(now())
 }

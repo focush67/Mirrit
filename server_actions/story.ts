@@ -33,7 +33,7 @@ export const onLikeStory = async (story: Partial<Story>) => {
   const newLike = await db.likeForStory.create({
     data: {
       story_Id: story?.id!,
-      liked_by_Id: self.id,
+      story_liker_id: self.id,
     },
   });
 

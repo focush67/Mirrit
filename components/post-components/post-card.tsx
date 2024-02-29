@@ -18,12 +18,14 @@ interface PostCardProps {
   post: Post & { owner: User };
   size?: "small" | "large";
   removeSaved?: boolean;
+  option?: boolean;
 }
 
 let PostCard = async ({
   post,
   size = "large",
   removeSaved = false,
+  option = false,
 }: PostCardProps) => {
   const comments = await getCommentsForPost(post.id);
   const self = await getSelf();
@@ -32,8 +34,8 @@ let PostCard = async ({
   return (
     <Card
       className={`py-2 flex flex-col ${size === "small" && "h-auto"} ${
-        size === "small" ? "w-[250px]" : "w-[260px]"
-      } relative shadow-2xl md:w-[400px]`}
+        size === "small" ? "w-[240px]" : "w-full"
+      } relative shadow-2xl`}
     >
       <div className="flex flex-row items-center h-auto ">
         <UserAvatar user={post.owner} postOwner={self?.id} isDashboard={true} />
@@ -57,9 +59,9 @@ let PostCard = async ({
             post.owner_Id === self?.id && (
               <span
                 className={`${
-                  size === "large"
+                  size === "large" || option === false
                     ? "hidden"
-                    : "flex gap-x-5 bg-inherit w-auto rounded-full"
+                    : "flex gap-x-4 bg-inherit w-fit rounded-full"
                 }`}
               >
                 <DeleteModal post={post} />

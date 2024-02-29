@@ -58,13 +58,7 @@ const PostUploadModal = () => {
 
   return (
     <>
-      <Button
-        variant="shadow"
-        size="sm"
-        color="primary"
-        className="ml-auto"
-        onPress={onOpen}
-      >
+      <Button variant="shadow" size="sm" color="primary" onPress={onOpen}>
         New
       </Button>
 

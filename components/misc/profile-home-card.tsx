@@ -19,11 +19,6 @@ export const Profile = ({ profile }: { profile: any }) => {
               src={profile?.imageUrl!}
             />
           </Link>
-          <CardBody className="hidden md:block px-3 py-0 text-small text-default-400">
-            <p className="md:text-xs md:text-md hidden sm:block">
-              {profile?.bio}
-            </p>
-          </CardBody>
         </div>
       </CardHeader>
 

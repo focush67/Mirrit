@@ -69,7 +69,6 @@ export const StoryComponent = ({
         .then(() => {
           toast.success("Liked Story");
           setHasLike(true);
-          onClose();
         })
         .catch(() => {
           onClose();
@@ -150,8 +149,8 @@ export const StoryComponent = ({
               <Image
                 src={story.storyCover}
                 alt="Story thumbnail here"
-                width={200}
-                height={200}
+                width={500}
+                height={400}
                 ref={imageRef}
               />
               <p>{story.title}</p>
