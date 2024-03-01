@@ -3,7 +3,7 @@
 import React, { useRef, useState, useTransition } from "react";
 import { Button } from "@nextui-org/react";
 import ReactTextareaAutosize from "react-textarea-autosize";
-import { onSendGroupMessage } from "@/server_actions/chat";
+import { onSendGroupMessage } from "@/server_actions/group";
 import toast from "react-hot-toast";
 interface GroupChatInputProps {
   groupId: string;

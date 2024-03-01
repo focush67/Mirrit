@@ -1,6 +1,9 @@
 import GroupChatArea from "@/components/chat-components/group-chat-area";
 import GroupChatInput from "@/components/chat-components/group-chat-input";
+import GroupInfo from "@/components/chat-components/group-info-modal";
 import { getSelf } from "@/services/auth-service";
+import { getProfilesInGroup } from "@/services/chat-service";
+import { getUserById } from "@/services/user-service";
 import { db } from "@/utilities/database";
 import { Avatar, Divider } from "@nextui-org/react";
 import { format } from "date-fns";
@@ -30,23 +33,27 @@ const SpecificGroupChatPage = async ({ params }: GroupPageProps) => {
     },
   });
 
+  const admin = await getUserById(specificGroup?.groupAdminId!);
   const groupChannel = specificGroup?.uniqueGroupID;
 
-  const formatTimeStamp = (time: Date) => {
-    return format(time, "dd/MM/yyyy HH:mm");
-  };
+  // const formatTimeStamp = (time: Date) => {
+  //   return format(time, "dd/MM/yyyy HH:mm");
+  // };
+
+  const groupMembers = await getProfilesInGroup(groupId);
 
   return (
     <div>
-      <div className="flex gap-x-2 space-y-1 items-center p-1">
-        <Avatar src={specificGroup?.groupCover} size="md" />
-        <h1>{specificGroup?.name}</h1>
-        <div className="hidden md:flex gap-x-3">
-          <p className="text-xs">
-            Created At {formatTimeStamp(new Date(specificGroup?.createdAt!))}
-          </p>
-          <p className="text-xs">Admin: {specificGroup?.groupAdminId}</p>
+      <div className="flex gap-x-2 space-y-3 items-center justify-between p-2 mr-2">
+        <div className="flex gap-x-2 items-center">
+          <Avatar src={specificGroup?.groupCover} size="md" />
+          <h1>{specificGroup?.name}</h1>
         </div>
+        <GroupInfo
+          group={specificGroup!}
+          members={groupMembers!}
+          admin={admin!}
+        />
       </div>
       <Divider />
       <div className="pt-5">

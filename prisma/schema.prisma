@@ -11,28 +11,29 @@ datasource db {
 }
 
 model User {
-  id                    String         @id @default(auto()) @map("_id") @db.ObjectId
-  username              String         @unique
+  id                    String             @id @default(auto()) @map("_id") @db.ObjectId
+  username              String             @unique
   imageUrl              String?
-  externalUserId        String         @unique
+  externalUserId        String             @unique
   bio                   String?
-  following             Follow[]       @relation("Following")
-  followedBy            Follow[]       @relation("FollowedBy")
-  posts                 Post[]         @relation("PostsCreated")
-  likedPosts            Like[]         @relation("LikedPosts")
-  commentedOnPosts      Comment[]      @relation("CommentedOnPosts")
-  savedPosts            Saved[]        @relation("SavedPosts")
-  notificationsSent     Notification[] @relation("sentNotifications")
-  notificationsReceiver Notification[] @relation("receivedNotifications")
-  createdStories        Story[]        @relation("StoriesCreated")
-  likedStories          LikeForStory[] @relation("LikedStories")
-  messagesSent          Message[]      @relation("messageSent")
-  groupsJoined          GroupMember[]  @relation("groupJoined")
-  groupsAdmin           Group[]        @relation("groupOwner")
-  groupMessagesSent     GroupMessage[] @relation("groupMessage")
-  messagesReceived      Message[]      @relation("messageReceived")
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
+  following             Follow[]           @relation("Following")
+  followedBy            Follow[]           @relation("FollowedBy")
+  posts                 Post[]             @relation("PostsCreated")
+  likedPosts            Like[]             @relation("LikedPosts")
+  commentedOnPosts      Comment[]          @relation("CommentedOnPosts")
+  savedPosts            Saved[]            @relation("SavedPosts")
+  notificationsSent     Notification[]     @relation("sentNotifications")
+  notificationsReceiver Notification[]     @relation("receivedNotifications")
+  createdStories        Story[]            @relation("StoriesCreated")
+  likedStories          LikeForStory[]     @relation("LikedStories")
+  messagesSent          Message[]          @relation("messageSent")
+  groupsJoined          GroupMember[]      @relation("groupJoined")
+  groupsAdmin           Group[]            @relation("groupOwner")
+  groupMessagesSent     GroupMessage[]     @relation("groupMessage")
+  messagesReceived      Message[]          @relation("messageReceived")
+  joinRequests          GroupJoinRequest[] @relation("sentGroupRequest")
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
 }
 
 model Follow {
@@ -147,17 +148,18 @@ model Message {
 }
 
 model Group {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  id            String             @id @default(auto()) @map("_id") @db.ObjectId
   uniqueGroupID String
-  groupAdminId  String         @db.ObjectId
+  groupAdminId  String             @db.ObjectId
   name          String
   description   String?
   groupCover    String
-  groupAdmin    User           @relation("groupOwner", fields: [groupAdminId], references: [id], onDelete: Cascade)
-  members       GroupMember[]  @relation("groupMember")
-  messages      GroupMessage[] @relation("groupMessage")
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  groupAdmin    User               @relation("groupOwner", fields: [groupAdminId], references: [id], onDelete: Cascade)
+  members       GroupMember[]      @relation("groupMember")
+  messages      GroupMessage[]     @relation("groupMessage")
+  joinRequests  GroupJoinRequest[] @relation("groupJoinRequest")
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
 }
 
 model GroupMember {
@@ -179,4 +181,12 @@ model GroupMessage {
   sender              User     @relation("groupMessage", fields: [senderId], references: [id], onDelete: Cascade)
   groupMessageContent String
   createdAt           DateTime @default(now())
+}
+
+model GroupJoinRequest {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  targetGroupId   String @db.ObjectId
+  targetGroup     Group  @relation("groupJoinRequest", fields: [targetGroupId], references: [id], onDelete: Cascade)
+  requestSenderId String @db.ObjectId
+  requestSender   User   @relation("sentGroupRequest", fields: [requestSenderId], references: [id], onDelete: Cascade)
 }

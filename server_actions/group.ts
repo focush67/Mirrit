@@ -3,47 +3,8 @@
 import { getSelf } from "@/services/auth-service";
 import { db } from "@/utilities/database";
 import { pusherServer } from "@/utilities/pusher";
-import { Group } from "@prisma/client";
+import { Group, User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-
-export const onSendMessage = async ({
-  content,
-  receiverId,
-}: {
-  content: string;
-  receiverId: string;
-}) => {
-  const self = await getSelf();
-  if (!self) {
-    console.log("You need to be logged in to send messages , returning");
-    return null;
-  }
-
-  const receiver = await db.user.findUnique({
-    where: {
-      id: receiverId,
-    },
-  });
-
-  if (!receiver) {
-    console.log("Receiver of message not found");
-    return null;
-  }
-
-  const newMessage = await db.message.create({
-    data: {
-      messageSenderId: self?.id,
-      messageReceiverId: receiverId,
-      messageContent: content,
-    },
-  });
-
-  const targetChannels = [self?.externalUserId, receiver.externalUserId];
-  console.log(`Sending chat message`);
-  pusherServer.trigger(targetChannels, "new-message", newMessage);
-
-  return newMessage;
-};
 
 export const onCreateGroup = async ({ group }: { group: Partial<Group> }) => {
   const self = await getSelf();
@@ -122,33 +83,6 @@ export const onSendGroupMessage = async ({
   return newGroupMessage;
 };
 
-export const onSendGroupJoinRequest = async (groupId: string) => {
-  const self = await getSelf();
-  if (!self) {
-    console.log("You have to be logged in to send group message");
-    return null;
-  }
-
-  const specific = await db.group.findUnique({
-    where: {
-      id: groupId,
-    },
-  });
-
-  if (!specific) {
-    console.log("No group was found, so not generating notification");
-    return null;
-  }
-
-  const joinRequest = await db.groupJoinRequest.create({
-    data: {
-      targetGroupId: groupId,
-      requestSenderId: self?.id,
-    },
-  });
-  revalidatePath("/chat/group");
-  return joinRequest;
-};
 export const initiateGroupRequest = async (groupId: string) => {
   const self = await getSelf();
   if (!self) {
@@ -163,5 +97,70 @@ export const initiateGroupRequest = async (groupId: string) => {
     },
   });
 
+  revalidatePath("/chat");
+
   return request;
+};
+
+export const onApproveGroupJoinRequest = async ({
+  group,
+  user,
+}: {
+  group: Group;
+  user: User;
+}) => {
+  const self = await getSelf();
+  if (!self) {
+    console.log("You need to be logged in to accept request");
+    return null;
+  }
+
+  const newMember = await db.groupMember.create({
+    data: {
+      userId: user.id,
+      groupId: group.id,
+    },
+  });
+
+  console.log("Server action for approving request ", newMember);
+
+  const deletedRequest = await db.groupJoinRequest.deleteMany({
+    where: {
+      targetGroupId: group?.id,
+      requestSenderId: user.id,
+    },
+  });
+
+  if (deletedRequest.count === 0) {
+    console.log("Request not found or already deleted");
+    return null;
+  }
+
+  console.log("Server action for request deletion ", deletedRequest);
+  revalidatePath("chat/group/requests");
+  return newMember;
+};
+
+export const onRejectGroupJoinRequest = async ({
+  group,
+  user,
+}: {
+  group: Group;
+  user: User;
+}) => {
+  const self = await getSelf();
+  if (!self) {
+    console.log("You need to be logged in to deny requests");
+    return null;
+  }
+
+  const deletedRequest = await db.groupJoinRequest.findFirst({
+    where: {
+      targetGroupId: group?.id,
+      requestSenderId: user.id,
+    },
+  });
+
+  console.log("Server action for denying request ", deletedRequest);
+  revalidatePath("chat/group/requests");
 };

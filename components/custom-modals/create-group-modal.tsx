@@ -15,7 +15,7 @@ import {
   Image,
 } from "@nextui-org/react";
 import { nanoid } from "nanoid";
-import { onCreateGroup } from "@/server_actions/chat";
+import { onCreateGroup } from "@/server_actions/group";
 import { Group } from "@prisma/client";
 import toast from "react-hot-toast";
 import { UploadDropZone } from "@/utilities/uploadthing";
@@ -58,8 +58,8 @@ export default function CreateGroupModal() {
   };
   return (
     <>
-      <Button onPress={onOpen} color="primary" variant="ghost">
-        <Plus />
+      <Button onPress={onOpen} color="default" size="sm">
+        <Plus className="w-6 h-6" />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm">
         <ModalContent>
