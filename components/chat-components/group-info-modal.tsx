@@ -14,8 +14,9 @@ import {
 } from "@nextui-org/react";
 import { Group, User } from "@prisma/client";
 import { format } from "date-fns";
-import { CrownIcon, Menu } from "lucide-react";
+import { CrownIcon, Menu, Trash } from "lucide-react";
 import Link from "next/link";
+import RemoveMember from "../buttons/remove-member";
 
 interface GroupInfoProps {
   members: User[];
@@ -55,9 +56,12 @@ export default function GroupInfo({ members, group, admin }: GroupInfoProps) {
               <h4 className="text-center">Members</h4>
               <ul>
                 {members.map((member, index) => (
-                  <Link href={`/${member.username}`} key={index}>
-                    <MemberCard key={index} member={member} admin={admin} />
-                  </Link>
+                  <MemberCard
+                    key={index}
+                    member={member}
+                    admin={admin}
+                    group={group}
+                  />
                 ))}
               </ul>
             </div>
@@ -71,18 +75,26 @@ export default function GroupInfo({ members, group, admin }: GroupInfoProps) {
 export const MemberCard = ({
   member,
   admin,
+  group,
 }: {
   member: User;
   admin: User;
+  group: Group;
 }) => {
   return (
     <Card className="mt-2 mb-2">
       <CardBody className="flex flex-row items-center gap-x-2">
-        <Avatar src={member?.imageUrl!} size="sm" />
+        <Link
+          href={member.id !== admin.id ? `/${member.username}` : `/dashboard`}
+        >
+          <Avatar src={member?.imageUrl!} size="sm" />
+        </Link>
         <div className="text-xs">{member.username}</div>
-        {admin.username === member.username && (
+        {admin.username === member.username ? (
           <CrownIcon className="h-5 w-5 ml-5" />
-        )}
+        ) : admin.id === member.id ? (
+          <RemoveMember member={member} group={group} />
+        ) : null}
       </CardBody>
     </Card>
   );

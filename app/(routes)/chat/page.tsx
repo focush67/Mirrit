@@ -6,18 +6,19 @@ import { Inbox } from "lucide-react";
 
 const ChatPageEnter = () => {
   return (
-    <div className="flex mt-2 w-full h-full">
-      <div className="w-3/4">
+    <div className="flex mt-2 h-full justify-between">
+      <div className="w-1/2 pr-2">
         <GroupsContainer />
       </div>
-      <span className="flex justify-center">
-        <CreateGroupModal />
-        <div className="ml-4 mt-2">
+      <div className="w-1/2 pl-2 flex flex-col justify-between">
+        <div className="flex gap-x-2 items-center">
+          <CreateGroupModal />
           <Link href={`chat/group/requests`}>
             <Inbox />
           </Link>
         </div>
-      </span>
+        <div></div>
+      </div>
     </div>
   );
 };

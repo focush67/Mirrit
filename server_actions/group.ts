@@ -191,3 +191,35 @@ export const onRejectGroupJoinRequest = async ({
   revalidatePath("chat/group/requests");
   return deletedRequest;
 };
+
+export const onRemoveMember = async ({
+  group,
+  member,
+}: {
+  group: Group;
+  member: User;
+}) => {
+  const self = await getSelf();
+  if (!self) {
+    console.log("You need to be logged in to remove the user");
+    return null;
+  }
+
+  const isAdminRequest = group.groupAdminId === self?.id;
+  if (!isAdminRequest) {
+    console.log("Unauthorised request");
+    return null;
+  }
+
+  const memberDeleted = await db.groupMember.deleteMany({
+    where: {
+      groupId: group.id,
+      userId: member.id,
+    },
+  });
+
+  console.log("Server action for member removal ", memberDeleted);
+  revalidatePath("/chat");
+  revalidatePath(`/chat/group/${group.id}`);
+  return memberDeleted;
+};

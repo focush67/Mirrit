@@ -66,12 +66,14 @@ model Post {
 
 model Like {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  liked_by_Id String   @unique @db.ObjectId
+  liked_by_Id String   @db.ObjectId
   post_Id     String   @db.ObjectId
   liker       User     @relation("LikedPosts", fields: [liked_by_Id], references: [id], onDelete: Cascade)
   target_post Post     @relation("LikedBy", fields: [post_Id], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@unique([liked_by_Id, post_Id])
 }
 
 model Comment {
