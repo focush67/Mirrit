@@ -23,13 +23,3 @@ const ChatLayout = ({ children }: { children: ReactNode }) => {
 };
 
 export default ChatLayout;
-
-export const ChatExit = () => {
-  return (
-    <Link href={"/chat"} className="flex mt-2 justify-center">
-      <div className="flex items-center space-x-2 cursor-pointer">
-        <ArrowLeftFromLine />
-      </div>
-    </Link>
-  );
-};
