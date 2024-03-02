@@ -6,7 +6,10 @@ import { GroupMessage, User } from "@prisma/client";
 import { format } from "date-fns";
 import React, { useEffect, useRef, useState } from "react";
 
-type GroupChatMessage = GroupMessage & { sender: User };
+type GroupChatMessage = GroupMessage & {
+  sender: User;
+  color: string | undefined;
+};
 
 interface ChatAreaProps {
   initialMessages: GroupChatMessage[];
@@ -22,7 +25,7 @@ const GroupChatArea = ({
   const [messages, setMessages] = useState<GroupChatMessage[]>(initialMessages);
 
   useEffect(() => {
-    console.log("subscribing to channel for gp chat ", groupChannel);
+    console.log("initial messages ", initialMessages);
     pusherClient.subscribe(groupChannel);
     const messageHandler = (groupMessage: GroupChatMessage) => {
       console.log("New Messages have been received ", groupMessage);
@@ -41,7 +44,6 @@ const GroupChatArea = ({
   const formatTimeStamp = (time: Date) => {
     return format(time, "HH:mm");
   };
-
   return (
     <div
       id="messages"
@@ -71,13 +73,15 @@ const GroupChatArea = ({
               >
                 <span
                   className={cn("px-4 py-2 rounded-lg inline-block", {
-                    "bg-blue-600 text-white": isCurrentUser,
-                    "bg-white text-black": !isCurrentUser,
                     "rounded-br-none":
                       !hasNextMessageFromSameUser && isCurrentUser,
                     "rounded-bl-none":
                       !hasNextMessageFromSameUser && !isCurrentUser,
                   })}
+                  style={{
+                    backgroundColor: message?.color, // Set background color to white for other users' messages
+                    color: isCurrentUser ? "#FFFFFF" : "#000000", // Set text color to white for current user's messages and black for other users' messages
+                  }}
                 >
                   <div className="flex gap-x-3 items-center">
                     <Avatar src={message?.sender?.imageUrl!} size="sm" />

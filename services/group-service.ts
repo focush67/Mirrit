@@ -170,3 +170,30 @@ export const getRequestedGroups = async () => {
 
   return requestedGroups;
 };
+
+export const getGroupChatMessages = async (groupId: string) => {
+  const groupMessages = await db.groupMessage.findMany({
+    where: {
+      groupId: groupId,
+    },
+    include: {
+      sender: true,
+    },
+  });
+
+  const fetchColorsPromise = groupMessages.map(async (message) => {
+    const member = await db.groupMember.findFirst({
+      where: {
+        userId: message?.senderId,
+      },
+      select: {
+        color: true,
+      },
+    });
+    const responseMember = { ...message, color: member?.color };
+    return responseMember;
+  });
+
+  const messagesWithColors = await Promise.all(fetchColorsPromise);
+  return messagesWithColors;
+};

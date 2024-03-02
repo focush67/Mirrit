@@ -79,9 +79,19 @@ export const onSendGroupMessage = async ({
     },
     include: {
       sender: true,
-      group: true,
     },
   });
+
+  const color = await db.groupMember.findFirst({
+    where: {
+      userId: self?.id,
+    },
+    select: {
+      color: true,
+    },
+  });
+
+  const newMessageResponse = { ...newGroupMessage, color: color?.color };
 
   console.log("Server action for group chat creation ", newGroupMessage);
 
@@ -96,7 +106,7 @@ export const onSendGroupMessage = async ({
   pusherServer.trigger(
     targetGroup?.uniqueGroupID!,
     "new-group-message",
-    newGroupMessage
+    newMessageResponse
   );
   return newGroupMessage;
 };
