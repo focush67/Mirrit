@@ -17,10 +17,9 @@ const GroupsContainer = async () => {
   const allJoinedGroups = await getJoinedGroups();
 
   return (
-    <div>
-      <div className="ml-2 h-[25vh] overflow-x-auto min-h-[10vh] w-auto">
-        <h1 className="text-center mt-3 mb-2">All Groups</h1>
-        <div className="ml-2 flex gap-x-2 overflow-x-auto w-fit items-center">
+    <div className="w-full">
+      <div className="ml-2 mt-2 mb-2 overflow-x-auto max-h-[30vh] w-full">
+        <div className="ml-2 flex flex-wrap gap-x-2 gap-y-1 w-fit items-center">
           {allUnjoinedGroups?.map((grp, index) => (
             <ChatProfileGroupCard key={index} group={grp} isPending={false} />
           ))}
@@ -28,19 +27,22 @@ const GroupsContainer = async () => {
       </div>
 
       <Divider />
-      <div className="ml-2 h-[25vh] overflow-x-auto min-h-[10vh] w-auto">
-        <div className="text-center mt-3 mb-2">Pending</div>
-        <div className="ml-2 flex gap-y-1 gap-x-2 overflow-x-auto w-fit mt-6">
-          {allRequestedGroups?.map((grp, index) => (
-            <ChatProfileGroupCard key={index} group={grp} isPending={true} />
-          ))}
+
+      <div className="ml-2 mt-2 mb-2 overflow-x-auto max-h-[30vh] w-full">
+        <div className="ml-2 mt-2 mb-2 overflow-x-auto max-h-[30vh] w-full">
+          <div className="ml-2 flex flex-wrap gap-x-2 gap-y-1 w-fit items-center">
+            {allRequestedGroups?.map((grp, index) => (
+              <ChatProfileGroupCard key={index} group={grp} isPending={true} />
+            ))}
+          </div>
         </div>
       </div>
 
       <Divider />
-      <div className="ml-2 max-h-[30vh] overflow-x-auto min-h-[10vh] w-auto py-3">
+
+      <div className="ml-2 overflow-x-auto min-h-[10vh] w-auto">
         <h1 className="text-center mt-3 mb-2">Joined Groups</h1>
-        <div className="ml-2 flex gap-x-2 overflow-x-auto w-fit">
+        <div className="ml-2 flex flex-wrap gap-x-2 gap-y-1 w-fit">
           {allJoinedGroups?.map((grp, index) => (
             <ChatProfileGroupCard key={index} group={grp} isPending={false} />
           ))}
@@ -61,13 +63,20 @@ export const ChatProfileGroupCard = async ({
 }) => {
   const self = await getSelf();
   const hasJoinedTheGroup = await checkMembership(group.id);
+  let linkHref = `/chat/group/${group.id}`;
+  let linkDisabled = false;
+
+  if (isPending) {
+    linkDisabled = true;
+  } else if (!hasJoinedTheGroup) {
+    linkDisabled = true;
+  }
   return (
-    <Card className="w-fit shadow-2xl bg-auto">
+    <Card className="w-auto shadow-2xl bg-auto">
       <CardHeader className="flex gap-3">
         <Link
           className="hover:cursor-pointer"
-          href={`/chat/group/${group.id}`}
-          aria-disabled={isPending}
+          href={linkDisabled ? "/chat" : linkHref}
         >
           <Avatar radius="sm" src={group?.groupCover!} />
         </Link>

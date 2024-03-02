@@ -27,8 +27,8 @@ const JoinGroupRequest = ({ targetGroup }: JoinGroupRequestProps) => {
     <div>
       <Button
         disabled={isPending}
-        variant="solid"
-        color="secondary"
+        variant="ghost"
+        color="primary"
         size="sm"
         onClick={groupRequest}
       >
