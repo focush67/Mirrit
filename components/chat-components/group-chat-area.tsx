@@ -1,43 +1,38 @@
 "use client";
 
 import { pusherClient } from "@/utilities/pusher";
-import { cn } from "@nextui-org/react";
+import { Avatar, cn } from "@nextui-org/react";
 import { GroupMessage, User } from "@prisma/client";
 import { format } from "date-fns";
 import React, { useEffect, useRef, useState } from "react";
 
+type GroupChatMessage = GroupMessage & { sender: User };
+
 interface ChatAreaProps {
-  initialMessages: GroupMessage[];
+  initialMessages: GroupChatMessage[];
   groupChannel: string;
   sessionId: string;
 }
-
-interface GroupResponse {
-  sender: User;
-  groupMessage: GroupMessage;
-}
-
 const GroupChatArea = ({
   initialMessages,
   groupChannel,
   sessionId,
 }: ChatAreaProps) => {
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
-  const [messages, setMessages] = useState<GroupMessage[]>(initialMessages);
+  const [messages, setMessages] = useState<GroupChatMessage[]>(initialMessages);
 
   useEffect(() => {
+    console.log("subscribing to channel for gp chat ", groupChannel);
     pusherClient.subscribe(groupChannel);
-    const messageHandler = (groupMessage: GroupResponse) => {
+    const messageHandler = (groupMessage: GroupChatMessage) => {
       console.log("New Messages have been received ", groupMessage);
-      setMessages((prev: GroupMessage[]) => [
-        groupMessage.groupMessage,
-        ...prev,
-      ]);
+      setMessages((prev: GroupChatMessage[]) => [groupMessage, ...prev]);
     };
 
     pusherClient.bind(`new-group-message`, messageHandler);
 
     return () => {
+      console.log("Messages before unmounting: ", messages);
       pusherClient.unbind("new-group-message");
       pusherClient.unsubscribe(groupChannel);
     };
@@ -54,10 +49,10 @@ const GroupChatArea = ({
     >
       <div ref={scrollDownRef} />
       {messages?.map((message, index) => {
-        const isCurrentUser = message.senderId === sessionId;
+        const isCurrentUser = message?.senderId === sessionId;
 
         const hasNextMessageFromSameUser =
-          messages[index - 1]?.senderId === messages[index].senderId;
+          messages[index - 1]?.senderId === messages[index]?.senderId;
         return (
           <div key={index} className="chat-message">
             <div
@@ -84,8 +79,12 @@ const GroupChatArea = ({
                       !hasNextMessageFromSameUser && !isCurrentUser,
                   })}
                 >
-                  {message.groupMessageContent}{" "}
-                  <span className="ml-2 text-xs text-gray-400">
+                  <div className="flex gap-x-3 items-center">
+                    <Avatar src={message?.sender?.imageUrl!} size="sm" />
+                    {message?.groupMessageContent}{" "}
+                  </div>
+
+                  <span className="flex justify-end text-xs text-gray-400">
                     {formatTimeStamp(new Date(message?.createdAt))}
                   </span>
                 </span>

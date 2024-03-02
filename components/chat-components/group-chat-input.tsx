@@ -15,7 +15,10 @@ const GroupChatInput = ({ groupId }: GroupChatInputProps) => {
   const sendMessage = () => {
     startTransition(() => {
       onSendGroupMessage({ content: input, groupId: groupId })
-        .then(() => toast.success("Message sent to group"))
+        .then((data) => {
+          toast.success("Message sent to group");
+          console.log(data);
+        })
         .catch((error: any) => {
           toast.error("Error sending message to group");
           console.log(error.message);

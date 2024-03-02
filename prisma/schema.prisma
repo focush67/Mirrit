@@ -165,6 +165,7 @@ model Group {
 model GroupMember {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String   @db.ObjectId
+  color     String   @unique
   groupId   String   @db.ObjectId
   user      User     @relation("groupJoined", fields: [userId], references: [id], onDelete: Cascade)
   group     Group    @relation("groupMember", fields: [groupId], references: [id], onDelete: Cascade)

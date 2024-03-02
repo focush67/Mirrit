@@ -2,7 +2,7 @@ import GroupChatArea from "@/components/chat-components/group-chat-area";
 import GroupChatInput from "@/components/chat-components/group-chat-input";
 import GroupInfo from "@/components/chat-components/group-info-modal";
 import { getSelf } from "@/services/auth-service";
-import { getProfilesInGroup } from "@/services/chat-service";
+import { getProfilesInGroup } from "@/services/group-service";
 import { getUserById } from "@/services/user-service";
 import { db } from "@/utilities/database";
 import { Avatar, Divider } from "@nextui-org/react";
@@ -26,20 +26,20 @@ const SpecificGroupChatPage = async ({ params }: GroupPageProps) => {
 
   const initialGroupChatMessages = await db.groupMessage.findMany({
     where: {
-      id: groupId,
+      groupId: groupId,
+    },
+    include: {
+      sender: true,
     },
     orderBy: {
       createdAt: "desc",
     },
   });
 
+  console.log("Initial group chat messages: ", initialGroupChatMessages);
+
   const admin = await getUserById(specificGroup?.groupAdminId!);
   const groupChannel = specificGroup?.uniqueGroupID;
-
-  // const formatTimeStamp = (time: Date) => {
-  //   return format(time, "dd/MM/yyyy HH:mm");
-  // };
-
   const groupMembers = await getProfilesInGroup(groupId);
 
   return (

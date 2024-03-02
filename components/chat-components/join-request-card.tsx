@@ -13,9 +13,10 @@ import toast from "react-hot-toast";
 interface JoinRequestCardProps {
   group: Group;
   user: User;
+  color: string;
 }
 
-const JoinRequestCard = ({ group, user }: JoinRequestCardProps) => {
+const JoinRequestCard = ({ group, user, color }: JoinRequestCardProps) => {
   const [isPending, startTransition] = useTransition();
 
   const approveRequest = () => {
@@ -23,6 +24,7 @@ const JoinRequestCard = ({ group, user }: JoinRequestCardProps) => {
       onApproveGroupJoinRequest({
         group,
         user,
+        color,
       })
         .then(() => toast.success("Request Accepted"))
         .catch((error: any) => {

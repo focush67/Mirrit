@@ -20,6 +20,7 @@ import { Group } from "@prisma/client";
 import toast from "react-hot-toast";
 import { UploadDropZone } from "@/utilities/uploadthing";
 import { Plus } from "lucide-react";
+import randomColor from "randomcolor";
 
 export default function CreateGroupModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -28,6 +29,7 @@ export default function CreateGroupModal() {
   const [groupDescription, setGroupDescription] = useState("");
   const [groupCover, setGroupCover] = useState("");
   const [groupId, setGroupId] = useState("");
+  const color = randomColor();
 
   const generateGroupID = () => {
     const randomId = nanoid(20);
@@ -42,7 +44,7 @@ export default function CreateGroupModal() {
       groupCover: groupCover,
     };
     startTransition(() => {
-      onCreateGroup({ group })
+      onCreateGroup({ group, color: color })
         .then(() => {
           toast.success(`Group created, you are the default Admin`);
           setGroupCover("");
@@ -58,7 +60,7 @@ export default function CreateGroupModal() {
   };
   return (
     <>
-      <Button onPress={onOpen} color="default" size="sm">
+      <Button onPress={onOpen} variant="ghost" size="sm">
         <Plus className="w-6 h-6" />
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="sm">
@@ -95,6 +97,7 @@ export default function CreateGroupModal() {
                   Generate ID
                 </Button>
               </ModalBody>
+
               <ModalFooter className="flex flex-col items-center">
                 <label className="text-center">Upload Group Cover</label>
                 {groupCover ? (
@@ -122,6 +125,7 @@ export default function CreateGroupModal() {
                     }}
                   ></UploadDropZone>
                 )}
+
                 <div className="flex gap-x-2">
                   <Button
                     color="danger"

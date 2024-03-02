@@ -10,15 +10,14 @@ const ChatPageEnter = () => {
       <div className="w-3/4">
         <GroupsContainer />
       </div>
-
-      <div className="flex justify-center">
+      <span className="flex justify-center">
         <CreateGroupModal />
         <div className="ml-4 mt-2">
           <Link href={`chat/group/requests`}>
             <Inbox />
           </Link>
         </div>
-      </div>
+      </span>
     </div>
   );
 };

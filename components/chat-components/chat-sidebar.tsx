@@ -38,7 +38,7 @@ export default ChatSidebarProfiles;
 
 export const ChatProfileCard = ({ chatProfile }: { chatProfile: User }) => {
   return (
-    <Link href={`/chat/${chatProfile.id}`} className="hover:bg-[#3d3d3d]">
+    <Link href={`/chat/${chatProfile.id}`} className="hover:bg-auto">
       <Card className="group w-auto hover:cursor-pointer bg-inherit">
         <CardHeader className="justify-center md:justify-between">
           <div className="flex gap-5 items-center">

@@ -3,7 +3,7 @@ import {
   getJoinedGroups,
   getRequestedGroups,
   getUnjoinedGroups,
-} from "@/services/chat-service";
+} from "@/services/group-service";
 import { Card, CardHeader, Avatar, Divider } from "@nextui-org/react";
 import { Group } from "@prisma/client";
 import Link from "next/link";
@@ -18,37 +18,31 @@ const GroupsContainer = async () => {
 
   return (
     <div>
-      <div className="max-h-[40vh] overflow-y-auto min-h-[10vh] relative">
-        <div className="text-center mb-2 mt-2 sticky-top-0">All Groups</div>
-        <div className="flex flex-col gap-y-2 overflow-y-auto">
+      <div className="h-[35vh] overflow-x-auto min-h-[10vh]">
+        <h1 className="text-center mt-3 mb-2">All Groups</h1>
+        <div className="ml-2 flex gap-x-2 overflow-x-auto w-fit">
           {allUnjoinedGroups?.map((grp, index) => (
-            <>
-              <ChatProfileGroupCard key={index} group={grp} isPending={false} />
-            </>
+            <ChatProfileGroupCard key={index} group={grp} isPending={false} />
           ))}
         </div>
       </div>
 
       <Divider />
-      <div className="max-h-[30vh] overflow-y-auto min-h-[10vh] relative">
-        <div className="text-center mr-5 sticky top-0">Pending</div>
-        <div className="flex flex-col gap-y-1 overflow-y-auto mt-6">
+      <div className="h-[25vh] overflow-x-auto min-h-[10vh] w-auto">
+        <div className="text-center mt-3 mb-2">Pending</div>
+        <div className="ml-2 flex gap-y-1 gap-x-2 overflow-x-auto w-fit mt-6">
           {allRequestedGroups?.map((grp, index) => (
-            <>
-              <ChatProfileGroupCard key={index} group={grp} isPending={true} />
-            </>
+            <ChatProfileGroupCard key={index} group={grp} isPending={true} />
           ))}
         </div>
       </div>
 
       <Divider />
-      <div className="max-h-[30vh] overflow-y-auto min-h-[10vh] relative">
-        <h1 className="text-center mb-2 mt-2 sticky top-0">Joined Groups</h1>
-        <div className="flex flex-col gap-y-2 overflow-y-auto">
+      <div className="max-h-[30vh] overflow-x-auto min-h-[10vh] w-auto py-3">
+        <h1 className="text-center mt-3 mb-2">Joined Groups</h1>
+        <div className="ml-2 flex gap-x-2 overflow-x-auto w-fit">
           {allJoinedGroups?.map((grp, index) => (
-            <>
-              <ChatProfileGroupCard key={index} group={grp} isPending={false} />
-            </>
+            <ChatProfileGroupCard key={index} group={grp} isPending={false} />
           ))}
         </div>
       </div>
@@ -68,9 +62,13 @@ export const ChatProfileGroupCard = async ({
   const self = await getSelf();
   const hasJoinedTheGroup = await checkMembership(group.id);
   return (
-    <Card className="w-auto bg-inherit">
+    <Card className="w-fit shadow-2xl bg-auto">
       <CardHeader className="flex gap-3">
-        <Link className="hover:cursor-pointer" href={`/chat/group/${group.id}`}>
+        <Link
+          className="hover:cursor-pointer"
+          href={`/chat/group/${group.id}`}
+          aria-disabled={isPending}
+        >
           <Avatar radius="sm" src={group?.groupCover!} />
         </Link>
         <div className="flex flex-col">

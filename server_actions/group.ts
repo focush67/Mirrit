@@ -6,7 +6,13 @@ import { pusherServer } from "@/utilities/pusher";
 import { Group, User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-export const onCreateGroup = async ({ group }: { group: Partial<Group> }) => {
+export const onCreateGroup = async ({
+  group,
+  color,
+}: {
+  group: Partial<Group>;
+  color: string;
+}) => {
   const self = await getSelf();
   if (!self) {
     console.log("You need to be logged in to create a group");
@@ -27,6 +33,7 @@ export const onCreateGroup = async ({ group }: { group: Partial<Group> }) => {
     data: {
       groupId: newGroup.id,
       userId: self?.id,
+      color: color,
     },
   });
 
@@ -52,9 +59,10 @@ export const onSendGroupMessage = async ({
     return null;
   }
 
-  const isValidGroupMember = await db.groupMember.findUnique({
+  const isValidGroupMember = await db.groupMember.findFirst({
     where: {
-      id: groupId,
+      groupId,
+      userId: self?.id,
     },
   });
 
@@ -71,12 +79,22 @@ export const onSendGroupMessage = async ({
     },
     include: {
       sender: true,
+      group: true,
     },
   });
 
   console.log("Server action for group chat creation ", newGroupMessage);
+
+  const targetGroup = await db.group.findUnique({
+    where: {
+      id: groupId,
+    },
+  });
+
+  console.log("Sending group chat to channel ", targetGroup?.uniqueGroupID);
+
   pusherServer.trigger(
-    newGroupMessage?.groupId,
+    targetGroup?.uniqueGroupID!,
     "new-group-message",
     newGroupMessage
   );
@@ -105,9 +123,11 @@ export const initiateGroupRequest = async (groupId: string) => {
 export const onApproveGroupJoinRequest = async ({
   group,
   user,
+  color,
 }: {
   group: Group;
   user: User;
+  color: string;
 }) => {
   const self = await getSelf();
   if (!self) {
@@ -119,6 +139,7 @@ export const onApproveGroupJoinRequest = async ({
     data: {
       userId: user.id,
       groupId: group.id,
+      color: color,
     },
   });
 
@@ -154,13 +175,19 @@ export const onRejectGroupJoinRequest = async ({
     return null;
   }
 
-  const deletedRequest = await db.groupJoinRequest.findFirst({
+  const deletedRequest = await db.groupJoinRequest.deleteMany({
     where: {
       targetGroupId: group?.id,
       requestSenderId: user.id,
     },
   });
 
+  if (deletedRequest.count === 0) {
+    console.log("Request not found or already deleted");
+    return null;
+  }
+
   console.log("Server action for denying request ", deletedRequest);
   revalidatePath("chat/group/requests");
+  return deletedRequest;
 };
