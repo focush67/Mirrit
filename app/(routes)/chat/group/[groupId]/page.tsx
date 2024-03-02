@@ -41,6 +41,7 @@ const SpecificGroupChatPage = async ({ params }: GroupPageProps) => {
   const admin = await getUserById(specificGroup?.groupAdminId!);
   const groupChannel = specificGroup?.uniqueGroupID;
   const groupMembers = await getProfilesInGroup(groupId);
+  const isGroupMember = groupMembers?.includes(self!);
 
   return (
     <div>
@@ -57,14 +58,20 @@ const SpecificGroupChatPage = async ({ params }: GroupPageProps) => {
       </div>
       <Divider />
       <div className="pt-5">
-        <GroupChatArea
-          initialMessages={initialGroupChatMessages}
-          groupChannel={groupChannel!}
-          sessionId={self?.id!}
-        />
+        {isGroupMember || admin?.id === self?.id ? (
+          <GroupChatArea
+            initialMessages={initialGroupChatMessages}
+            groupChannel={groupChannel!}
+            sessionId={self?.id!}
+          />
+        ) : (
+          <div className="ml-4">You need to be a member to see chats</div>
+        )}
       </div>
       <div>
-        <GroupChatInput groupId={groupId} />
+        {(isGroupMember || admin?.id === self?.id) && (
+          <GroupChatInput groupId={groupId} />
+        )}
       </div>
     </div>
   );
