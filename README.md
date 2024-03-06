@@ -1,36 +1,23 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Mirrit
 
-First, run the development server:
+This is a social media application made with NextJS 14, TypeScript and MongoDB.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Brief Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application supports users for posting their day to day activities as posts to the application and supports full posts' interactions. Users can like, comment and save a given post. It also supports relationships, meaning that users can follow other users. Also upon interacting with the post, a realtime notification alert goes to the owner of the target post and contains the information of the user who interacted with the post. Users can also add to their story, and other people can like the stories of all other users.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The application also supports realtime chat as well as complex group chat features where users can create their personalized groups and other users can generate a group joining request and on approval, the user is added to the group. The application is completely responsive and adheres to the best practises, including SSR (Server Side Rendering) and Server Actions. Also the application is completely responsive on all majorly used devices, including mobile devices as well.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Tech Stack Used
+    1. NextJS 14: A powerful full stack framework
+    2. TypeScript: For ensuring complete control over the types 
+    3. MongoDB
+    4. Prisma
+    5. Clerk
+    6. UploadThing
+    7. Pusher
 
-## Learn More
+### Deployment Link
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+https://social-app-refactored-git-version-2-focush67.vercel.app/?vercelToolbarCode=EsVu_eKn4N6YBdq
