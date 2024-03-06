@@ -6,7 +6,7 @@ import ProfileSkeleton from "@/components/skeletons/profile-card";
 
 export const DashboardLoading = () => {
   return (
-    <div className="flex flex-col space-y-6 mt-4 py-4">
+    <div className="flex flex-col mt-4">
       <div className="flex justify-center items-center w-full mt-8">
         <ProfileSkeleton />
       </div>

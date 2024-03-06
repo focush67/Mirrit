@@ -8,7 +8,6 @@ import { ToastProvider } from "@/providers/toast-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { NotificationProvider } from "@/context/notification-context";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -29,8 +28,8 @@ export default async function RootLayout({
             <ReduxProvider>
               <ToastProvider>
                 <Providers>
-                  <NavbarComponent />
                   {children}
+                  <NavbarComponent />
                 </Providers>
               </ToastProvider>
             </ReduxProvider>

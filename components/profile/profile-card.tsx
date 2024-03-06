@@ -23,6 +23,7 @@ import Link from "next/link";
 import { UploadDropZone } from "@/utilities/uploadthing";
 import { onCreateStory } from "@/server_actions/story";
 import toast from "react-hot-toast";
+import { UserButton } from "@clerk/nextjs";
 
 interface ProfileCardProps {
   profile:
@@ -39,13 +40,7 @@ export default async function ProfileCard({ profile }: ProfileCardProps) {
       <Card className="w-full m-2 items-center shadow-2xl">
         <CardHeader className="flex justify-between">
           <div className="flex gap-5">
-            <Avatar
-              isBordered
-              radius="full"
-              size="md"
-              src={profile?.imageUrl!}
-              className="hover:cursor-pointer"
-            />
+            <UserButton />
 
             <div className="flex flex-col gap-1 items-start justify-between">
               <h4 className="text-xs font-semibold leading-none text-default-600">

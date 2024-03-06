@@ -1,14 +1,5 @@
 "use client";
-
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Navbar,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenu,
-  NavbarMenuItem,
-  NavbarMenuToggle,
-} from "@nextui-org/react";
 import Link from "next/link";
 import ToggleSwitch from "../switch/toggle-switch";
 import { UserButton, useUser } from "@clerk/nextjs";
@@ -16,26 +7,28 @@ import { LoginButton } from "./navbar-component";
 import { NotificationsType } from "../notification-components/notification-component";
 import { pusherClient } from "@/utilities/pusher";
 import { NotificationContext } from "@/context/notification-context";
-import { BellDot } from "lucide-react";
+import {
+  BellDot,
+  Bookmark,
+  HomeIcon,
+  MessageCircleIcon,
+  User,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Divider } from "@nextui-org/react";
 
 interface NavigationProps {
   menuItems: string[];
   isLoggedIn: boolean;
 }
 
-export default function NavigationBar({
-  menuItems,
-  isLoggedIn,
-}: NavigationProps) {
+export default function NavigationBar({ isLoggedIn }: NavigationProps) {
   const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentNotifications, setCurrentNotifications] = useState<
     NotificationsType[]
   >([]);
   const { notificationCount, setNotificationCount } =
     useContext(NotificationContext) || {};
-
   const { user } = useUser();
 
   useEffect(() => {
@@ -85,84 +78,50 @@ export default function NavigationBar({
   }, [currentNotifications, user, notificationCount]);
 
   return (
-    <Navbar
-      isBordered
-      isMenuOpen={isMenuOpen}
-      onMenuOpenChange={setIsMenuOpen}
-      className="w-auto h-15 fixed top-0 z-50"
-    >
-      <NavbarContent className="sm:hidden" justify="start">
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          disabled={!isLoggedIn}
-        />
-      </NavbarContent>
-      <NavbarContent className="hidden sm:flex gap-4 shadow-2xl">
-        <NavbarItem>
-          <Link href="/" className={`${isLoggedIn ? "block" : "hidden"}`}>
-            Home
-          </Link>
-        </NavbarItem>
-        <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
-          <Link href="/dashboard">Dashboard</Link>
-        </NavbarItem>
-        <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
-          <Link href={`/saved`}>Saved</Link>
-        </NavbarItem>
-        <NavbarItem className={!isLoggedIn ? "hidden" : "block"}>
-          <Link href={"/chat"}>Chat</Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent justify="end">
-        <NavbarItem
-          className={`{
-          } flex gap-x-1 md:hidden lg:hidden hover:cursor-pointer`}
-        >
+    <>
+      <footer className="p-4 flex items-center justify-center fixed bottom-0 w-full z-50 bg-black text-white border-t-2 border-gray-500">
+        <div className="w-3/4 flex justify-evenly gap-x-2">
           <div>
-            <BellDot
-              fill={notificationCount! > 0 ? "red" : "white"}
-              onClick={() => router.push("/notifications")}
-            />
+            <Link href="/" className={`${isLoggedIn ? "block" : "hidden"}`}>
+              <HomeIcon />
+            </Link>
           </div>
-          <div>{notificationCount}</div>
-        </NavbarItem>
-        <NavbarItem>
-          {isLoggedIn ? <UserButton afterSignOutUrl="/" /> : <LoginButton />}
-        </NavbarItem>
-        <NavbarItem>
-          <ToggleSwitch />
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarMenu className={"flex items-center"}>
-        {menuItems.map((item: string, index: number) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            {item === "Home" ? (
-              <Link
-                className="w-full capitalize"
-                href={`/`}
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  return true;
-                }}
-              >
-                {item}
-              </Link>
-            ) : (
-              <Link
-                className="w-full capitalize"
-                href={`/${item}`}
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  return true;
-                }}
-              >
-                {item}
-              </Link>
-            )}
-          </NavbarMenuItem>
-        ))}
-      </NavbarMenu>
-    </Navbar>
+          <div className={!isLoggedIn ? "hidden" : "block"}>
+            <Link href="/dashboard">
+              <User />
+            </Link>
+          </div>
+          <div className={!isLoggedIn ? "hidden" : "block"}>
+            <Link href={`/saved`}>
+              <Bookmark />
+            </Link>
+          </div>
+          <div className={!isLoggedIn ? "hidden" : "block"}>
+            <Link href={"/chat"}>
+              <MessageCircleIcon />
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-x-3">
+          <div
+            className={`{
+          } flex gap-x-1 md:hidden lg:hidden hover:cursor-pointer`}
+            onClick={() => router.push("/notifications")}
+          >
+            <BellDot
+              className="w-6 h-6"
+              fill={notificationCount! > 0 ? "red" : "white"}
+            />
+            <span>{notificationCount}</span>
+          </div>
+          <div>{!isLoggedIn && <LoginButton />}</div>
+          <div>
+            <ToggleSwitch />
+          </div>
+        </div>
+      </footer>
+    </>
   );
 }
 

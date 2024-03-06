@@ -1,5 +1,4 @@
 "use client";
-
 import { onLikeStory } from "@/server_actions/story";
 import {
   Avatar,
@@ -27,16 +26,14 @@ interface StoryProps {
 
 const Story = ({ stories }: StoryProps) => {
   return (
-    <section className="md:flex flex-col">
-      <div className="flex items-center">
-        <ul>
-          {stories.map((story, index) => (
-            <div className="mt-2 mb-4" key={story.id}>
-              <StoryComponent story={story} key={index} />
-            </div>
-          ))}
-        </ul>
-      </div>
+    <section className="w-full h-[9vh] border-b-1 border-b-gray-500 bg-black fixed top-0 overflow-y-hidden overflow-x-auto">
+      <ul className="flex gap-x-2 ml-2">
+        {stories.map((story, index) => (
+          <div className="mt-2 mb-4 ml-2" key={story.id}>
+            <StoryComponent story={story} key={index} />
+          </div>
+        ))}
+      </ul>
     </section>
   );
 };
@@ -117,8 +114,8 @@ export const StoryComponent = ({
   }, []);
 
   return (
-    <div className="flex flex-col space-y-2">
-      <div className="flex gap-x-3 items-center">
+    <div className="flex flex-col space-y-2 space-x-3">
+      <div className="flex flex-col gap-y-1 gap-x-3 items-center">
         <Avatar
           src={story.owner.imageUrl!}
           onClick={onOpen}
@@ -127,9 +124,6 @@ export const StoryComponent = ({
           color={seen ? "default" : "danger"}
           size="md"
         />
-        <p className="hidden md:block md:text-xs lg:text-xs">
-          {story.owner.username}
-        </p>
       </div>
       <Modal
         size="full"

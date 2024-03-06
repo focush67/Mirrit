@@ -16,7 +16,7 @@ const StorySidebar = async () => {
     status: likedStati[index],
   }));
   return (
-    <div className="flex flex-col items-center space-y-2 mt-2">
+    <div className="mt-2 fixed top-0 z-[100] flex  justify-start">
       <Story stories={formattedStories} />
     </div>
   );
