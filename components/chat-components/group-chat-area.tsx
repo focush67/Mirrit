@@ -72,7 +72,7 @@ const GroupChatArea = ({
                 )}
               >
                 <span
-                  className={cn("px-4 py-2 rounded-lg inline-block", {
+                  className={cn("px-3 py-1 rounded-lg inline-block", {
                     "rounded-br-none":
                       !hasNextMessageFromSameUser && isCurrentUser,
                     "rounded-bl-none":
@@ -80,15 +80,15 @@ const GroupChatArea = ({
                   })}
                   style={{
                     backgroundColor: message?.color, // Set background color to white for other users' messages
-                    color: isCurrentUser ? "#FFFFFF" : "#000000", // Set text color to white for current user's messages and black for other users' messages
+                    color: "#000000", // Set text color to white for current user's messages and black for other users' messages
                   }}
                 >
-                  <div className="flex gap-x-3 items-center">
+                  <div className="flex gap-x-3 items-center text-xs">
                     <Avatar src={message?.sender?.imageUrl!} size="sm" />
                     {message?.groupMessageContent}{" "}
                   </div>
 
-                  <span className="flex justify-end text-xs text-gray-400">
+                  <span className="flex justify-end text-xs ">
                     {formatTimeStamp(new Date(message?.createdAt))}
                   </span>
                 </span>

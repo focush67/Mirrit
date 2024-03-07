@@ -34,8 +34,8 @@ const SpecificGroupChatPage = async ({ params }: GroupPageProps) => {
   const groupMembers = await getProfilesInGroup(groupId);
 
   return (
-    <div>
-      <div className="flex gap-x-2 space-y-3 items-center justify-between p-2 mr-2">
+    <div className="h-screen flex flex-col">
+      <div className="flex gap-x-2 space-y-3 items-center  justify-between p-2 mr-2 h-fit">
         <div className="flex gap-x-2 items-center">
           <Avatar src={specificGroup?.groupCover} size="md" />
           <h1 className="text-md">{specificGroup?.name}</h1>
@@ -47,14 +47,14 @@ const SpecificGroupChatPage = async ({ params }: GroupPageProps) => {
         />
       </div>
       <Divider />
-      <div className="pt-5">
+      <div className="h-[79%] overflow-y-auto">
         <GroupChatArea
           initialMessages={initialGroupChatMessages}
           groupChannel={groupChannel!}
           sessionId={self?.id!}
         />
       </div>
-      <div>
+      <div className="mb-[4rem]">
         <GroupChatInput groupId={groupId} />
       </div>
     </div>

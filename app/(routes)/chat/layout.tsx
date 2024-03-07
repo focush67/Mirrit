@@ -23,8 +23,7 @@ const ChatLayout = ({ children }: { children: ReactNode }) => {
             <JoinedGroups />
             <Divider />
           </div>
-
-          <div className="my-auto flex gap-x-2 items-center gap-y-5 mt-4 justify-center">
+          <div className="my-auto mb-[5rem] flex gap-x-2 items-center gap-y-5 mt-4 justify-center">
             <CreateGroupModal />
             <Link href={`chat/group/requests`}>
               <Inbox />

@@ -29,20 +29,22 @@ const SpecificChat = async ({ params }: SpecificChatProps) => {
   });
   const chatChannel = self?.externalUserId!;
   return (
-    <div>
-      <div className="flex gap-x-2 space-y-1 items-center p-1">
-        <Avatar src={chatPartner?.imageUrl!} size="md" />
-        <h1>{chatPartner?.username}</h1>
+    <div className="h-screen flex flex-col">
+      <div className="flex gap-x-2 space-y-3 items-center  justify-between p-2 mr-2 h-fit">
+        <div className="flex gap-x-2 items-center">
+          <Avatar src={chatPartner?.imageUrl!} size="md" />
+          <h1 className="text-md">{chatPartner?.username}</h1>
+        </div>
       </div>
       <Divider />
-      <div className="pt-5">
+      <div className="h-[79%] overflow-y-auto">
         <ChatArea
           initialMessages={initialMessages}
-          chatChannel={chatChannel}
+          chatChannel={chatChannel!}
           sessionId={self?.id!}
         />
       </div>
-      <div>
+      <div className="mb-[4rem]">
         <ChatInput chatPartner={chatPartner!} />
       </div>
     </div>

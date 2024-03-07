@@ -1,6 +1,6 @@
 import React from "react";
 import { User } from "@prisma/client";
-import { Card, CardHeader, Avatar, Divider } from "@nextui-org/react";
+import { Card, CardHeader, Avatar } from "@nextui-org/react";
 import Link from "next/link";
 
 import { db } from "@/utilities/database";
@@ -21,11 +21,11 @@ const ChatSidebarProfiles = async () => {
   });
 
   return (
-    <div className="overflow-y-auto flex flex-col h-1/2">
+    <div className="overflow-y-auto flex flex-col">
       <div className="space-y-2">
         <h1 className="mt-1 mb-1 font-semibold text-center">Profiles</h1>
         {profiles.map((profile, index) => (
-          <div key={profile.id} className="space-y-2">
+          <div key={profile.id} className="space-y-1">
             <ChatProfileCard key={index} chatProfile={profile} />
           </div>
         ))}
