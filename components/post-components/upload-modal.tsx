@@ -16,6 +16,7 @@ import { UploadDropZone } from "@/utilities/uploadthing";
 import { useState, useTransition } from "react";
 import { createPost } from "@/server_actions/posts";
 import Image from "next/image";
+import { Bell } from "lucide-react";
 
 const PostUploadModal = () => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -57,9 +58,12 @@ const PostUploadModal = () => {
 
   return (
     <>
-      <Button variant="shadow" size="sm" color="primary" onPress={onOpen}>
+      <button
+        className="bg-blue-800 text-white rounded-xl text-sm px-3 py-1"
+        onClick={onOpen}
+      >
         New
-      </Button>
+      </button>
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
         <ModalContent>
@@ -76,6 +80,7 @@ const PostUploadModal = () => {
                   <Input
                     autoFocus
                     name="title"
+                    label="title"
                     placeholder="Enter title of post"
                     variant="bordered"
                     value={title}
@@ -85,6 +90,7 @@ const PostUploadModal = () => {
                     name="description"
                     placeholder="Enter description"
                     type="text"
+                    label="description"
                     variant="bordered"
                     value={description}
                     onChange={onChange}

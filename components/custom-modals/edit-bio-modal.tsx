@@ -35,9 +35,7 @@ const EditBioModal = ({ initialBio }: EditBioProps) => {
 
   return (
     <span className="w-auto">
-      <Button onPress={onOpen} className="bg-inherit" size="sm">
-        <LucideClipboardEdit />
-      </Button>
+      <LucideClipboardEdit onClick={onOpen} />
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
         <ModalContent>
           {(onClose) => (

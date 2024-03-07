@@ -1,10 +1,16 @@
 "use client";
-
 import {
   onApproveGroupJoinRequest,
   onRejectGroupJoinRequest,
 } from "@/server_actions/group";
-import { Avatar, Button, Card, CardBody, CardHeader } from "@nextui-org/react";
+import {
+  Avatar,
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+} from "@nextui-org/react";
 import { Group, User } from "@prisma/client";
 import { Check, Trash } from "lucide-react";
 import React, { useTransition } from "react";
@@ -40,20 +46,26 @@ const JoinRequestCard = ({ group, user, color }: JoinRequestCardProps) => {
         .then(() => toast.success("Rejected request"))
         .catch((error: any) => {
           console.log(error.message);
-          toast.error("Error rejecting request,check logs");
+          toast.error("Error rejecting request, check logs");
         });
     });
   };
 
   return (
-    <Card className="w-[80vw] mt-2 mb-2">
-      <CardHeader className="flex gap-x-2">
+    <Card className="w-fit mt-2 mb-2">
+      <CardHeader className="flex items-center">
         <Avatar src={user?.imageUrl!} alt="User image" />
-        <h1 className="text=md">{user?.username}</h1>
-        <p>requested to join</p>
-        <Avatar src={group?.groupCover} alt="Group Cover" />
-        <p className="text-md">{group?.name}</p>
+        <div className="ml-2">
+          <h1 className="text-md">{user?.username}</h1>
+          <p className="text-xs">wants to join</p>
+        </div>
       </CardHeader>
+
+      <CardFooter className="flex items-center">
+        <Avatar src={group?.groupCover} alt="Group Cover" />
+        <p className="text-md ml-2">{group?.name}</p>
+      </CardFooter>
+
       <CardBody>
         <div className="flex justify-end gap-x-2">
           <Button
@@ -61,6 +73,7 @@ const JoinRequestCard = ({ group, user, color }: JoinRequestCardProps) => {
             color="success"
             disabled={isPending}
             onClick={approveRequest}
+            size="sm"
           >
             <Check />
           </Button>
@@ -69,6 +82,7 @@ const JoinRequestCard = ({ group, user, color }: JoinRequestCardProps) => {
             color="danger"
             disabled={isPending}
             onClick={denyRequest}
+            size="sm"
           >
             <Trash />
           </Button>

@@ -13,20 +13,22 @@ import { Input } from "@nextui-org/react";
 import { useState, useTransition } from "react";
 import toast from "react-hot-toast";
 import { Image } from "@nextui-org/react";
+import { PlusCircleIcon } from "lucide-react";
 
 export const StoryModal = ({ ownerId }: { ownerId: string }) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [title, setTitle] = useState("");
-  const [cover, setCover] = useState("");
+  const [storyTitle, setStoryTitle] = useState("");
+  const [storyCover, setStoryCover] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    console.log("Submitting");
     e.preventDefault();
     e.stopPropagation();
     startTransition(() => {
       onCreateStory({
-        title: title,
-        storyCover: cover,
+        title: storyTitle,
+        storyCover: storyCover,
         ownerId: ownerId,
       })
         .then(() => {
@@ -39,9 +41,7 @@ export const StoryModal = ({ ownerId }: { ownerId: string }) => {
 
   return (
     <>
-      <Button onPress={onOpen} variant="bordered" size="sm">
-        Story
-      </Button>
+      <PlusCircleIcon onClick={onOpen} className="mt-1" />
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -61,18 +61,18 @@ export const StoryModal = ({ ownerId }: { ownerId: string }) => {
                 >
                   <Input
                     autoFocus
-                    name="title"
+                    name="story-title"
                     label="Title"
-                    placeholder="Enter title of post"
+                    placeholder="Enter title of story"
                     variant="bordered"
-                    value={title}
+                    value={storyTitle}
                     required
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) => setStoryTitle(e.target.value)}
                   />
 
                   <div>
                     <div className="flex items-center justify-center">
-                      {!cover && (
+                      {!storyCover && (
                         <UploadDropZone
                           endpoint="thumbnailUploader"
                           appearance={{
@@ -84,15 +84,15 @@ export const StoryModal = ({ ownerId }: { ownerId: string }) => {
                             },
                           }}
                           onClientUploadComplete={(res) => {
-                            setCover(res?.[0]?.url);
+                            setStoryCover(res?.[0]?.url);
                           }}
                         ></UploadDropZone>
                       )}
-                      {cover && (
+                      {storyCover && (
                         <div className="mt-2 mb-2 flex items-center">
                           <Image
                             isLoading={isPending}
-                            src={cover}
+                            src={storyCover}
                             width={200}
                             height={200}
                             alt="Thumbnail"
@@ -104,7 +104,7 @@ export const StoryModal = ({ ownerId }: { ownerId: string }) => {
                   </div>
                   <Button
                     type="submit"
-                    disabled={title.length === 0 || isPending}
+                    disabled={storyTitle.length === 0 || isPending}
                     variant="ghost"
                   >
                     Create Story

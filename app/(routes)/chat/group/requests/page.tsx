@@ -13,7 +13,7 @@ const GroupJoinReq = async () => {
         <Link href={"/chat"} className="ml-4">
           <ArrowLeftFromLine />
         </Link>
-        <h1 className="text-2xl">Pending Requests</h1>
+        <h1 className="text-xl">Pending Requests</h1>
         <div className="w-6"></div>
       </div>
       <div className="mt-10">
