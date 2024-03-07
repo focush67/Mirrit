@@ -7,7 +7,7 @@ const ChatPageEnter = async () => {
     <div className="flex flex-col items-center justify-center mt-2">
       <h1 className="text-2xl">All Groups</h1>
       <div className="ml-2 mt-2 mb-2 overflow-y-auto">
-        <div className="ml-2 flex flex-wrap gap-x-2 gap-y-1 w-fit items-center">
+        <div className="ml-2 flex flex-col gap-x-2 gap-y-1 w-fit items-center">
           {allUnjoinedGroups?.map((grp, index) => (
             <ChatProfileGroupCard key={index} group={grp} isPending={false} />
           ))}

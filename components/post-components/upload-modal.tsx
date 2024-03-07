@@ -34,7 +34,6 @@ const PostUploadModal = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    e.stopPropagation();
     startTransition(() => {
       createPost({
         title,
@@ -77,7 +76,6 @@ const PostUploadModal = () => {
                   <Input
                     autoFocus
                     name="title"
-                    label="Title"
                     placeholder="Enter title of post"
                     variant="bordered"
                     value={title}
@@ -85,7 +83,6 @@ const PostUploadModal = () => {
                   />
                   <Textarea
                     name="description"
-                    label="Description"
                     placeholder="Enter description"
                     type="text"
                     variant="bordered"

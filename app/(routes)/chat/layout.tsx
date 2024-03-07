@@ -17,7 +17,7 @@ const ChatLayout = ({ children }: { children: ReactNode }) => {
     <div className="py-1 mt-1 flex w-full h-full">
       <div className="p-2 border-r h-screen">
         <div className="overflow-y-auto flex flex-col justify-between h-full">
-          <div className="h-3/4 mb-4">
+          <div className="h-3/4 mb-4 overflow-y-auto">
             <ChatSidebarProfiles />
             <Divider />
             <JoinedGroups />
