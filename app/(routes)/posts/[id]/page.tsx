@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Card,
-  CardHeader,
-  CardFooter,
-  Image,
-  Button,
-  Avatar,
-} from "@nextui-org/react";
+import { Card, CardHeader, Image, Avatar } from "@nextui-org/react";
 import { getAllPosts, getCommentsForPost } from "@/server_actions/posts";
 import Like from "@/components/buttons/like";
 import Comment from "@/components/buttons/comment";
@@ -23,8 +16,8 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
   const singlePost = posts.find((post) => post.id === params.id);
   const comments = await getCommentsForPost(singlePost?.id!);
   return (
-    <div className="w-[80vw] h-[50vh] mt-10 ml-5 py-8">
-      <Card className="col-span-12 sm:col-span-4 ">
+    <div className="w-fit h-fit mt-2 ml-1 mr-1 py-2 flex flex-col items-center justify-center">
+      <Card className="w-fit col-span-12 sm:col-span-4 flex items-center">
         <CardHeader className="absolute z-10 top-1 flex items-center gap-x-2">
           <Avatar src={singlePost?.owner.imageUrl!} size="lg" />
           <h4 className="text-white font-medium text-large">

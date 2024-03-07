@@ -38,7 +38,7 @@ const SpecificGroupChatPage = async ({ params }: GroupPageProps) => {
       <div className="flex gap-x-2 space-y-3 items-center justify-between p-2 mr-2">
         <div className="flex gap-x-2 items-center">
           <Avatar src={specificGroup?.groupCover} size="md" />
-          <h1>{specificGroup?.name}</h1>
+          <h1 className="text-md">{specificGroup?.name}</h1>
         </div>
         <GroupInfo
           group={specificGroup!}

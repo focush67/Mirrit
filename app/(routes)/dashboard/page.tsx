@@ -7,14 +7,20 @@ const Dashboard = async () => {
   const self = await getSelf();
   const posts = await getCurrentUserPosts();
   return (
-    <div className="flex flex-col items-center mt-0">
-      <div className="flex justify-center items-center w-full mt-2">
+    <div>
+      <div className="flex justify-center items-center w-full">
         <ProfileCard profile={self} />
       </div>
-      <div className="flex justify-center items-center overflow-hidden">
-        <div className="grid sm:grid-cols-2 gap-2 lg:gap-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+      <div className="flex justify-center items-center overflow-hidden mt-5">
+        <div className="grid sm:grid-cols-2 gap-3 lg:gap-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {posts?.map((post) => (
-            <PostCard post={post} key={post.id} size="small" option={true} />
+            <PostCard
+              post={post}
+              key={post.id}
+              size="small"
+              option={true}
+              interactions={false}
+            />
           ))}
         </div>
       </div>

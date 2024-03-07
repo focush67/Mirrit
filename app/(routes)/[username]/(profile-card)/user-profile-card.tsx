@@ -80,7 +80,7 @@ export default function UserProfileCard({
 
   return (
     <>
-      <div className="w-full flex justify-center md:justify-center mt-10 py-6">
+      <div className="w-full flex justify-center md:justify-center py-4">
         <Card className="w-full m-2">
           <CardHeader className="flex justify-between items-center">
             <div className="flex gap-5">

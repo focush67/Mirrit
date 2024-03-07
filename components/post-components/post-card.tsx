@@ -19,6 +19,7 @@ interface PostCardProps {
   size?: "small" | "large";
   removeSaved?: boolean;
   option?: boolean;
+  interactions?: boolean;
 }
 
 let PostCard = async ({
@@ -26,6 +27,7 @@ let PostCard = async ({
   size = "large",
   removeSaved = false,
   option = false,
+  interactions = true,
 }: PostCardProps) => {
   const comments = await getCommentsForPost(post.id);
   const self = await getSelf();
@@ -33,11 +35,11 @@ let PostCard = async ({
   const dis = distance(post);
   return (
     <Card
-      className={`py-2 flex flex-col ${size === "small" && "h-auto"} ${
-        size === "small" ? "w-[240px]" : "w-full"
+      className={`py-2 flex flex-col ${size === "small" && "h-fit"} ${
+        size === "small" ? "w-[220px]" : "w-[260px]"
       } relative shadow-2xl`}
     >
-      <div className="flex flex-row items-center h-auto ">
+      <div className="flex flex-row items-center h-auto">
         <UserAvatar user={post.owner} postOwner={self?.id} isDashboard={true} />
 
         <CardHeader className="relative pb-0 pt-2 px-1 flex-row items-center overflow-x-hidden sm:gap-2">
@@ -83,7 +85,7 @@ let PostCard = async ({
         </Link>
 
         <Description text={post.description!} size={size} />
-        {removeSaved === false && (
+        {removeSaved === false && interactions && (
           <div
             className={`flex  ${
               size === "small" ? "justify-center" : "justify-between"

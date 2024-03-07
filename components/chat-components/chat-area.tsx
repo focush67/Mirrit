@@ -68,8 +68,8 @@ const ChatArea = ({
                 )}
               >
                 <span
-                  className={cn("px-4 py-2 rounded-lg inline-block", {
-                    "bg-blue-600 text-white": isCurrentUser,
+                  className={cn("px-4 text-sm py-2 rounded-lg inline-block", {
+                    "bg-blue-600 ": isCurrentUser,
                     "bg-white text-black": !isCurrentUser,
                     "rounded-br-none":
                       !hasNextMessageFromSameUser && isCurrentUser,
@@ -78,8 +78,10 @@ const ChatArea = ({
                   })}
                 >
                   {message.messageContent}{" "}
-                  <span className="ml-2 text-xs text-gray-400">
-                    {formatTimeStamp(new Date(message?.createdAt))}
+                  <span className="ml-2 text-xs">
+                    <p className="text-green-950 font-bold">
+                      {formatTimeStamp(new Date(message?.createdAt))}
+                    </p>
                   </span>
                 </span>
               </div>

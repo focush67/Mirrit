@@ -11,7 +11,7 @@ import { NotificationProvider } from "@/context/notification-context";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Social Media App Version 2",
+  title: "Mirrit",
   description: "Made with Next14 and TypeScript",
 };
 
