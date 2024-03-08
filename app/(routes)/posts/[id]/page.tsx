@@ -5,6 +5,7 @@ import { distance } from "@/utilities/date-format";
 import { db } from "@/utilities/database";
 import { Comment as CommentType, User } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
+import { CommentCard } from "@/components/comments/comment-card";
 
 interface SinglePostProps {
   params: {
@@ -63,23 +64,3 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
     </div>
   );
 }
-
-interface CommentProps {
-  comment: CommentType & { commentor: User };
-}
-
-export const CommentCard = ({ comment }: CommentProps) => {
-  const formattedTime = formatDistanceToNow(new Date(comment.createdAt), {
-    addSuffix: true,
-  });
-
-  return (
-    <Card className="w-auto flex flex-col justify-between gap-4 mt-2 p-4">
-      <div className="flex flex-row items-center justify-between">
-        <Avatar src={comment?.commentor?.imageUrl!} size="md" alt="Avatar" />
-        <p className="text-small font-semibold">{comment.content}</p>
-        <p className="text-gray-500 text-xs">{formattedTime}</p>
-      </div>
-    </Card>
-  );
-};
