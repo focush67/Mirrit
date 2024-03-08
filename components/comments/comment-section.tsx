@@ -21,19 +21,13 @@ import { CommentOnPost } from "@/server_actions/interactions";
 import { StateType } from "@/redux_store/store";
 import { T_Comment } from "@/types/comment";
 import { PostType } from "@/types/post";
-import { removeTimeFields } from "@/utilities/remove-fields";
 import { useUser } from "@clerk/nextjs";
 interface CommentSectionProps {
   post: Post;
-  existingComments: T_Comment[];
   loggedInUserId: string | undefined;
 }
 
-let CommentSection = ({
-  post,
-  existingComments,
-  loggedInUserId,
-}: CommentSectionProps) => {
+let CommentSection = ({ post, loggedInUserId }: CommentSectionProps) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [presentComment, setPresentComment] = useState<string>("");
   const [isPending, startTransition] = useTransition();

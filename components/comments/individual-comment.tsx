@@ -1,5 +1,4 @@
 import React from "react";
-
 import { Post } from "@prisma/client";
 import DeleteComment from "../buttons/delete-comment";
 import { User as UserData } from "@nextui-org/react";

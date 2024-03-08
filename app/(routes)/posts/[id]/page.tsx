@@ -1,22 +1,31 @@
 import React from "react";
 import { Card, CardHeader, Image, Avatar } from "@nextui-org/react";
-import { getAllPosts, getCommentsForPost } from "@/server_actions/posts";
-import Like from "@/components/buttons/like";
-import Comment from "@/components/buttons/comment";
-import ShareButton from "@/components/buttons/save";
+import { getAllPosts } from "@/server_actions/posts";
 import { distance } from "@/utilities/date-format";
+import { db } from "@/utilities/database";
+import { Comment as CommentType, User } from "@prisma/client";
+import { formatDistanceToNow } from "date-fns";
 
 interface SinglePostProps {
   params: {
     id: string;
   };
 }
+
 export default async function SinglePostPage({ params }: SinglePostProps) {
   const posts = await getAllPosts();
   const singlePost = posts.find((post) => post.id === params.id);
-  const comments = await getCommentsForPost(singlePost?.id!);
+  const comments = await db.comment.findMany({
+    where: {
+      post_Id: singlePost?.id,
+    },
+    include: {
+      commentor: true,
+    },
+  });
+
   return (
-    <div className="w-fit h-fit mt-2 ml-1 mr-1 py-2 flex flex-col items-center justify-center">
+    <div className="mt-2 ml-1 mr-1 py-2 flex flex-col items-center justify-center">
       <Card className="w-fit col-span-12 sm:col-span-4 flex items-center">
         <CardHeader className="absolute z-10 top-1 flex items-center gap-x-2">
           <Avatar src={singlePost?.owner.imageUrl!} size="lg" />
@@ -31,30 +40,46 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
           className="z-0 w-fit h-fit object-cover"
           src={singlePost?.cover}
         />
-        <Card className="border-white h-[8vh] mt-0 grid grid-cols-3 items-center justify-evenly ml-6">
-          <div className="flex justify-center">
-            <Like post={singlePost!} />
-          </div>
-          <div className="flex justify-center">
-            <Comment post={singlePost!} existingComments={comments} />
-          </div>
-          <div className="flex justify-center">
-            <ShareButton post={singlePost!} owner={singlePost?.owner!} />
-          </div>
-        </Card>
       </Card>
 
-      <Card className="w-[80vw] h-[20vh] mt-2 flex flex-col bg-inherit">
+      <Card className="w-[80vw] mt-2 flex flex-col bg-inherit">
         <div className="p-4">
           <h2 className="text-xl font-semibold">{singlePost?.title}</h2>
           <p className="mt-2 text-gray-600">{singlePost?.description}</p>
         </div>
-        <div className="ml-4 italic">{distance(singlePost)}</div>
+        <div className="ml-4 italic p-2">{distance(singlePost)}</div>
       </Card>
 
-      <Card className="w-[80vw] h-[20vh] mt-2 flex flex-col bg-inherit items-center">
-        <h1 className="text-xl">Comments</h1>
+      <Card className="w-[80vw] oveflow-y-auto mt-2 flex flex-col bg-inherit">
+        <div className="p-4">
+          <h1 className="text-xl font-semibold">Comments</h1>
+          <div className="overflow-auto flex flex-col gap-y-2 p-2">
+            {comments.map((comment) => (
+              <CommentCard key={comment.id} comment={comment} />
+            ))}
+          </div>
+        </div>
       </Card>
     </div>
   );
 }
+
+interface CommentProps {
+  comment: CommentType & { commentor: User };
+}
+
+export const CommentCard = ({ comment }: CommentProps) => {
+  const formattedTime = formatDistanceToNow(new Date(comment.createdAt), {
+    addSuffix: true,
+  });
+
+  return (
+    <Card className="w-auto flex flex-col justify-between gap-4 mt-2 p-4">
+      <div className="flex flex-row items-center justify-between">
+        <Avatar src={comment?.commentor?.imageUrl!} size="md" alt="Avatar" />
+        <p className="text-small font-semibold">{comment.content}</p>
+        <p className="text-gray-500 text-xs">{formattedTime}</p>
+      </div>
+    </Card>
+  );
+};

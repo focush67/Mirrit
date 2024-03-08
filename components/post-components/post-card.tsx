@@ -6,7 +6,6 @@ import { Post, User } from "@prisma/client";
 import UserAvatar from "../profile/user-avatar";
 import CommentButton from "../buttons/comment";
 import ShareButton from "../buttons/save";
-import { getCommentsForPost } from "@/server_actions/posts";
 import { getSelf } from "@/services/auth-service";
 import DeleteModal from "../custom-modals/delete-post-modal";
 import EditModal from "../custom-modals/edit-post-modal";
@@ -29,7 +28,6 @@ let PostCard = async ({
   option = false,
   interactions = true,
 }: PostCardProps) => {
-  const comments = await getCommentsForPost(post.id);
   const self = await getSelf();
   const owner = self as User;
   const dis = distance(post);
@@ -95,7 +93,7 @@ let PostCard = async ({
           >
             <LikeButton post={post} />
 
-            <CommentButton post={post} existingComments={comments} />
+            <CommentButton post={post} />
 
             <ShareButton post={post} owner={owner} />
           </div>
