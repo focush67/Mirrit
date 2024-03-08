@@ -106,7 +106,7 @@ export default function NavigationBar({ isLoggedIn }: NavigationProps) {
         <div className="flex items-center gap-x-3">
           <div
             className={`{
-          } flex gap-x-1 md:hidden lg:hidden hover:cursor-pointer`}
+          } flex gap-x-1 hover:cursor-pointer`}
             onClick={() => router.push("/notifications")}
           >
             <BellDot

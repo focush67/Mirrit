@@ -15,6 +15,7 @@ import { LikeForStory, Story, User } from "@prisma/client";
 import { Heart } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
 import toast from "react-hot-toast";
+import DeleteStory from "../buttons/delete-story";
 
 interface StoryProps {
   stories: (Story & {
@@ -22,15 +23,16 @@ interface StoryProps {
     likes: LikeForStory[];
     status: boolean | undefined;
   })[];
+  logged: User;
 }
 
-const Story = ({ stories }: StoryProps) => {
+const Story = ({ stories, logged }: StoryProps) => {
   return (
-    <section className="w-full h-[9vh] border-b-1 border-b-gray-500 bg-black fixed top-0 overflow-y-hidden overflow-x-auto">
+    <section className="w-full h-[9vh] border-b-1 flex justify-center border-b-gray-500 bg-black fixed top-0 overflow-y-hidden overflow-x-auto">
       <ul className="flex gap-x-2 ml-2">
         {stories.map((story, index) => (
           <div className="mt-2 mb-4 ml-2" key={story.id}>
-            <StoryComponent story={story} key={index} />
+            <StoryComponent story={story} key={index} logged={logged} />
           </div>
         ))}
       </ul>
@@ -42,12 +44,14 @@ export default Story;
 
 export const StoryComponent = ({
   story,
+  logged,
 }: {
   story: Story & {
     owner: User;
     likes: LikeForStory[];
     status: boolean | undefined;
   };
+  logged: User;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [seen, setSeen] = useState(false);
@@ -126,18 +130,19 @@ export const StoryComponent = ({
         />
       </div>
       <Modal
-        size="full"
+        size="md"
         isOpen={isOpen}
         onClose={onClose}
         backdrop="blur"
-        className="w-auto h-fit rounded-full"
-        placement="center"
+        className="w-fit h-fit"
+        placement="bottom-center"
         radius="lg"
       >
         <ModalContent>
           <>
             <ModalHeader className="flex flex-col gap-1">
               {story.owner.username}
+              {logged?.id === story.ownerId && <DeleteStory story={story} />}
             </ModalHeader>
             <ModalBody>
               <Image

@@ -3,6 +3,7 @@
 import { Story } from "@prisma/client";
 import { db } from "@/utilities/database";
 import { getSelf } from "@/services/auth-service";
+import { revalidatePath } from "next/cache";
 
 export const onCreateStory = async (story: Partial<Story>) => {
   const self = await getSelf();
@@ -39,4 +40,21 @@ export const onLikeStory = async (story: Partial<Story>) => {
 
   console.log("Server action for liking story ", newLike);
   return newLike;
+};
+
+export const onDeleteStory = async (storyId: string) => {
+  const self = await getSelf();
+  if (!self) {
+    console.log("You need to be logged in to delete your story");
+    return null;
+  }
+
+  const deleteStory = await db.story.delete({
+    where: {
+      id: storyId,
+    },
+  });
+
+  revalidatePath("/");
+  return deleteStory;
 };
