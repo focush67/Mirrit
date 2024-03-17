@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Avatar,
+  Divider,
   Image,
   Modal,
   ModalBody,

@@ -54,7 +54,7 @@ const SpecificGroupChatPage = async ({ params }: GroupPageProps) => {
           sessionId={self?.id!}
         />
       </div>
-      <div className="mb-[4rem]">
+      <div className="mb-[4.7rem]">
         <GroupChatInput groupId={groupId} />
       </div>
     </div>

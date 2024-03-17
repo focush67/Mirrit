@@ -44,7 +44,7 @@ const SpecificChat = async ({ params }: SpecificChatProps) => {
           sessionId={self?.id!}
         />
       </div>
-      <div className="mb-[4rem]">
+      <div className="mb-[4.7rem]">
         <ChatInput chatPartner={chatPartner!} />
       </div>
     </div>

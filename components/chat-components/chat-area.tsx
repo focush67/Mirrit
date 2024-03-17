@@ -79,7 +79,7 @@ const ChatArea = ({
                 >
                   {message.messageContent}{" "}
                   <span className="ml-2 text-xs">
-                    <p className="text-green-950 font-bold">
+                    <p className=" font-bold text-end">
                       {formatTimeStamp(new Date(message?.createdAt))}
                     </p>
                   </span>

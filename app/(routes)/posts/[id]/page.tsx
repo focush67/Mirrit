@@ -49,16 +49,24 @@ export default async function SinglePostPage({ params }: SinglePostProps) {
         </div>
       </Card>
 
-      <Card className="w-full max-w-[800px] h-screen mx-auto">
-        <div className="p-4">
-          <h1 className="text-xl font-semibold mb-4">Comments</h1>
-          <div className="space-y-4">
-            {comments.map((comment) => (
-              <CommentCard key={comment.id} comment={comment} />
-            ))}
+      {comments && comments.length > 0 ? (
+        <Card className="w-full max-w-[800px] h-screen mx-auto">
+          <div className="p-4">
+            <h1 className="text-xl font-semibold mb-4">Comments</h1>
+            <div className="space-y-4">
+              {comments.map((comment) => (
+                <CommentCard key={comment.id} comment={comment} />
+              ))}
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      ) : (
+        <Card className="w-full max-w-[800px] h-[20vh] mx-auto">
+          <div className="p-4">
+            <h1 className="text-xl font-semibold mb-4">No comments</h1>
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

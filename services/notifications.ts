@@ -16,6 +16,9 @@ export const getNotifications = async () => {
       sender: true,
       post: true,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   return notifications;
 };

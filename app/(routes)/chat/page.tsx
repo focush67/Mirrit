@@ -1,5 +1,4 @@
 import { ChatProfileGroupCard } from "@/components/chat-components/groups-container";
-import PendingRequests from "@/components/chat-components/pending-requests";
 import {
   getRequestedGroups,
   getUnjoinedGroups,
@@ -11,7 +10,7 @@ const ChatPageEnter = async () => {
   const allPendingRequests = await getRequestedGroups();
   return (
     <div className="flex flex-col items-center justify-center gap-y-2">
-      <h1 className="text-2xl">All Groups</h1>
+      <h1 className="text-2xl font-semibold">All Groups</h1>
       <div className="ml-2 mt-2 mb-5 overflow-y-auto">
         <div className="ml-2 flex flex-col gap-x-2 gap-y-1 w-fit items-center">
           {allUnjoinedGroups?.map((grp, index) => (
@@ -20,7 +19,7 @@ const ChatPageEnter = async () => {
         </div>
       </div>
       <Divider />
-      <h1 className="text-2xl">Pending Requests</h1>
+      <h1 className="text-2xl font-semibold">Pending Requests</h1>
       <div className="ml-2 mt-2 mb-5 overflow-y-auto">
         <div className="ml-2 flex flex-col gap-x-2 gap-y-1 w-fit items-center">
           {allPendingRequests?.map((grp, index) => (

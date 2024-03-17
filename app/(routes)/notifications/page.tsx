@@ -3,11 +3,7 @@ import { getNotifications } from "@/services/notifications";
 
 const NotificationLayout = async () => {
   const previousNotifications = await getNotifications();
-  return (
-    <div>
-      <Notifications notifications={previousNotifications} />
-    </div>
-  );
+  return <Notifications notifications={previousNotifications} />;
 };
 
 export default NotificationLayout;

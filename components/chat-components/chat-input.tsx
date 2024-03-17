@@ -16,10 +16,15 @@ const ChatInput = ({ chatPartner }: ChatInputProps) => {
   const sendMessage = () => {
     startTransition(() => {
       onSendMessage({ content: input, receiverId: chatPartner.id })
-        .then(() => toast.success("Message sent"))
+        .then(() => {
+          toast.success("Message sent");
+        })
         .catch((error: any) => {
           toast.error("Error sending message");
           console.log(error.message);
+        })
+        .finally(() => {
+          setInput("");
         });
     });
   };

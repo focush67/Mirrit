@@ -1,11 +1,12 @@
 "use client";
 
-import { pusherClient, pusherServer } from "@/utilities/pusher";
+import { pusherClient } from "@/utilities/pusher";
 import { useContext, useEffect, useState } from "react";
 import NotificationCard from "@/components/notification-components/notification-card";
 import { Post, User } from "@prisma/client";
 import { useUser } from "@clerk/nextjs";
 import { NotificationContext } from "@/context/notification-context";
+import { Divider } from "@nextui-org/react";
 
 export interface NotificationsType {
   id: string;
@@ -15,6 +16,7 @@ export interface NotificationsType {
   sender: User;
   receiver: User;
   post: Post | null;
+  createdAt: Date;
 }
 
 interface Props {
@@ -76,25 +78,44 @@ const Notifications = ({ notifications }: Props) => {
       pusherClient.unsubscribe(`${user?.id}`);
     };
   }, [currentNotifications, user, notificationCount]);
-  return (
-    <div className="flex flex-col items-center py-8 mt-10">
-      <div>
-        {notifications.map((notification, index) => {
-          if (notification.type === "like") {
-            return <NotificationCard notification={notification} key={index} />;
-          } else {
-            return <NotificationCard notification={notification} key={index} />;
-          }
-        })}
 
-        <div className="mt-3 mb-1 flex flex-col items-center justify-center">
-          <div>
-            {currentNotifications?.map((current, index) => (
-              <NotificationCard key={index} notification={current} />
-            ))}
-          </div>
+  // Group notifications by their creation times
+  const groupedNotifications: { [key: string]: NotificationsType[] } = {};
+  notifications.forEach((notification) => {
+    const dateKey = new Date(notification.createdAt)
+      .toLocaleDateString(undefined, {
+        day: "numeric",
+        month: "short",
+      })
+      .toUpperCase(); // Convert date to uppercase
+    if (!groupedNotifications[dateKey]) {
+      groupedNotifications[dateKey] = [];
+    }
+    groupedNotifications[dateKey].push(notification);
+  });
+
+  return (
+    <div className="flex flex-col md:items-start sm:items-center py-2">
+      <h1 className="ml-2 text-xl font-semibold">Notifications</h1>
+      <Divider className="mb-2" />
+      {Object.entries(groupedNotifications)?.map(([dateKey, notifications]) => (
+        <div key={dateKey} className="text-center mb-4">
+          <h2 className="text-sm font-bold">{dateKey}</h2>
+          {notifications.map((notification, index) => (
+            <NotificationCard notification={notification} key={index} />
+          ))}
         </div>
+      ))}
+      {/* Render current notifications */}
+      <div className="h-[10vh] overflow-y-auto">
+        {notifications.length === 0 && currentNotifications.length === 0 && (
+          <div className="text-center text-gray-500">No notifications</div>
+        )}
+        {currentNotifications?.map((current, index) => (
+          <NotificationCard key={index} notification={current} />
+        ))}
       </div>
+      <Divider />
     </div>
   );
 };

@@ -17,6 +17,7 @@ const StorySidebar = async () => {
     ...story,
     status: likedStati[index],
   }));
+
   return (
     <div className="mt-2 fixed top-0 left-0 z-[100] flex overflow-x-auto">
       <Story stories={formattedStories} logged={self!} />

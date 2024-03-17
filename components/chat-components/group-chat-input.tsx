@@ -22,6 +22,9 @@ const GroupChatInput = ({ groupId }: GroupChatInputProps) => {
         .catch((error: any) => {
           toast.error("Error sending message to group");
           console.log(error.message);
+        })
+        .finally(() => {
+          setInput("");
         });
     });
   };

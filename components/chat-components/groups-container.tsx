@@ -24,7 +24,7 @@ export const ChatProfileGroupCard = async ({
     linkDisabled = true;
   }
   return (
-    <Card className="w-auto shadow-2xl bg-auto">
+    <Card className="w-full shadow-2xl bg-inherit hover:bg-background">
       <CardHeader className="flex gap-3">
         <Link
           className="hover:cursor-pointer"
@@ -39,6 +39,9 @@ export const ChatProfileGroupCard = async ({
             !hasJoinedTheGroup && <JoinGroupRequest targetGroup={group} />
           )
         ) : null}
+        <h4 className="hidden md:text-xs md:font-semibold md:leading-none md:text-default-600 lg:block">
+          {group?.name}
+        </h4>
       </CardHeader>
     </Card>
   );
