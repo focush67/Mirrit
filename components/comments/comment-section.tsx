@@ -19,7 +19,6 @@ import { commentOnPost } from "@/redux_store/slices/posts/post-slice";
 import toast from "react-hot-toast";
 import { CommentOnPost } from "@/server_actions/interactions";
 import { StateType } from "@/redux_store/store";
-import { T_Comment } from "@/types/comment";
 import { PostType } from "@/types/post";
 import { useUser } from "@clerk/nextjs";
 interface CommentSectionProps {

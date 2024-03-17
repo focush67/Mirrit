@@ -92,9 +92,7 @@ let PostCard = async ({
             } gap-2`}
           >
             <LikeButton post={post} />
-
             <CommentButton post={post} />
-
             <ShareButton post={post} owner={owner} />
           </div>
         )}

@@ -1,5 +1,5 @@
 "use client";
-import { onLikeStory } from "@/server_actions/story";
+import { useEffect, useRef, useState } from "react";
 import {
   Avatar,
   Image,
@@ -13,7 +13,7 @@ import {
 } from "@nextui-org/react";
 import { LikeForStory, Story, User } from "@prisma/client";
 import { Heart } from "lucide-react";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { onLikeStory } from "@/server_actions/story";
 import toast from "react-hot-toast";
 import DeleteStory from "../buttons/delete-story";
 
@@ -32,7 +32,12 @@ const Story = ({ stories, logged }: StoryProps) => {
       <ul className="flex gap-x-2 ml-2">
         {stories.map((story, index) => (
           <div className="mt-2 mb-4 ml-2" key={story.id}>
-            <StoryComponent story={story} key={index} logged={logged} />
+            <StoryComponent
+              stories={stories}
+              story={story}
+              key={index}
+              logged={logged}
+            />
           </div>
         ))}
       </ul>
@@ -43,9 +48,15 @@ const Story = ({ stories, logged }: StoryProps) => {
 export default Story;
 
 export const StoryComponent = ({
+  stories,
   story,
   logged,
 }: {
+  stories: (Story & {
+    owner: User;
+    likes: LikeForStory[];
+    status: boolean | undefined;
+  })[];
   story: Story & {
     owner: User;
     likes: LikeForStory[];
@@ -55,37 +66,27 @@ export const StoryComponent = ({
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [seen, setSeen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useState(false);
   const [progress, setProgress] = useState(0);
   const [hasLike, setHasLike] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
 
   const handleStoryLike = () => {
     if (story.status === true) {
       onClose();
       return;
     }
-    startTransition(() => {
-      onLikeStory(story)
-        .then(() => {
-          toast.success("Liked Story");
-          setHasLike(true);
-        })
-        .catch(() => {
-          onClose();
-        });
-    });
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      const timeout = setTimeout(() => {
+    startTransition(true);
+    onLikeStory(story)
+      .then(() => {
+        toast.success("Liked Story");
+        setHasLike(true);
+      })
+      .catch(() => {
         onClose();
-      }, 10000);
-      setSeen(true);
-      return () => clearTimeout(timeout);
-    }
-  }, [isOpen, onClose]);
+      });
+  };
 
   useEffect(() => {
     let interval: any;
@@ -94,12 +95,13 @@ export const StoryComponent = ({
       interval = setInterval(() => {
         const currentTime = Date.now();
         const elapsedTime = currentTime - start;
-        const duration = 10000;
+        const duration = 10000; // Adjust this value for the duration of each story
         const percentage = (elapsedTime / duration) * 100;
         setProgress(percentage);
 
         if (elapsedTime >= duration) {
           onClose();
+          setCurrentStoryIndex((prevIndex) => (prevIndex + 1) % stories.length);
         }
       }, 100);
     }
@@ -111,11 +113,12 @@ export const StoryComponent = ({
       imageRef.current.onload = () => {
         const timer = setTimeout(() => {
           onClose();
-        }, 10000);
+          setCurrentStoryIndex((prevIndex) => (prevIndex + 1) % stories.length);
+        }, 10000); // Adjust this value for the duration of each story
         return () => clearTimeout(timer);
       };
     }
-  }, []);
+  }, [currentStoryIndex, stories, onClose]);
 
   return (
     <div className="flex flex-col space-y-2 space-x-3">

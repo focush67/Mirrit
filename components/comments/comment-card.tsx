@@ -12,10 +12,13 @@ export const CommentCard = ({ comment }: CommentProps) => {
   });
 
   return (
-    <Card className="w-auto flex flex-col justify-between gap-4 mt-2 p-4">
-      <div className="flex flex-row items-center justify-between">
-        <Avatar src={comment?.commentor?.imageUrl!} size="md" alt="Avatar" />
-        <p className="text-small font-semibold">{comment.content}</p>
+    <Card className="w-fit bg-inherit border-1 border-white  flex flex-col justify-between gap-4 mt-2 p-4">
+      <div className="flex flex-row items-center justify-between gap-x-2">
+        <div className="flex items-center gap-x-4">
+          <Avatar src={comment?.commentor?.imageUrl!} size="sm" alt="Avatar" />
+          <p className="text-small ">{comment.content}</p>
+        </div>
+
         <p className="text-gray-500 text-xs">{formattedTime}</p>
       </div>
     </Card>

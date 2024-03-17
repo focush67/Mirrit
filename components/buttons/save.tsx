@@ -14,6 +14,7 @@ import {
 import { AppDispatch } from "@/redux_store/store";
 import { addNewSavedPostState } from "@/redux_store/slices/saved/saved-slice";
 import { useUser } from "@clerk/nextjs";
+import { removeTimeFields } from "@/utilities/remove-fields";
 
 interface SaveProps {
   post: Post;
@@ -39,10 +40,11 @@ const ShareButton = ({ post, owner }: SaveProps) => {
       savePost(post.id)
         .then((data) => {
           toast.success(`Post saved to Collections`);
+          const timeFreeOwner = removeTimeFields(owner);
           dispatch(
             addNewSavedPostState({
               postId: post.id,
-              owner: owner,
+              owner: timeFreeOwner,
             })
           );
         })

@@ -11,7 +11,7 @@ const Dashboard = async () => {
       <div className="flex justify-center items-center w-full">
         <ProfileCard profile={self} />
       </div>
-      <div className="flex justify-center items-center overflow-hidden mt-2">
+      <div className="flex justify-center items-start h-full mt-4">
         <div className="grid sm:grid-cols-2 gap-3 lg:gap-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {posts?.map((post) => (
             <PostCard

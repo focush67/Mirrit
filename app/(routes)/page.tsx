@@ -8,7 +8,7 @@ const HomePageLayout = async () => {
   return (
     <div className="mt-12 py-8 flex flex-wrap justify-center">
       <StorySidebar />
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col h-[101vh]">
         {posts.map((post, index) => (
           <div className="mt-2 mb-2" key={index}>
             <PostCard key={post.id} post={post} />
